@@ -17,6 +17,12 @@ export default {
       fontFamily: {
         display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
+      gridTemplateColumns: {
+        board: '100fr repeat(9, 60fr) 100fr',
+      },
+      gridTemplateRows: {
+        board: '100fr repeat(9, 60fr) 100fr',
+      },
     },
   },
   plugins: [],

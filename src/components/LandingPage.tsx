@@ -15,8 +15,8 @@ const learningPoints = [
 ];
 
 const howToPlaySteps = [
-  'Chọn 2-4 người chơi, đặt tên và avatar.',
-  'Tung xúc xắc để di chuyển trên bàn 32 ô.',
+  'Chọn 2-4 người chơi, đặt tên và ảnh nhân vật.',
+  'Tung xúc xắc để di chuyển trên bàn 40 ô, từ ô 0 đến ô 39 rồi quay lại Khởi nghiệp.',
   'Mua tài sản, trả phí, xử lý sự kiện và trả lời quiz lý luận.',
   'Chiến thắng bằng quyền lực thị trường, điểm lý luận hoặc tổng điểm sau 25 vòng.',
 ];
@@ -95,7 +95,7 @@ export function LandingPage({ hasSavedGame, onContinue, onStart, onLearnTheory, 
               <h2 className="mt-3 text-2xl font-black text-white">Hiểu độc quyền qua hành động</h2>
             </div>
             <div className="rounded-lg border border-gold/40 bg-gold/10 px-3 py-2 text-sm font-black text-gold">
-              32 ô
+              40 ô
             </div>
           </div>
           <div className="mt-5 space-y-3">

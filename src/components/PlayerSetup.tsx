@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { avatars } from '../data/avatars';
 import type { GameState } from '../types/game';
 import { createInitialGameState } from '../utils/gameLogic';
+import { PlayerAvatar } from './PlayerAvatar';
 
 interface PlayerSetupProps {
   onBack: () => void;
@@ -50,7 +51,7 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
         return {
           id: `player-${index + 1}`,
           name: player.name.trim(),
-          avatar: selectedAvatar.icon,
+          avatar: selectedAvatar.imagePath,
         };
       }),
     );
@@ -65,7 +66,7 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan">Setup</p>
           <h1 className="section-title mt-2">Thiết lập người chơi</h1>
           <p className="mt-3 text-sm leading-6 text-slate-300">
-            Chọn đội hình thuyết trình, đặt tên đại diện và avatar. Khi bắt đầu, hệ thống sẽ tạo
+            Chọn đội hình thuyết trình, đặt tên đại diện và ảnh nhân vật. Khi bắt đầu, hệ thống sẽ tạo
             trạng thái game ban đầu với vốn, ảnh hưởng, users, data và điểm lý luận.
           </p>
         </div>
@@ -131,9 +132,12 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
                       Tên người chơi
                     </label>
                   </div>
-                  <div className="grid h-14 w-14 place-items-center rounded-lg border border-gold/40 bg-gold/10 text-3xl">
-                    {selectedAvatar.icon}
-                  </div>
+                  <PlayerAvatar
+                    alt={selectedAvatar.label}
+                    className="h-14 w-14 rounded-lg border border-gold/40"
+                    imagePath={selectedAvatar.imagePath}
+                    label={selectedAvatar.label}
+                  />
                 </div>
 
                 <input
@@ -146,7 +150,7 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
                 />
 
                 <div className="mt-4">
-                  <p className="text-sm font-bold text-slate-200">Chọn avatar</p>
+                  <p className="text-sm font-bold text-slate-200">Chọn ảnh nhân vật</p>
                   <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8 md:grid-cols-4 xl:grid-cols-8">
                     {avatars.map((avatar) => (
                       <button
@@ -161,7 +165,12 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
                         title={avatar.label}
                         type="button"
                       >
-                        {avatar.icon}
+                        <PlayerAvatar
+                          alt={avatar.label}
+                          className="h-8 w-8 rounded-md"
+                          imagePath={avatar.imagePath}
+                          label={avatar.label}
+                        />
                       </button>
                     ))}
                   </div>

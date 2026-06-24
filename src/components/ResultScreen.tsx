@@ -1,5 +1,6 @@
 import type { GameState, Player } from '../types/game';
 import { calculateAssetValue, calculateMarketPower, calculateTotalScore } from '../utils/scoring';
+import { PlayerAvatar } from './PlayerAvatar';
 
 interface ResultScreenProps {
   gameState: GameState | null;
@@ -46,9 +47,7 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
         <div className="panel">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">Winner</p>
           <div className="mt-4 flex items-center gap-4">
-            <div className="grid h-20 w-20 place-items-center rounded-lg border border-gold/40 bg-gold/10 text-5xl">
-              {winner.avatar}
-            </div>
+            <PlayerAvatar alt={winner.name} className="h-20 w-20 rounded-lg border border-gold/40" imagePath={winner.avatar} label={winner.name} />
             <div>
               <h1 className="text-4xl font-black text-white">{winner.name}</h1>
               <p className="mt-1 text-lg font-bold text-cyan">{winnerBreakdown.finalScore} final score</p>
@@ -118,7 +117,7 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
                 <tr className={isWinner ? 'text-white' : ''} key={player.id}>
                   <td className="border-b border-white/10 py-3 pr-4 font-black text-gold">#{index + 1}</td>
                   <td className="border-b border-white/10 py-3 pr-4">
-                    <span className="mr-2">{player.avatar}</span>
+                    <PlayerAvatar alt={player.name} className="mr-2 h-7 w-7 rounded-md align-middle" imagePath={player.avatar} label={player.name} />
                     <span className="font-bold">{player.name}</span>
                   </td>
                   <td className="border-b border-white/10 py-3 pr-4">${breakdown.money}</td>

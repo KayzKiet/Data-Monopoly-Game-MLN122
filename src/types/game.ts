@@ -2,6 +2,8 @@ export type PageName = 'landing' | 'setup' | 'game' | 'theory' | 'result';
 
 export type Era = 'oil' | 'data' | 'system';
 
+export type EventDeckType = 'fortune' | 'chance';
+
 export type TileType =
   | 'start'
   | 'oil-field'
@@ -43,6 +45,7 @@ export interface Player {
   data: number;
   theoryPoints: number;
   assets: Asset[];
+  heldEventCards: string[];
   position: number;
   isInJail: boolean;
   underInvestigation: boolean;
@@ -58,7 +61,7 @@ export interface Tile {
   asset?: Asset;
   fee?: number;
   quizId?: string;
-  eventDeck?: 'chance' | 'crisis';
+  eventDeck?: EventDeckType;
 }
 
 export interface EventCard {
@@ -66,6 +69,8 @@ export interface EventCard {
   title: string;
   description: string;
   effect: string;
+  deck: EventDeckType;
+  keepWhenDrawn?: boolean;
   theoryConnection: string;
 }
 
@@ -105,7 +110,9 @@ export interface GameState {
   diceValue: number | null;
   selectedTileId: string | null;
   activeEventId: string | null;
+  activeEventDeck: EventDeckType | null;
   activeQuizId: string | null;
+  eventDecks: Record<EventDeckType, string[]>;
   winnerId: string | null;
   status: 'setup' | 'playing' | 'finished';
   log: GameLogEntry[];
@@ -113,6 +120,6 @@ export interface GameState {
 
 export interface AvatarOption {
   id: string;
-  icon: string;
+  imagePath: string;
   label: string;
 }

@@ -1,5 +1,6 @@
 import type { GameState, Player } from '../types/game';
 import { calculateAssetValue, calculateMarketPower } from '../utils/scoring';
+import { PlayerAvatar } from './PlayerAvatar';
 
 interface PlayerPanelProps {
   currentPlayerId: string | null;
@@ -28,7 +29,7 @@ function PlayerStatsCard({ currentPlayerId, player, players }: { currentPlayerId
     <article className={`rounded-lg border p-3 ${isCurrent ? 'border-cyan/60 bg-cyan/10' : 'border-white/10 bg-oil/60'}`}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="text-xl">{player.avatar}</span>
+          <PlayerAvatar alt={player.name} className="h-8 w-8 rounded-md" imagePath={player.avatar} label={player.name} />
           <p className="truncate font-bold text-white">{player.name}</p>
         </div>
         <p className="text-sm font-black text-cyan">{marketPower} MP</p>

@@ -8,6 +8,7 @@ import { BoardTile } from './BoardTile';
 import { Dice } from './Dice';
 import { EventModal } from './EventModal';
 import { GameLog } from './GameLog';
+import { PlayerAvatar } from './PlayerAvatar';
 import { PlayerPanel } from './PlayerPanel';
 import { QuizModal } from './QuizModal';
 
@@ -22,11 +23,11 @@ interface GameBoardProps {
 
 const playerColors = ['bg-cyan', 'bg-gold', 'bg-emerald-400', 'bg-rose-400'];
 
-const perimeterPositions = Array.from({ length: 32 }, (_, index) => {
-  if (index <= 8) return { row: 9, col: 9 - index };
-  if (index <= 16) return { row: 17 - index, col: 1 };
-  if (index <= 24) return { row: 1, col: index - 15 };
-  return { row: index - 23, col: 9 };
+const perimeterPositions = Array.from({ length: 40 }, (_, index) => {
+  if (index <= 10) return { row: 11, col: 11 - index };
+  if (index <= 20) return { row: 21 - index, col: 1 };
+  if (index <= 30) return { row: 1, col: index - 19 };
+  return { row: index - 29, col: 11 };
 });
 
 export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onSetup, onTheory }: GameBoardProps) {
@@ -179,7 +180,13 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
             <p className="mt-2 text-sm font-semibold text-slate-300">
               Lượt hiện tại:{' '}
               <span className="rounded-md bg-cyan/10 px-2 py-1 font-black text-cyan">
-                {currentPlayer.avatar} {currentPlayer.name}
+                <PlayerAvatar
+                  alt={currentPlayer.name}
+                  className="mr-1 h-5 w-5 rounded"
+                  imagePath={currentPlayer.avatar}
+                  label={currentPlayer.name}
+                />
+                {currentPlayer.name}
               </span>
             </p>
           )}
@@ -194,9 +201,15 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
         </div>
       </div>
 
-      <div className="grid min-h-[calc(100vh-116px)] gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(360px,28vw)]">
-        <div className="rounded-xl border border-cyan/20 bg-[#75bceb] p-3 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.22)]">
-          <div className="mx-auto grid aspect-square h-auto max-h-[calc(100vh-150px)] w-full max-w-[calc(100vh-150px)] grid-cols-9 grid-rows-9 gap-1.5 rounded-lg border-4 border-[#5c9e1c] bg-[#ff914d] p-1.5 shadow-[0_0_0_6px_rgba(22,75,42,0.35)]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(780px,1fr)_minmax(360px,28vw)]">
+        <div className="overflow-auto rounded-xl border border-cyan/20 bg-[#75bceb] p-4 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.22)]">
+          <div
+            className="mx-auto grid h-[740px] w-[740px] shrink-0 overflow-hidden rounded-lg bg-[#ff914d] outline outline-4 outline-[#5c9e1c] shadow-[0_0_0_6px_rgba(22,75,42,0.35)]"
+            style={{
+              gridTemplateColumns: '100px repeat(9, 60px) 100px',
+              gridTemplateRows: '100px repeat(9, 60px) 100px',
+            }}
+          >
             {gameState.tiles.map((tile) => (
               <BoardTileAtPosition
                 currentPlayerId={currentPlayer?.id ?? null}
@@ -210,7 +223,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
               />
             ))}
 
-            <div className="col-start-3 col-end-8 row-start-3 row-end-8 overflow-hidden rounded-md border-4 border-[#2b7f62] bg-[linear-gradient(135deg,#31c7d0_0%,#4fc294_48%,#275a91_100%)] p-4 text-center">
+            <div className="col-start-3 col-end-10 row-start-3 row-end-10 overflow-hidden rounded-md border-4 border-[#2b7f62] bg-[linear-gradient(135deg,#31c7d0_0%,#4fc294_48%,#275a91_100%)] p-4 text-center">
               <div className="grid h-full place-items-center rounded-md bg-[radial-gradient(circle_at_center,rgba(255,244,170,0.22),transparent_32%),linear-gradient(135deg,rgba(10,34,58,0.16),rgba(10,34,58,0.5))]">
                 <div className="w-full space-y-5">
                   <div>
@@ -218,9 +231,6 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
                     <h2 className="mt-2 text-2xl font-black uppercase text-[#ffe66f] drop-shadow-[3px_3px_0_rgba(32,38,80,0.85)] min-[1360px]:text-3xl">
                       Cạnh tranh / Độc quyền
                     </h2>
-                    <p className="mx-auto mt-2 max-w-xl text-xs font-semibold leading-5 text-white/85 min-[1360px]:text-sm">
-                      Trung tâm mô phỏng thị trường: tung xúc xắc, di chuyển token và quan sát quyền lực thị trường tăng dần.
-                    </p>
                   </div>
                   {currentPlayer && (
                     <Dice
@@ -281,7 +291,7 @@ function BoardTileAtPosition({ currentPlayerId, movingPlayerId, owner, ownerColo
   const playersOnTile = players.filter((player) => (visualPositions[player.id] ?? player.position) === tile.index);
 
   return (
-    <div style={{ gridColumn: position.col, gridRow: position.row }}>
+    <div className="min-h-0 min-w-0" style={{ gridColumn: position.col, gridRow: position.row }}>
       <BoardTile
         currentPlayerId={currentPlayerId}
         movingPlayerId={movingPlayerId}
@@ -312,7 +322,7 @@ function CurrentPlayersCard({ gameState }: { gameState: GameState }) {
               <div className="flex items-center justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
                   <span className={`h-3 w-3 rounded-full ${playerColors[index] ?? 'bg-white'}`} />
-                  <span className="text-xl">{player.avatar}</span>
+                  <PlayerAvatar alt={player.name} className="h-7 w-7 rounded-md" imagePath={player.avatar} label={player.name} />
                   <p className="truncate font-bold text-white">{player.name}</p>
                 </div>
                 <span className="text-xs font-black text-cyan">Ô {player.position + 1}</span>

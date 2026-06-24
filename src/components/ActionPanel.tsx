@@ -1,4 +1,5 @@
 import type { GameState, Player, Tile } from '../types/game';
+import { PlayerAvatar } from './PlayerAvatar';
 
 interface ActionPanelProps {
   currentPlayer: Player;
@@ -46,9 +47,10 @@ export function ActionPanel({
           </div>
           <p className="mt-1 text-xs leading-5 text-slate-400">{currentTile.asset.theoryConnection}</p>
           {owner && (
-            <p className="mt-2 text-xs font-semibold text-cyan">
-              Chủ sở hữu: {owner.avatar} {owner.name}
-            </p>
+            <div className="mt-2 flex items-center gap-2 text-xs font-semibold text-cyan">
+              <PlayerAvatar alt={owner.name} className="h-5 w-5 rounded" imagePath={owner.avatar} label={owner.name} />
+              <span>Chủ sở hữu: {owner.name}</span>
+            </div>
           )}
         </div>
       )}

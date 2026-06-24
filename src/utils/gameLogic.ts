@@ -1,7 +1,7 @@
 import { events } from '../data/events';
 import { quizzes } from '../data/quizzes';
 import { tiles } from '../data/tiles';
-import type { Asset, EventCard, GameLogEntry, GameState, Player, QuizQuestion, Tile } from '../types/game';
+import type { Asset, EventDeckType, GameLogEntry, GameState, Player, QuizQuestion, Tile } from '../types/game';
 import { calculateMarketPower, calculateTotalScore, getLastPlacePlayer, getLeadingPlayer } from './scoring';
 
 const START_BONUS = 100;
@@ -10,7 +10,6 @@ const INITIAL_INFLUENCE = 10;
 const INITIAL_USERS = 20;
 const INITIAL_DATA = 20;
 const THEORY_REWARD = 10;
-const BOARD_SIZE = 32;
 
 type PlayerSetupInput = Pick<Player, 'name' | 'avatar'> & Partial<Pick<Player, 'id'>>;
 
@@ -25,6 +24,7 @@ export function createInitialPlayer(id: number, name: string, avatar: string): P
     data: INITIAL_DATA,
     theoryPoints: 0,
     assets: [],
+    heldEventCards: [],
     position: 0,
     isInJail: false,
     underInvestigation: false,
@@ -47,7 +47,9 @@ export function createInitialGameState(players: PlayerSetupInput[]): GameState {
       diceValue: null,
       selectedTileId: null,
       activeEventId: null,
+      activeEventDeck: null,
       activeQuizId: null,
+      eventDecks: createEventDecks(),
       winnerId: null,
       status: 'playing',
       log: [],
@@ -69,8 +71,9 @@ export function movePlayer(state: GameState, diceValue: number, playerId = getCu
   const player = findPlayer(state, playerId);
   if (!player || state.status !== 'playing') return state;
 
-  const nextPosition = (player.position + diceValue) % BOARD_SIZE;
-  const passedStart = player.position + diceValue >= BOARD_SIZE;
+  const boardSize = state.tiles.length;
+  const nextPosition = (player.position + diceValue) % boardSize;
+  const passedStart = player.position + diceValue >= boardSize;
 
   const updatedPlayers = state.players.map((item) => {
     if (item.id !== playerId) return item;
@@ -89,7 +92,7 @@ export function movePlayer(state: GameState, diceValue: number, playerId = getCu
     selectedTileId: state.tiles[nextPosition]?.id ?? null,
   };
 
-  const startMessage = passedStart ? ` và nhận ${START_BONUS} vốn khi đi qua Start` : '';
+  const startMessage = passedStart ? ` và nhận ${START_BONUS} vốn khi đi qua Khởi nghiệp` : '';
   return addLog(movedState, 'movement', `${player.name} tung ${diceValue}, di chuyển đến ô ${nextPosition + 1}${startMessage}.`, playerId);
 }
 
@@ -122,8 +125,7 @@ export function handleTileLanding(state: GameState, playerId = getCurrentPlayer(
   }
 
   if (tile.type === 'event') {
-    const event = pickEvent(state, tile.index);
-    return addLog({ ...state, activeEventId: event.id }, 'event', `${player.name} rút sự kiện: ${event.title}.`, playerId);
+    return drawEventCard(state, tile.eventDeck ?? 'chance', player);
   }
 
   if (tile.type === 'theory-quiz') {
@@ -320,9 +322,156 @@ export function applyEvent(state: GameState, eventId: string): GameState {
         money: Math.max(0, player.money - 30),
       }));
       break;
+    case 'fortune-lottery-win':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({ ...player, money: player.money + 120 }));
+      break;
+    case 'fortune-stock-profit':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({
+        ...player,
+        money: player.money + 90,
+        influence: player.influence + 2,
+      }));
+      break;
+    case 'fortune-stock-loss':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({ ...player, money: Math.max(0, player.money - 80) }));
+      break;
+    case 'fortune-cable-shark':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => {
+        const ownsDataAsset = player.assets.some((asset) => asset.era === 'data');
+        return {
+          ...player,
+          money: Math.max(0, player.money - (ownsDataAsset ? 60 : 20)),
+          data: Math.max(0, player.data - (ownsDataAsset ? 10 : 0)),
+        };
+      });
+      break;
+    case 'fortune-flood':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({
+        ...player,
+        money: Math.max(0, player.money - player.assets.filter((asset) => asset.era === 'oil' || asset.type === 'logistics').length * 25),
+      }));
+      break;
+    case 'fortune-tax-refund':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({
+        ...player,
+        money: player.money + 70,
+        data: player.data + (player.assets.some((asset) => asset.type === 'ai-lab') ? 8 : 0),
+      }));
+      break;
+    case 'fortune-public-backlash':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({
+        ...player,
+        influence: Math.max(0, player.influence - 4),
+        users: Math.max(0, player.users - 8),
+      }));
+      break;
+    case 'fortune-get-out-free':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({
+        ...player,
+        heldEventCards: player.heldEventCards.includes(event.id) ? player.heldEventCards : [...player.heldEventCards, event.id],
+      }));
+      break;
+    case 'fortune-data-grant':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({ ...player, data: player.data + 18 }));
+      break;
+    case 'fortune-oil-maintenance':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({
+        ...player,
+        money: Math.max(0, player.money - player.assets.filter((asset) => asset.era === 'oil').length * 15),
+      }));
+      break;
+    case 'fortune-viral-campaign':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({
+        ...player,
+        users: player.users + 20,
+        data: player.data + 8,
+      }));
+      break;
+    case 'fortune-operating-cost':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({ ...player, money: Math.max(0, player.money - 40) }));
+      break;
+    case 'chance-extra-turn':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({ ...player, influence: player.influence + 5 }));
+      break;
+    case 'chance-move-startup':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({
+        ...player,
+        position: 0,
+        money: player.money + START_BONUS,
+      }));
+      break;
+    case 'chance-antitrust-fine':
+      updatedPlayers = updatePlayer(state.players, leadingPlayer?.id, (player) => ({
+        ...player,
+        money: Math.max(0, player.money - 100),
+        influence: Math.max(0, player.influence - 5),
+        underInvestigation: true,
+      }));
+      break;
+    case 'chance-oil-price-shock':
+      updatedPlayers = state.players.map((player) => ({
+        ...player,
+        money: player.money + player.assets.filter((asset) => asset.era === 'oil').length * 25,
+      }));
+      break;
+    case 'chance-data-leak':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({
+        ...player,
+        data: Math.floor(player.data * 0.75),
+        influence: Math.max(0, player.influence - 3),
+      }));
+      break;
+    case 'chance-network-effect':
+      updatedPlayers = updatePlayer(state.players, getPlayerWithMostUsers(state.players)?.id, (player) => ({
+        ...player,
+        users: player.users + 18,
+        data: player.data + 8,
+      }));
+      break;
+    case 'chance-open-data':
+      updatedPlayers = state.players.map((player) => ({ ...player, data: player.data + 12 }));
+      break;
+    case 'chance-ai-breakthrough':
+      updatedPlayers = state.players.map((player) => ({
+        ...player,
+        data: player.data + player.assets.filter((asset) => asset.type === 'ai-lab').length * 25,
+      }));
+      break;
+    case 'chance-startup-innovation':
+      updatedPlayers = updatePlayer(state.players, lastPlacePlayer?.id, (player) => ({
+        ...player,
+        money: player.money + 120,
+        theoryPoints: player.theoryPoints + 5,
+      }));
+      break;
+    case 'chance-merger-wave':
+      updatedPlayers = state.players.map((player) => ({
+        ...player,
+        influence: player.influence + Math.floor(player.assets.length / 2),
+      }));
+      break;
+    case 'chance-labor-protest':
+      updatedPlayers = state.players.map((player) => ({ ...player, money: Math.max(0, player.money - 30) }));
+      break;
+    case 'chance-cloud-outage':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => {
+        const ownsCloud = player.assets.some((asset) => asset.type === 'cloud-infrastructure');
+        return {
+          ...player,
+          money: Math.max(0, player.money - (ownsCloud ? 50 : 0)),
+          data: Math.max(0, player.data - (ownsCloud ? 0 : 5)),
+        };
+      });
+      break;
+    case 'chance-privacy-movement':
+      updatedPlayers = state.players.map((player) => ({
+        ...player,
+        data: Math.max(0, player.data - player.assets.filter((asset) => asset.era === 'data').length * 4),
+      }));
+      break;
   }
 
-  return addLog({ ...state, players: updatedPlayers, activeEventId: null }, 'event', message, currentPlayer.id);
+  return addLog({ ...state, players: updatedPlayers, activeEventId: null, activeEventDeck: null }, 'event', message, currentPlayer.id);
 }
 
 export function answerQuiz(state: GameState, playerId: string, quizId: string, answer: QuizQuestion['correctAnswer']): GameState {
@@ -364,6 +513,7 @@ export function endTurn(state: GameState): GameState {
     diceValue: null,
     selectedTileId: null,
     activeEventId: null,
+    activeEventDeck: null,
     activeQuizId: null,
   }, 'system', `Chuyển lượt sang ${nextPlayer?.name ?? 'người chơi tiếp theo'}.`, nextPlayer?.id);
 }
@@ -463,8 +613,50 @@ function getAssetResourceGain(asset: Asset) {
   return { money: 0, users: 5, data: 6, influence: 1 };
 }
 
-function pickEvent(state: GameState, tileIndex: number): EventCard {
-  return events[(state.round + state.currentPlayerIndex + tileIndex) % events.length];
+function createEventDecks(): Record<EventDeckType, string[]> {
+  return {
+    fortune: shuffleDeck(events.filter((event) => event.deck === 'fortune').map((event) => event.id)),
+    chance: shuffleDeck(events.filter((event) => event.deck === 'chance').map((event) => event.id)),
+  };
+}
+
+function shuffleDeck(cardIds: string[]): string[] {
+  const shuffled = [...cardIds];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
+function drawEventCard(state: GameState, deckType: EventDeckType, player: Player): GameState {
+  const rebuiltDeck = events.filter((event) => event.deck === deckType).map((event) => event.id);
+  const currentDeck = state.eventDecks?.[deckType]?.length ? state.eventDecks[deckType] : shuffleDeck(rebuiltDeck);
+  const [drawnCardId, ...remainingDeck] = currentDeck;
+  const event = events.find((item) => item.id === drawnCardId) ?? events.find((item) => item.deck === deckType);
+
+  if (!event) return state;
+
+  // Normal cards go to the bottom of the deck. Held cards stay out until a later gameplay rule uses them.
+  const nextDeck = event.keepWhenDrawn ? remainingDeck : [...remainingDeck, event.id];
+  const deckLabel = deckType === 'fortune' ? 'Khí vận' : 'Cơ hội';
+
+  return addLog(
+    {
+      ...state,
+      activeEventId: event.id,
+      activeEventDeck: deckType,
+      eventDecks: {
+        ...(state.eventDecks ?? createEventDecks()),
+        [deckType]: nextDeck,
+      },
+    },
+    'event',
+    `${player.name} rút thẻ ${deckLabel}: ${event.title}.`,
+    player.id,
+  );
 }
 
 function getCurrentPlayer(state: GameState): Player {

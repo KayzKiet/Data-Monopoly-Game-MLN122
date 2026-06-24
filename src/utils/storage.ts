@@ -1,3 +1,6 @@
+import { avatars } from '../data/avatars';
+import { events } from '../data/events';
+import { tiles } from '../data/tiles';
 import type { GameState } from '../types/game';
 
 const storageKey = 'data-monopoly-progress';
@@ -22,7 +25,7 @@ export function loadGameState(): GameState | null {
   if (!raw) return null;
 
   try {
-    return JSON.parse(raw) as GameState;
+    return migrateGameState(JSON.parse(raw) as GameState);
   } catch {
     clearGameState();
     return null;
@@ -35,4 +38,29 @@ export function clearGameState() {
   } catch {
     // Ignore storage failures; the in-memory state will still reset.
   }
+}
+
+function migrateGameState(gameState: GameState): GameState {
+  const eventDecks = gameState.eventDecks ?? {
+    fortune: events.filter((event) => event.deck === 'fortune').map((event) => event.id),
+    chance: events.filter((event) => event.deck === 'chance').map((event) => event.id),
+  };
+
+  return {
+    ...gameState,
+    tiles,
+    activeEventDeck: gameState.activeEventDeck ?? null,
+    eventDecks,
+    players: gameState.players.map((player) => ({
+      ...player,
+      avatar: normalizeAvatar(player.avatar, Number(player.id.replace('player-', '')) - 1),
+      heldEventCards: player.heldEventCards ?? [],
+      position: player.position % tiles.length,
+    })),
+  };
+}
+
+function normalizeAvatar(avatar: string, index: number): string {
+  if (avatar.startsWith('/images/players/')) return avatar;
+  return avatars[index]?.imagePath ?? avatars[0].imagePath;
 }

@@ -107,12 +107,12 @@ Nội dung:
 
 * Chọn số người chơi: 2, 3, hoặc 4
 * Nhập tên người chơi
-* Chọn avatar bằng emoji/icon
+* Chọn ảnh nhân vật từ `public/images/players`
 * Bắt đầu game
 
 ### 3. Game Board
 
-* Board 32 ô
+* Board 40 ô
 * Hiển thị người chơi hiện tại
 * Nút tung xúc xắc
 * Panel hành động
@@ -185,9 +185,25 @@ Mỗi lượt:
 
 ## Tile Types
 
-Board gồm 32 ô, chia thành các loại:
+Board gồm 40 ô, đi từ ô số 0 đến ô số 39. Ô số 40 trùng lại ô xuất phát Khởi nghiệp.
 
-1. Start
+Kích thước board mục tiêu trên màn 16.5 inch, 1920 x 1080:
+
+* Toàn board khoảng 740 x 740 px
+* 4 ô góc khoảng 100 x 100 px
+* 9 ô cạnh trên và 9 ô cạnh dưới khoảng 60 x 100 px
+* 9 ô cạnh trái và 9 ô cạnh phải khoảng 100 x 60 px
+
+Ảnh từng ô đặt trong `public/images/tiles`, ưu tiên file PNG đặt theo `tile.id`.
+
+Các ô đặc biệt:
+
+* Khí vận: ô số 2, 17, 33
+* Cơ hội: ô số 7, 22, 36
+
+Board chia thành các loại:
+
+1. Khởi nghiệp / Start
 2. Oil Field
 3. Refinery
 4. Pipeline
@@ -199,7 +215,7 @@ Board gồm 32 ô, chia thành các loại:
 10. AI Lab
 11. Tax / Regulation
 12. Crisis
-13. Chance / Event
+13. Khí vận / Cơ hội / Event
 14. Theory Quiz
 15. Antitrust Investigation
 
