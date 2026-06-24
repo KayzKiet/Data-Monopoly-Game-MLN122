@@ -1,0 +1,88 @@
+import type { EventCard } from '../types/game';
+
+export const events: EventCard[] = [
+  {
+    id: 'oil-price-shock',
+    title: 'Oil Price Shock',
+    description: 'Giá dầu biến động mạnh vì nguồn cung khan hiếm.',
+    effect: 'Tài sản dầu mỏ tạo thêm tiền thuê trong 2 vòng.',
+    theoryConnection: 'Độc quyền tài nguyên cho phép doanh nghiệp hưởng lợi lớn khi thị trường thiếu nguồn cung.',
+  },
+  {
+    id: 'antitrust-investigation',
+    title: 'Antitrust Investigation',
+    description: 'Doanh nghiệp dẫn đầu bị giám sát vì quyền lực thị trường quá lớn.',
+    effect: 'Người chơi có market power cao nhất trả tiền phạt.',
+    theoryConnection: 'Khi cạnh tranh dẫn đến tập trung, nhà nước có thể phải can thiệp bằng chính sách chống độc quyền.',
+  },
+  {
+    id: 'data-leak',
+    title: 'Data Leak',
+    description: 'Rò rỉ dữ liệu làm suy giảm niềm tin của người dùng.',
+    effect: 'Người chơi hiện tại mất 25% dữ liệu.',
+    theoryConnection: 'Dữ liệu là tài nguyên chiến lược nhưng cũng tạo rủi ro xã hội về riêng tư và kiểm soát.',
+  },
+  {
+    id: 'network-effect',
+    title: 'Network Effect',
+    description: 'Nền tảng lớn thu hút thêm người dùng vì đã có sẵn cộng đồng đông đảo.',
+    effect: 'Người có nhiều users nhất nhận thêm users.',
+    theoryConnection: 'Hiệu ứng mạng lưới là biểu hiện mới của độc quyền trong CNTB hiện đại.',
+  },
+  {
+    id: 'open-data-regulation',
+    title: 'Open Data Regulation',
+    description: 'Quy định mở dữ liệu làm giảm rào cản cho đối thủ nhỏ.',
+    effect: 'Tất cả người chơi nhận một lượng data cơ bản.',
+    theoryConnection: 'Chính sách công có thể làm suy yếu lợi thế tích lũy dữ liệu của nền tảng lớn.',
+  },
+  {
+    id: 'ai-breakthrough',
+    title: 'AI Breakthrough',
+    description: 'Đột phá AI làm dữ liệu trở nên có giá trị hơn.',
+    effect: 'Chủ sở hữu AI Lab nhận bonus data value.',
+    theoryConnection: 'AI củng cố lợi thế của doanh nghiệp đang nắm nhiều dữ liệu và hạ tầng tính toán.',
+  },
+  {
+    id: 'startup-innovation',
+    title: 'Startup Innovation',
+    description: 'Một ý tưởng mới tạo cơ hội cho doanh nghiệp yếu hơn.',
+    effect: 'Người chơi cuối bảng nhận comeback bonus.',
+    theoryConnection: 'Đổi mới có thể tạo cạnh tranh, nhưng vẫn phải vượt qua rào cản vốn, dữ liệu và hạ tầng.',
+  },
+  {
+    id: 'public-backlash',
+    title: 'Public Backlash',
+    description: 'Công chúng phản ứng với doanh nghiệp kiểm soát quá nhiều dữ liệu hoặc tài nguyên.',
+    effect: 'Người có influence cao nhất mất influence.',
+    theoryConnection: 'Độc quyền không chỉ là vấn đề kinh tế mà còn là vấn đề quyền lực xã hội.',
+  },
+  {
+    id: 'infrastructure-expansion',
+    title: 'Infrastructure Expansion',
+    description: 'Hạ tầng logistics và cloud được mở rộng.',
+    effect: 'Logistics và cloud assets mạnh hơn trong vòng này.',
+    theoryConnection: 'Hạ tầng là điều kiện vật chất cho cả độc quyền dầu mỏ và độc quyền dữ liệu.',
+  },
+  {
+    id: 'privacy-movement',
+    title: 'Privacy Movement',
+    description: 'Phong trào bảo vệ riêng tư làm giảm khả năng khai thác dữ liệu.',
+    effect: 'Thu nhập từ data assets giảm trong vòng này.',
+    theoryConnection: 'Mâu thuẫn giữa khai thác dữ liệu và quyền riêng tư là giới hạn của mô hình nền tảng.',
+  },
+  {
+    id: 'merger-wave',
+    title: 'Merger Wave',
+    description: 'Làn sóng sáp nhập làm tài sản tập trung vào ít chủ thể hơn.',
+    effect: 'Người có nhiều assets nhận thêm market power.',
+    theoryConnection: 'Tập trung tư bản là con đường trực tiếp dẫn tới độc quyền.',
+  },
+  {
+    id: 'labor-protest',
+    title: 'Labor Protest',
+    description: 'Người lao động phản đối chi phí xã hội của tăng trưởng độc quyền.',
+    effect: 'Tất cả người chơi trả operating cost.',
+    theoryConnection: 'Sự phát triển tư bản tạo mâu thuẫn xã hội khi lợi ích tập trung nhưng chi phí lan rộng.',
+  },
+];
