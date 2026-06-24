@@ -8,7 +8,7 @@ interface PlayerPanelProps {
 
 export function PlayerPanel({ currentPlayerId, gameState }: PlayerPanelProps) {
   return (
-    <section className="panel">
+    <section className="rounded-lg border border-red-200/15 bg-oil/70 p-4 shadow-gold backdrop-blur">
       <h2 className="text-lg font-bold text-white">Thống kê người chơi</h2>
       <div className="mt-4 space-y-3">
         {gameState.players.map((player) => (

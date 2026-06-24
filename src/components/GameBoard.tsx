@@ -168,8 +168,8 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   }
 
   return (
-    <section className="mx-auto w-full max-w-[1560px] space-y-4 px-3 py-4 sm:px-5">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <section className="w-full px-3 py-3 sm:px-4">
+      <div className="mb-3 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan">
             Round {gameState.round} / {gameState.maxRounds}
@@ -194,9 +194,9 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
         </div>
       </div>
 
-      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,calc(100vh-120px))_340px] 2xl:grid-cols-[minmax(0,calc(100vh-112px))_360px]">
-        <div className="mx-auto w-full max-w-[calc(100vh-120px)] min-w-0 rounded-lg border-4 border-[#5c9e1c] bg-[#75bceb] p-2 shadow-[0_0_0_6px_rgba(22,75,42,0.35)]">
-          <div className="grid aspect-square w-full grid-cols-9 grid-rows-9 gap-1.5 rounded-md bg-[#ff914d] p-1.5">
+      <div className="grid min-h-[calc(100vh-116px)] gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(360px,28vw)]">
+        <div className="rounded-xl border border-cyan/20 bg-[#75bceb] p-3 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.22)]">
+          <div className="mx-auto grid aspect-square h-auto max-h-[calc(100vh-150px)] w-full max-w-[calc(100vh-150px)] grid-cols-9 grid-rows-9 gap-1.5 rounded-lg border-4 border-[#5c9e1c] bg-[#ff914d] p-1.5 shadow-[0_0_0_6px_rgba(22,75,42,0.35)]">
             {gameState.tiles.map((tile) => (
               <BoardTileAtPosition
                 currentPlayerId={currentPlayer?.id ?? null}
@@ -237,7 +237,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
           </div>
         </div>
 
-        <aside className="max-h-[calc(100vh-118px)] space-y-4 overflow-y-auto pr-1">
+        <aside className="max-h-[calc(100vh-116px)] space-y-4 overflow-y-auto rounded-xl border border-red-300/20 bg-[linear-gradient(180deg,rgba(127,29,29,0.42),rgba(67,20,7,0.28))] p-3 pr-2">
           <CurrentPlayersCard gameState={gameState} />
           {currentPlayer && (
             <ActionPanel
@@ -296,7 +296,7 @@ function BoardTileAtPosition({ currentPlayerId, movingPlayerId, owner, ownerColo
 
 function CurrentPlayersCard({ gameState }: { gameState: GameState }) {
   return (
-    <section className="panel">
+    <section className="rounded-lg border border-red-200/15 bg-oil/70 p-4 shadow-gold backdrop-blur">
       <h2 className="text-lg font-bold text-white">Người chơi</h2>
       <div className="mt-4 space-y-3">
         {gameState.players.map((player, index) => {

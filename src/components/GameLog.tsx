@@ -19,7 +19,7 @@ export function GameLog({ entries }: GameLogProps) {
   const visibleEntries = [...entries].slice(-8).reverse();
 
   return (
-    <section className="panel">
+    <section className="rounded-lg border border-red-200/15 bg-oil/70 p-4 shadow-gold backdrop-blur">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-lg font-bold text-white">Game log</h2>
         <span className="text-xs font-bold text-slate-500">{entries.length} entries</span>

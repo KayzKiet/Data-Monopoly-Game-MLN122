@@ -29,7 +29,7 @@ export function ActionPanel({
   const buyLabel = getBuyLabel(currentTile, owner, currentPlayer.money);
 
   return (
-    <section className="panel">
+    <section className="rounded-lg border border-red-200/15 bg-oil/70 p-4 shadow-gold backdrop-blur">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-white">Hành động</h2>
