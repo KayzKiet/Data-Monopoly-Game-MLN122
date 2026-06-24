@@ -3,11 +3,22 @@ import type { GameState } from '../types/game';
 const storageKey = 'data-monopoly-progress';
 
 export function saveGameState(gameState: GameState) {
-  localStorage.setItem(storageKey, JSON.stringify(gameState));
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(gameState));
+  } catch {
+    // localStorage can fail in private browsing or full storage; gameplay should continue in memory.
+  }
 }
 
 export function loadGameState(): GameState | null {
-  const raw = localStorage.getItem(storageKey);
+  let raw: string | null = null;
+
+  try {
+    raw = localStorage.getItem(storageKey);
+  } catch {
+    return null;
+  }
+
   if (!raw) return null;
 
   try {
@@ -19,5 +30,9 @@ export function loadGameState(): GameState | null {
 }
 
 export function clearGameState() {
-  localStorage.removeItem(storageKey);
+  try {
+    localStorage.removeItem(storageKey);
+  } catch {
+    // Ignore storage failures; the in-memory state will still reset.
+  }
 }

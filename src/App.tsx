@@ -5,6 +5,7 @@ import { PlayerSetup } from './components/PlayerSetup';
 import { ResultScreen } from './components/ResultScreen';
 import { TheoryPage } from './components/TheoryPage';
 import type { GameState } from './types/game';
+import { clearGameState, loadGameState, saveGameState } from './utils/storage';
 
 export type Page = 'landing' | 'setup' | 'game' | 'theory' | 'result';
 
@@ -18,11 +19,39 @@ const navItems: Array<{ label: string; page: Page }> = [
 
 function App() {
   const [page, setPage] = useState<Page>('landing');
-  const [gameState, setGameState] = useState<GameState | null>(null);
+  const [gameState, setGameState] = useState<GameState | null>(() => loadGameState());
+
+  const commitGameState = (nextGameState: GameState | null) => {
+    setGameState(nextGameState);
+
+    if (nextGameState) {
+      saveGameState(nextGameState);
+    } else {
+      clearGameState();
+    }
+  };
 
   const handleGameStart = (initialGameState: GameState) => {
-    setGameState(initialGameState);
+    commitGameState(initialGameState);
     setPage('game');
+  };
+
+  const handleContinueGame = () => {
+    if (!gameState) return;
+    setPage(gameState.status === 'finished' ? 'result' : 'game');
+  };
+
+  const handleResetGame = () => {
+    const confirmed = window.confirm('Bạn có chắc muốn reset game hiện tại? Tiến trình đã lưu sẽ bị xóa.');
+    if (!confirmed) return;
+
+    commitGameState(null);
+    setPage('setup');
+  };
+
+  const handlePlayAgain = () => {
+    commitGameState(null);
+    setPage('setup');
   };
 
   return (
@@ -58,6 +87,8 @@ function App() {
 
       {page === 'landing' && (
         <LandingPage
+          hasSavedGame={Boolean(gameState)}
+          onContinue={handleContinueGame}
           onHowToPlay={() => undefined}
           onLearnTheory={() => setPage('theory')}
           onStart={() => setPage('setup')}
@@ -67,12 +98,9 @@ function App() {
       {page === 'game' && (
         <GameBoard
           gameState={gameState}
-          onGameStateChange={setGameState}
+          onGameStateChange={commitGameState}
           onFinish={() => setPage('result')}
-          onReset={() => {
-            setGameState(null);
-            setPage('setup');
-          }}
+          onReset={handleResetGame}
           onSetup={() => setPage('setup')}
           onTheory={() => setPage('theory')}
         />
@@ -82,7 +110,7 @@ function App() {
         <ResultScreen
           gameState={gameState}
           onHome={() => setPage('landing')}
-          onRestart={() => setPage('setup')}
+          onRestart={handlePlayAgain}
           onTheory={() => setPage('theory')}
         />
       )}

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 
 interface LandingPageProps {
+  hasSavedGame: boolean;
+  onContinue: () => void;
   onStart: () => void;
   onLearnTheory: () => void;
   onHowToPlay: () => void;
@@ -19,7 +21,7 @@ const howToPlaySteps = [
   'Chiến thắng bằng quyền lực thị trường, điểm lý luận hoặc tổng điểm sau 25 vòng.',
 ];
 
-export function LandingPage({ onStart, onLearnTheory, onHowToPlay }: LandingPageProps) {
+export function LandingPage({ hasSavedGame, onContinue, onStart, onLearnTheory, onHowToPlay }: LandingPageProps) {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
 
   const handleHowToPlay = () => {
@@ -48,8 +50,13 @@ export function LandingPage({ onStart, onLearnTheory, onHowToPlay }: LandingPage
         </div>
 
         <div className="flex flex-wrap gap-3">
+          {hasSavedGame && (
+            <button className="primary-button" onClick={onContinue} type="button">
+              Continue Game
+            </button>
+          )}
           <button className="primary-button" onClick={onStart} type="button">
-            Start Game
+            New Game
           </button>
           <button className="secondary-button" onClick={onLearnTheory} type="button">
             Learn Theory
@@ -64,7 +71,7 @@ export function LandingPage({ onStart, onLearnTheory, onHowToPlay }: LandingPage
         </div>
 
         {showHowToPlay && (
-          <div className="panel max-w-3xl">
+          <div className="panel max-w-3xl animate-[fadeIn_180ms_ease-out]">
             <h2 className="text-lg font-bold text-white">Cách chơi nhanh</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {howToPlaySteps.map((step, index) => (

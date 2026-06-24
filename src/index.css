@@ -21,6 +21,40 @@ body {
   background: #07090d;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dicePulse {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(8deg) scale(1.08);
+  }
+}
+
+@keyframes tokenHop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-6px) scale(1.12);
+  }
+}
+
 button,
 input,
 select {
@@ -33,7 +67,7 @@ select {
   }
 
   .panel {
-    @apply rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-glow backdrop-blur;
+    @apply rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-glow backdrop-blur transition duration-200;
   }
 
   .section-title {
@@ -45,10 +79,10 @@ select {
   }
 
   .primary-button {
-    @apply rounded-md bg-cyan px-4 py-2 font-bold text-oil shadow-glow transition hover:bg-cyan/90;
+    @apply rounded-md bg-cyan px-4 py-2 font-bold text-oil shadow-glow transition duration-200 hover:bg-cyan/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-cyan;
   }
 
   .secondary-button {
-    @apply rounded-md border border-gold/50 bg-gold/10 px-4 py-2 font-bold text-gold transition hover:bg-gold/20;
+    @apply rounded-md border border-gold/50 bg-gold/10 px-4 py-2 font-bold text-gold transition duration-200 hover:bg-gold/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45;
   }
 }

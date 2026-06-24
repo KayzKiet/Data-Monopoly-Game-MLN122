@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { events } from '../data/events';
 import { quizzes } from '../data/quizzes';
 import type { GameState, Player, Tile } from '../types/game';
-import { answerQuiz, applyEvent, buyAsset, endTurn, handleTileLanding, movePlayer, rollDice, upgradeAsset } from '../utils/gameLogic';
+import { answerQuiz, applyEvent, buyAsset, endTurn, handleTileLanding, movePlayer, upgradeAsset } from '../utils/gameLogic';
 import { ActionPanel } from './ActionPanel';
 import { BoardTile } from './BoardTile';
 import { Dice } from './Dice';
@@ -31,6 +31,11 @@ const perimeterPositions = Array.from({ length: 32 }, (_, index) => {
 
 export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onSetup, onTheory }: GameBoardProps) {
   const currentPlayer = gameState?.players[gameState.currentPlayerIndex] ?? null;
+  const [diceFaces, setDiceFaces] = useState<[number, number] | null>(null);
+  const [isRolling, setIsRolling] = useState(false);
+  const [movingPlayerId, setMovingPlayerId] = useState<string | null>(null);
+  const [visualPositions, setVisualPositions] = useState<Record<string, number>>({});
+  const timers = useRef<number[]>([]);
 
   const ownerByTileId = useMemo(() => {
     const owners = new Map<string, Player>();
@@ -46,6 +51,24 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const activeEvent = gameState?.activeEventId ? events.find((event) => event.id === gameState.activeEventId) ?? null : null;
   const activeQuiz = gameState?.activeQuizId ? quizzes.find((quiz) => quiz.id === gameState.activeQuizId) ?? null : null;
 
+  useEffect(() => {
+    if (!gameState || isRolling) return;
+
+    setVisualPositions(
+      Object.fromEntries(gameState.players.map((player) => [player.id, player.position])),
+    );
+  }, [gameState, isRolling]);
+
+  useEffect(() => {
+    return () => {
+      timers.current.forEach((timer) => {
+        window.clearTimeout(timer);
+        window.clearInterval(timer);
+      });
+      timers.current = [];
+    };
+  }, []);
+
   const commitGameState = (nextState: GameState) => {
     onGameStateChange(nextState);
     if (nextState.status === 'finished') {
@@ -54,12 +77,52 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   };
 
   const handleRoll = () => {
-    if (!gameState || !currentPlayer || gameState.diceValue !== null) return;
+    if (!gameState || !currentPlayer || gameState.diceValue !== null || isRolling) return;
 
-    const diceValue = rollDice();
-    const movedState = movePlayer(gameState, diceValue, currentPlayer.id);
-    const landedState = handleTileLanding(movedState, currentPlayer.id);
-    commitGameState(landedState);
+    const rolledFaces: [number, number] = [randomDieFace(), randomDieFace()];
+    const diceValue = rolledFaces[0] + rolledFaces[1];
+    const playerId = currentPlayer.id;
+    const startPosition = currentPlayer.position;
+    let previewTick = 0;
+
+    setIsRolling(true);
+    setMovingPlayerId(playerId);
+
+    const previewInterval = window.setInterval(() => {
+      previewTick += 1;
+      setDiceFaces([((previewTick + 1) % 6) + 1, ((previewTick + 4) % 6) + 1]);
+    }, 90);
+    timers.current.push(previewInterval);
+
+    const revealTimer = window.setTimeout(() => {
+      window.clearInterval(previewInterval);
+      setDiceFaces(rolledFaces);
+
+      let step = 0;
+      const movementInterval = window.setInterval(() => {
+        step += 1;
+        const nextPosition = (startPosition + step) % gameState.tiles.length;
+        setVisualPositions((current) => ({ ...current, [playerId]: nextPosition }));
+
+        if (step >= diceValue) {
+          window.clearInterval(movementInterval);
+
+          const settleTimer = window.setTimeout(() => {
+            const movedState = movePlayer(gameState, diceValue, playerId);
+            const landedState = handleTileLanding(movedState, playerId);
+            setIsRolling(false);
+            setMovingPlayerId(null);
+            setDiceFaces(null);
+            commitGameState(landedState);
+          }, 160);
+
+          timers.current.push(settleTimer);
+        }
+      }, 180);
+      timers.current.push(movementInterval);
+    }, 700);
+
+    timers.current.push(revealTimer);
   };
 
   const handleBuyAsset = (tileId: string) => {
@@ -105,7 +168,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   }
 
   return (
-    <section className="screen-shell space-y-6">
+    <section className="mx-auto w-full max-w-[1560px] space-y-4 px-3 py-4 sm:px-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan">
@@ -131,39 +194,56 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
         </div>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="panel overflow-x-auto">
-          <div className="mx-auto grid min-w-[760px] max-w-[980px] grid-cols-9 grid-rows-9 gap-2">
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,calc(100vh-120px))_340px] 2xl:grid-cols-[minmax(0,calc(100vh-112px))_360px]">
+        <div className="mx-auto w-full max-w-[calc(100vh-120px)] min-w-0 rounded-lg border-4 border-[#5c9e1c] bg-[#75bceb] p-2 shadow-[0_0_0_6px_rgba(22,75,42,0.35)]">
+          <div className="grid aspect-square w-full grid-cols-9 grid-rows-9 gap-1.5 rounded-md bg-[#ff914d] p-1.5">
             {gameState.tiles.map((tile) => (
               <BoardTileAtPosition
                 currentPlayerId={currentPlayer?.id ?? null}
                 key={tile.id}
                 owner={tile.asset ? ownerByTileId.get(tile.asset.tileId) ?? null : null}
                 ownerColor={getOwnerColor(gameState.players, tile, ownerByTileId)}
+                movingPlayerId={movingPlayerId}
                 players={gameState.players}
                 tile={tile}
+                visualPositions={visualPositions}
               />
             ))}
 
-            <div className="col-start-3 col-end-8 row-start-3 row-end-8 grid place-items-center rounded-lg border border-white/10 bg-oil/70 p-6 text-center">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-gold">Data Monopoly</p>
-                <h2 className="mt-3 text-2xl font-black text-white">Oil Power vs Data Power</h2>
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Tài sản dầu mỏ tạo sức mạnh vật chất. Tài sản dữ liệu tạo sức mạnh nền tảng, người dùng và AI.
-                </p>
+            <div className="col-start-3 col-end-8 row-start-3 row-end-8 overflow-hidden rounded-md border-4 border-[#2b7f62] bg-[linear-gradient(135deg,#31c7d0_0%,#4fc294_48%,#275a91_100%)] p-4 text-center">
+              <div className="grid h-full place-items-center rounded-md bg-[radial-gradient(circle_at_center,rgba(255,244,170,0.22),transparent_32%),linear-gradient(135deg,rgba(10,34,58,0.16),rgba(10,34,58,0.5))]">
+                <div className="w-full space-y-5">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.24em] text-yellow-100">Data Monopoly</p>
+                    <h2 className="mt-2 text-2xl font-black uppercase text-[#ffe66f] drop-shadow-[3px_3px_0_rgba(32,38,80,0.85)] min-[1360px]:text-3xl">
+                      Cạnh tranh / Độc quyền
+                    </h2>
+                    <p className="mx-auto mt-2 max-w-xl text-xs font-semibold leading-5 text-white/85 min-[1360px]:text-sm">
+                      Trung tâm mô phỏng thị trường: tung xúc xắc, di chuyển token và quan sát quyền lực thị trường tăng dần.
+                    </p>
+                  </div>
+                  {currentPlayer && (
+                    <Dice
+                      currentPlayerName={currentPlayer.name}
+                      diceFaces={diceFaces}
+                      gameState={gameState}
+                      isRolling={isRolling}
+                      onRoll={handleRoll}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <aside className="space-y-5">
+        <aside className="max-h-[calc(100vh-118px)] space-y-4 overflow-y-auto pr-1">
           <CurrentPlayersCard gameState={gameState} />
-          {currentPlayer && <Dice currentPlayerName={currentPlayer.name} gameState={gameState} onRoll={handleRoll} />}
           {currentPlayer && (
             <ActionPanel
               currentPlayer={currentPlayer}
               gameState={gameState}
+              isBusy={isRolling}
               onApplyEvent={handleApplyEvent}
               onBuyAsset={handleBuyAsset}
               onEndTurn={handleEndTurn}
@@ -182,22 +262,29 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   );
 }
 
+function randomDieFace(): number {
+  return Math.floor(Math.random() * 6) + 1;
+}
+
 interface BoardTileAtPositionProps {
   currentPlayerId: string | null;
+  movingPlayerId: string | null;
   owner: Player | null;
   ownerColor: string | null;
   players: Player[];
   tile: Tile;
+  visualPositions: Record<string, number>;
 }
 
-function BoardTileAtPosition({ currentPlayerId, owner, ownerColor, players, tile }: BoardTileAtPositionProps) {
+function BoardTileAtPosition({ currentPlayerId, movingPlayerId, owner, ownerColor, players, tile, visualPositions }: BoardTileAtPositionProps) {
   const position = perimeterPositions[tile.index];
-  const playersOnTile = players.filter((player) => player.position === tile.index);
+  const playersOnTile = players.filter((player) => (visualPositions[player.id] ?? player.position) === tile.index);
 
   return (
     <div style={{ gridColumn: position.col, gridRow: position.row }}>
       <BoardTile
         currentPlayerId={currentPlayerId}
+        movingPlayerId={movingPlayerId}
         owner={owner}
         ownerColor={ownerColor}
         playersOnTile={playersOnTile}

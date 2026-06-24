@@ -59,10 +59,10 @@ export function createInitialGameState(players: PlayerSetupInput[]): GameState {
 
 export function rollDice(seed?: number): number {
   if (seed !== undefined) {
-    return (Math.abs(seed) % 6) + 1;
+    return (Math.abs(seed) % 11) + 2;
   }
 
-  return Math.floor(Math.random() * 6) + 1;
+  return Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1;
 }
 
 export function movePlayer(state: GameState, diceValue: number, playerId = getCurrentPlayer(state).id): GameState {

@@ -3,6 +3,7 @@ import type { GameState, Player, Tile } from '../types/game';
 interface ActionPanelProps {
   currentPlayer: Player;
   gameState: GameState;
+  isBusy: boolean;
   onApplyEvent: () => void;
   onBuyAsset: (tileId: string) => void;
   onEndTurn: () => void;
@@ -13,6 +14,7 @@ interface ActionPanelProps {
 export function ActionPanel({
   currentPlayer,
   gameState,
+  isBusy,
   onApplyEvent,
   onBuyAsset,
   onEndTurn,
@@ -24,6 +26,7 @@ export function ActionPanel({
   const canBuy = Boolean(currentTile?.asset && !owner && currentPlayer.money >= currentTile.asset.purchasePrice);
   const rentPreview = currentTile?.asset && owner && owner.id !== currentPlayer.id ? currentTile.asset.baseRent * currentTile.asset.level : null;
   const upgradableAssets = currentPlayer.assets.filter((asset) => asset.level < asset.maxLevel);
+  const buyLabel = getBuyLabel(currentTile, owner, currentPlayer.money);
 
   return (
     <section className="panel">
@@ -52,12 +55,12 @@ export function ActionPanel({
 
       {rentPreview !== null && (
         <div className="mt-3 rounded-md border border-rose-300/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-100">
-          Rent đã/khi landing: khoảng ${rentPreview} cho {owner?.name}.
+          Tiền thuê đã được xử lý khi dừng ở ô này: khoảng ${rentPreview} cho {owner?.name}.
         </div>
       )}
 
       {gameState.activeEventId && (
-        <button className="secondary-button mt-4 w-full" onClick={onApplyEvent} type="button">
+        <button className="secondary-button mt-4 w-full" disabled={isBusy} onClick={onApplyEvent} type="button">
           Áp dụng sự kiện
         </button>
       )}
@@ -65,11 +68,11 @@ export function ActionPanel({
       <div className="mt-4 grid gap-2">
         <button
           className="primary-button disabled:cursor-not-allowed disabled:opacity-45"
-          disabled={!currentTile?.asset || !canBuy}
+          disabled={isBusy || !currentTile?.asset || !canBuy}
           onClick={() => currentTile?.asset && onBuyAsset(currentTile.id)}
           type="button"
         >
-          Mua tài sản
+          {buyLabel}
         </button>
 
         <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
@@ -81,6 +84,7 @@ export function ActionPanel({
               upgradableAssets.map((asset) => (
                 <button
                   className="rounded-md border border-white/10 bg-oil/70 px-3 py-2 text-left text-sm font-semibold text-slate-200 transition hover:border-gold hover:text-gold"
+                  disabled={isBusy}
                   key={asset.id}
                   onClick={() => onUpgradeAsset(asset.id)}
                   type="button"
@@ -94,11 +98,12 @@ export function ActionPanel({
           </div>
         </div>
 
-        <button className="secondary-button" onClick={onEndTurn} type="button">
+        <button className="secondary-button" disabled={isBusy} onClick={onEndTurn} type="button">
           Kết thúc lượt
         </button>
         <button
-          className="rounded-md border border-red-300/30 bg-red-500/10 px-4 py-2 font-bold text-red-100 transition hover:bg-red-500/20"
+          className="rounded-md border border-red-300/30 bg-red-500/10 px-4 py-2 font-bold text-red-100 transition duration-200 hover:bg-red-500/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45"
+          disabled={isBusy}
           onClick={onReset}
           type="button"
         >
@@ -107,6 +112,13 @@ export function ActionPanel({
       </div>
     </section>
   );
+}
+
+function getBuyLabel(tile: Tile | undefined, owner: Player | null, money: number): string {
+  if (!tile?.asset) return 'Không có tài sản để mua';
+  if (owner) return 'Tài sản đã có chủ';
+  if (money < tile.asset.purchasePrice) return 'Chưa đủ vốn để mua';
+  return 'Mua tài sản';
 }
 
 function findAssetOwner(gameState: GameState, tileId: string): Player | null {
