@@ -47,50 +47,58 @@ board-outer-blue.png
 board-inner-orange.png
 ```
 
-## Danh sách file cần có
+## Danh sách ảnh cần generate riêng, có số thứ tự và gợi ý prompt
+
+Bạn có thể copy từng dòng để yêu cầu AI generate ảnh. Phần trong ngoặc là ngữ cảnh để AI không hiểu sai tên ô.
+
+Các ô dùng chung ảnh như `fortune-2.png`, `fortune-3.png`, `chance-2.png`, `chance-3.png`, `theory-quiz-2.png`, `theory-quiz-3.png` không nằm trong danh sách prompt chính bên dưới. Xem mục "Các ô có thể dùng chung ảnh" để copy/đổi tên file.
 
 ```text
-startup-start.png
-black-river-oil-field.png
-fortune-1.png
-iron-pump-refinery.png
-nova-search.png
-platform-tax.png
-socialsphere.png
-chance-1.png
-continental-pipeline.png
-steel-port-logistics.png
-theory-quiz-1.png
-shopgrid.png
-cloudnest.png
-petrorail-network.png
-supply-chain-crisis.png
-adsignal.png
-northern-drill-site.png
-fortune-2.png
-visionai-lab.png
-oceanic-fuel-harbor.png
-antitrust-office.png
-mapstream.png
-chance-2.png
-golden-barrel-depot.png
-datavault.png
-theory-quiz-2.png
-streamloop.png
-marketmind-ai.png
-open-data-regulation.png
-pipeline-gate.png
-cloud-tollway.png
-trust-crisis.png
-data-union-hub.png
-fortune-3.png
-green-fuel-grid.png
-theory-quiz-3.png
-chance-3.png
-algorithm-exchange.png
-deep-sea-terminal.png
-platform-court.png
+00. startup-start.png (ô Khởi nghiệp, biểu tượng startup, vốn đầu tư, vòng tái đầu tư, không phải ảnh công ty thật)
+01. black-river-oil-field.png (mỏ dầu Black River, giàn khoan dầu, tài nguyên khan hiếm, bối cảnh độc quyền dầu mỏ)
+02. fortune-1.png (ô Khí vận, lá bài may rủi, vận may cá nhân, biểu tượng dấu hỏi; có thể dùng chung ảnh với fortune-2.png và fortune-3.png)
+03. iron-pump-refinery.png (nhà máy lọc dầu Iron Pump, bồn chứa dầu, ống khói, công nghiệp dầu mỏ)
+04. nova-search.png (Nova Search là nền tảng tìm kiếm dữ liệu, thanh search, dữ liệu truy vấn, thuật toán tìm kiếm; không phải ngôi sao nova ngoài vũ trụ)
+05. platform-tax.png (ô Thuế nền tảng, hóa đơn thuế, luật quy định nền tảng số, biểu tượng cân bằng/thuế)
+06. socialsphere.png (SocialSphere là mạng xã hội, người dùng kết nối, mạng lưới cộng đồng, dữ liệu hành vi)
+07. chance-1.png (ô Cơ hội, lá bài cơ hội, biến động thị trường/chính sách/công nghệ; có thể dùng chung ảnh với chance-2.png và chance-3.png)
+08. continental-pipeline.png (đường ống dầu Continental Pipeline, hạ tầng vận chuyển dầu, ống dẫn xuyên lục địa)
+09. steel-port-logistics.png (Steel Port Logistics, cảng thép, container, vận tải hàng hóa, chuỗi cung ứng)
+10. theory-quiz-1.png (ô Quiz lý luận MLN122, sách vở, câu hỏi, lớp học; có thể dùng chung ảnh với theory-quiz-2.png và theory-quiz-3.png)
+11. shopgrid.png (ShopGrid là sàn thương mại điện tử, giỏ hàng online, dữ liệu giao dịch, người bán/người mua)
+12. cloudnest.png (CloudNest là công ty/hạ tầng dữ liệu đám mây, server, cloud infrastructure, trung tâm dữ liệu; không phải tổ chim)
+13. petrorail-network.png (PetroRail Network, đường sắt vận chuyển nhiên liệu, toa tàu chở dầu, logistics dầu mỏ)
+14. supply-chain-crisis.png (ô Khủng hoảng chuỗi cung ứng, container kẹt, cảnh báo đứt gãy logistics, chi phí vận hành tăng)
+15. adsignal.png (AdSignal là mạng quảng cáo số, dữ liệu hành vi, tín hiệu quảng cáo, biểu đồ marketing)
+16. northern-drill-site.png (Northern Drill Site, điểm khoan dầu phía bắc, giàn khoan trong vùng lạnh/xa xôi)
+18. visionai-lab.png (VisionAI Lab là phòng thí nghiệm AI thị giác, camera, mô hình AI, dữ liệu hình ảnh)
+19. oceanic-fuel-harbor.png (Oceanic Fuel Harbor, cảng nhiên liệu đại dương, tàu dầu, bồn chứa ven biển)
+20. antitrust-office.png (văn phòng điều tra chống độc quyền, hồ sơ điều tra, kính lúp, tòa nhà cơ quan quản lý)
+21. mapstream.png (MapStream là dịch vụ bản đồ số, dữ liệu vị trí, dòng di chuyển, định vị GPS)
+23. golden-barrel-depot.png (Golden Barrel Depot, kho thùng dầu, dự trữ nhiên liệu, màu vàng/dầu mỏ)
+24. datavault.png (DataVault là kho dữ liệu lớn, bảo mật dữ liệu, ổ cứng/server, két dữ liệu số)
+26. streamloop.png (StreamLoop là nền tảng nội dung/streaming, vòng lặp đề xuất, người dùng xem nội dung)
+27. marketmind-ai.png (MarketMind AI là AI dự đoán thị trường, biểu đồ dữ liệu, trí tuệ nhân tạo phân tích giá)
+28. open-data-regulation.png (ô Quy định dữ liệu mở, luật chia sẻ dữ liệu, biểu tượng dữ liệu mở, chính sách nền tảng)
+29. pipeline-gate.png (Pipeline Gate, cổng đường ống dầu, trạm kiểm soát, phí hạ tầng)
+30. cloud-tollway.png (Cloud Tollway là cổng thu phí hạ tầng cloud, server, phí truy cập dịch vụ đám mây)
+31. trust-crisis.png (ô Khủng hoảng niềm tin, người dùng rời bỏ nền tảng, cảnh báo riêng tư dữ liệu, mất niềm tin)
+32. data-union-hub.png (Data Union Hub là cộng đồng/liên minh dữ liệu, nhóm người dùng chia sẻ dữ liệu, hub số)
+34. green-fuel-grid.png (Green Fuel Grid, lưới nhiên liệu xanh, năng lượng mới, hạ tầng phân phối)
+37. algorithm-exchange.png (Algorithm Exchange là chợ thuật toán, mã lệnh, giao dịch thuật toán, nền tảng AI/data)
+38. deep-sea-terminal.png (Deep Sea Terminal, cảng biển sâu, tàu hàng lớn, logistics quốc tế)
+39. platform-court.png (Phiên điều trần nền tảng, tòa án/quốc hội, chống độc quyền, công ty nền tảng bị chất vấn)
 ```
+
+## Các ô có thể dùng chung ảnh
+
+Nếu muốn giảm số lượng ảnh cần tạo, các nhóm sau có thể dùng chung một ảnh và copy/đổi tên file:
+
+- Khí vận: generate `02. fortune-1.png`, sau đó copy thành `17. fortune-2.png` và `33. fortune-3.png`.
+- Cơ hội: generate `07. chance-1.png`, sau đó copy thành `22. chance-2.png` và `36. chance-3.png`.
+- Quiz lý luận: generate `10. theory-quiz-1.png`, sau đó copy thành `25. theory-quiz-2.png` và `35. theory-quiz-3.png`.
+
+Ví dụ: tạo một ảnh `fortune-1.png`, sau đó copy thành `fortune-2.png` và `fortune-3.png`.
 
 ## Mỗi ô hiện gì trên giao diện
 
@@ -105,51 +113,6 @@ Mỗi ô trên bàn cờ có thể hiển thị:
 - Màu chủ sở hữu ở đáy ô nếu tài sản đã có chủ.
 
 Thông tin chi tiết hơn như tiền thuê, lợi ích nâng cấp, người khác mất gì khi vào ô... được hiển thị ở panel bên phải khi người chơi đứng trên ô đó.
-
-## Bảng mô tả file ảnh từng ô
-
-| File ảnh | Ô | Nội dung gợi ý cho ảnh |
-| --- | --- | --- |
-| `startup-start.png` | Khởi nghiệp | Biểu tượng startup, vốn đầu tư, vòng tái đầu tư. |
-| `black-river-oil-field.png` | Black River Oil Field | Mỏ dầu, giàn khoan, tài nguyên khan hiếm. |
-| `fortune-1.png` | Khí vận | Lá bài may rủi, dấu hỏi, vận may. |
-| `iron-pump-refinery.png` | Iron Pump Refinery | Nhà máy lọc dầu, ống khói, bồn chứa. |
-| `nova-search.png` | Nova Search | Thanh tìm kiếm, dữ liệu truy vấn. |
-| `platform-tax.png` | Thuế nền tảng | Thuế, hóa đơn, biểu tượng quy định. |
-| `socialsphere.png` | SocialSphere | Mạng xã hội, người dùng kết nối. |
-| `chance-1.png` | Cơ hội | Lá bài cơ hội, thị trường biến động. |
-| `continental-pipeline.png` | Continental Pipeline | Đường ống dầu, hạ tầng vận chuyển. |
-| `steel-port-logistics.png` | Steel Port Logistics | Cảng, container, vận tải. |
-| `theory-quiz-1.png` | Quiz lý luận | Sách, câu hỏi, biểu tượng MLN122. |
-| `shopgrid.png` | ShopGrid | Sàn thương mại điện tử, giỏ hàng, giao dịch. |
-| `cloudnest.png` | CloudNest | Hạ tầng đám mây, server, cloud. |
-| `petrorail-network.png` | PetroRail Network | Đường sắt vận chuyển nhiên liệu. |
-| `supply-chain-crisis.png` | Khủng hoảng chuỗi cung ứng | Đứt gãy chuỗi cung ứng, cảnh báo, container kẹt. |
-| `adsignal.png` | AdSignal | Quảng cáo số, biểu đồ, tín hiệu dữ liệu. |
-| `northern-drill-site.png` | Northern Drill Site | Điểm khoan dầu phía bắc, giàn khoan. |
-| `fortune-2.png` | Khí vận | Lá bài may rủi, biến động cá nhân. |
-| `visionai-lab.png` | VisionAI Lab | AI, camera, phòng thí nghiệm dữ liệu. |
-| `oceanic-fuel-harbor.png` | Oceanic Fuel Harbor | Cảng nhiên liệu, tàu dầu. |
-| `antitrust-office.png` | Điều tra chống độc quyền | Tòa nhà quản lý, kính lúp, hồ sơ điều tra. |
-| `mapstream.png` | MapStream | Bản đồ số, vị trí, dữ liệu di chuyển. |
-| `chance-2.png` | Cơ hội | Lá bài cơ hội, chính sách hoặc công nghệ mới. |
-| `golden-barrel-depot.png` | Golden Barrel Depot | Kho thùng dầu, dự trữ nhiên liệu. |
-| `datavault.png` | DataVault | Kho dữ liệu, ổ cứng, bảo mật. |
-| `theory-quiz-2.png` | Quiz lý luận | Câu hỏi lý luận, sách vở, bảng học. |
-| `streamloop.png` | StreamLoop | Nền tảng nội dung, vòng lặp đề xuất. |
-| `marketmind-ai.png` | MarketMind AI | AI dự đoán thị trường, biểu đồ. |
-| `open-data-regulation.png` | Quy định dữ liệu mở | Dữ liệu mở, luật chia sẻ dữ liệu. |
-| `pipeline-gate.png` | Pipeline Gate | Cổng đường ống, phí hạ tầng. |
-| `cloud-tollway.png` | Cloud Tollway | Phí cloud, server, cổng thu phí số. |
-| `trust-crisis.png` | Khủng hoảng niềm tin | Người dùng rời bỏ, cảnh báo riêng tư dữ liệu. |
-| `data-union-hub.png` | Data Union Hub | Cộng đồng dữ liệu, nhóm người dùng. |
-| `fortune-3.png` | Khí vận | Lá bài may rủi, vận động bất ngờ. |
-| `green-fuel-grid.png` | Green Fuel Grid | Lưới nhiên liệu xanh, năng lượng mới. |
-| `theory-quiz-3.png` | Quiz lý luận | Câu hỏi tổng kết, MLN122. |
-| `chance-3.png` | Cơ hội | Lá bài cơ hội, cú hích thị trường. |
-| `algorithm-exchange.png` | Algorithm Exchange | Chợ thuật toán, mã lệnh, giao dịch số. |
-| `deep-sea-terminal.png` | Deep Sea Terminal | Cảng biển sâu, tàu hàng, logistics quốc tế. |
-| `platform-court.png` | Phiên điều trần nền tảng | Tòa án, phiên điều trần, chống độc quyền. |
 
 ## Có cần đủ ảnh ngay không?
 

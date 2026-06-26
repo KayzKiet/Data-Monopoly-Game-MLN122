@@ -323,10 +323,10 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
               onApplyEvent={handleApplyEvent}
               onBuyAsset={handleBuyAsset}
               onEndTurn={handleEndTurn}
-              onReset={onReset}
               onUpgradeAsset={handleUpgradeAsset}
             />
           )}
+          <GameManagementCard isBusy={isTurnBusy} onFinish={onFinish} onReset={onReset} />
           <PlayerPanel currentPlayerId={currentPlayer?.id ?? null} gameState={gameState} />
           <GameLog entries={gameState.log} />
         </aside>
@@ -367,6 +367,27 @@ function BoardTileAtPosition({ currentPlayerId, movingPlayerId, owner, ownerColo
         tile={tile}
       />
     </div>
+  );
+}
+
+function GameManagementCard({ isBusy, onFinish, onReset }: { isBusy: boolean; onFinish: () => void; onReset: () => void }) {
+  return (
+    <section className="rounded-lg border border-red-200/15 bg-oil/70 p-4 shadow-gold backdrop-blur">
+      <h2 className="text-lg font-bold text-white">Quản lý ván</h2>
+      <div className="mt-3 grid gap-2">
+        <button className="primary-button" disabled={isBusy} onClick={onFinish} type="button">
+          Kết thúc game sớm
+        </button>
+        <button
+          className="rounded-md border border-red-300/30 bg-red-500/10 px-4 py-2 font-bold text-red-100 transition duration-200 hover:bg-red-500/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45"
+          disabled={isBusy}
+          onClick={onReset}
+          type="button"
+        >
+          Reset game
+        </button>
+      </div>
+    </section>
   );
 }
 

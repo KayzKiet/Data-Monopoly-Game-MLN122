@@ -9,7 +9,6 @@ interface ActionPanelProps {
   onApplyEvent: () => void;
   onBuyAsset: (tileId: string) => void;
   onEndTurn: () => void;
-  onReset: () => void;
   onUpgradeAsset: (assetId: string) => void;
 }
 
@@ -20,7 +19,6 @@ export function ActionPanel({
   onApplyEvent,
   onBuyAsset,
   onEndTurn,
-  onReset,
   onUpgradeAsset,
 }: ActionPanelProps) {
   const currentTile = gameState.tiles[currentPlayer.position];
@@ -136,14 +134,6 @@ export function ActionPanel({
 
         <button className="secondary-button" disabled={isBusy || !canEndTurn} onClick={onEndTurn} type="button">
           {gameState.rollsThisTurn <= 0 ? 'Tung xúc xắc trước' : gameState.activeEventId || gameState.activeQuizId ? 'Xử lý ô hiện tại trước' : 'Kết thúc lượt'}
-        </button>
-        <button
-          className="rounded-md border border-red-300/30 bg-red-500/10 px-4 py-2 font-bold text-red-100 transition duration-200 hover:bg-red-500/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45"
-          disabled={isBusy}
-          onClick={onReset}
-          type="button"
-        >
-          Reset game
         </button>
       </div>
     </section>

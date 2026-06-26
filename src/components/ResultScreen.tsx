@@ -40,6 +40,7 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
   const ranking = [...gameState.players].sort((left, right) => calculateTotalScore(right) - calculateTotalScore(left));
   const winner = gameState.winnerId ? gameState.players.find((player) => player.id === gameState.winnerId) ?? ranking[0] : ranking[0];
   const winnerBreakdown = getScoreBreakdown(winner, gameState.players);
+  const chartRows = ranking.map((player) => ({ player, breakdown: getScoreBreakdown(player, gameState.players) }));
 
   return (
     <section className="screen-shell space-y-6">
@@ -92,6 +93,8 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
         </div>
       </div>
 
+      <ComparisonChart rows={chartRows} />
+
       <div className="panel overflow-x-auto">
         <h2 className="text-xl font-black text-white">Bảng xếp hạng</h2>
         <table className="mt-4 w-full min-w-[780px] text-left text-sm">
@@ -132,6 +135,53 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
             })}
           </tbody>
         </table>
+      </div>
+    </section>
+  );
+}
+
+function ComparisonChart({ rows }: { rows: Array<{ player: Player; breakdown: ReturnType<typeof getScoreBreakdown> }> }) {
+  const metrics = [
+    { key: 'finalScore', label: 'Điểm tổng', color: 'bg-cyan' },
+    { key: 'marketPower', label: 'Quyền lực thị trường', color: 'bg-gold' },
+    { key: 'assetValue', label: 'Giá trị tài sản', color: 'bg-emerald-400' },
+    { key: 'users', label: 'Người dùng', color: 'bg-sky-400' },
+    { key: 'data', label: 'Dữ liệu', color: 'bg-violet-400' },
+    { key: 'theoryPoints', label: 'Điểm lý luận', color: 'bg-rose-400' },
+  ] as const;
+
+  return (
+    <section className="panel">
+      <h2 className="text-xl font-black text-white">Biểu đồ so sánh người chơi</h2>
+      <div className="mt-5 grid gap-5 xl:grid-cols-2">
+        {metrics.map((metric) => {
+          const maxValue = Math.max(...rows.map((row) => row.breakdown[metric.key]), 1);
+
+          return (
+            <div className="rounded-lg border border-white/10 bg-oil/60 p-4" key={metric.key}>
+              <p className="text-sm font-black text-white">{metric.label}</p>
+              <div className="mt-4 space-y-3">
+                {rows.map(({ breakdown, player }) => {
+                  const value = breakdown[metric.key];
+                  const width = Math.max(4, Math.round((value / maxValue) * 100));
+
+                  return (
+                    <div className="grid grid-cols-[110px_1fr_72px] items-center gap-3 text-xs" key={`${metric.key}-${player.id}`}>
+                      <div className="flex min-w-0 items-center gap-2">
+                        <PlayerAvatar alt={player.name} className="h-6 w-6 rounded" imagePath={player.avatar} label={player.name} />
+                        <span className="truncate font-bold text-slate-200">{player.name}</span>
+                      </div>
+                      <div className="h-3 overflow-hidden rounded-full bg-white/10">
+                        <div className={`h-full rounded-full ${metric.color}`} style={{ width: `${width}%` }} />
+                      </div>
+                      <span className="text-right font-black text-white">{metric.key === 'assetValue' ? `$${value}` : value}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
