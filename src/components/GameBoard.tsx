@@ -18,7 +18,9 @@ interface GameBoardProps {
   onFinish: () => void;
   onReset: () => void;
   onSetup: () => void;
+  onToggleTheme: () => void;
   onTheory: () => void;
+  themeMode: 'dark' | 'light';
 }
 
 const playerColors = ['bg-cyan', 'bg-gold', 'bg-emerald-400', 'bg-rose-400'];
@@ -34,17 +36,19 @@ const perimeterPositions = Array.from({ length: 40 }, (_, index) => {
   return { row: index - 29, col: 11 };
 });
 
-export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onSetup, onTheory }: GameBoardProps) {
+export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onSetup, onTheory, onToggleTheme, themeMode }: GameBoardProps) {
   const currentPlayer = gameState?.players[gameState.currentPlayerIndex] ?? null;
   const [diceFaces, setDiceFaces] = useState<[number, number] | null>(null);
   const [turnAnimationPhase, setTurnAnimationPhase] = useState<TurnAnimationPhase>('idle');
   const [movingPlayerId, setMovingPlayerId] = useState<string | null>(null);
   const [boardZoom, setBoardZoom] = useState(0.9);
+  const [boardBrightness, setBoardBrightness] = useState(1);
   const [visualPositions, setVisualPositions] = useState<Record<string, number>>({});
   const timers = useRef<number[]>([]);
   const isRolling = turnAnimationPhase === 'rolling';
   const isMoving = turnAnimationPhase === 'moving';
   const isTurnBusy = turnAnimationPhase !== 'idle';
+  const isLightTheme = themeMode === 'light';
   const canRollDice = Boolean(
     gameState &&
       currentPlayer &&
@@ -232,28 +236,43 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(960px,1fr)_minmax(420px,28vw)]">
-        <div
-          className="max-h-[calc(100vh-124px)] overflow-auto rounded-xl border border-cyan/20 bg-[#75bceb] bg-cover bg-center p-5 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.22)]"
-          style={{ backgroundImage: 'linear-gradient(rgba(117,188,235,0.88),rgba(117,188,235,0.88)), url("/images/board/board-outer-blue.png")' }}
-        >
-          <div className="sticky left-0 top-0 z-40 mb-3 flex w-fit items-center gap-2 rounded-lg border border-white/20 bg-oil/80 p-2 shadow-lg backdrop-blur">
-            <span className="px-2 text-xs font-black uppercase tracking-[0.14em] text-cyan">Phóng bàn</span>
+        <div className="space-y-3">
+          <div className="flex w-fit flex-wrap items-center gap-2 rounded-lg border border-white/20 bg-oil/80 p-2 shadow-lg backdrop-blur">
+            <BoardControl
+              label="Phóng bàn"
+              onDecrease={() => setBoardZoom((current) => Math.max(0.65, Number((current - 0.1).toFixed(2))))}
+              onIncrease={() => setBoardZoom((current) => Math.min(1.35, Number((current + 0.1).toFixed(2))))}
+              value={`${Math.round(boardZoom * 100)}%`}
+            />
+            <div className="h-8 w-px bg-white/15" />
+            <BoardControl
+              label="Sáng nền"
+              onDecrease={() => setBoardBrightness((current) => Math.max(0.65, Number((current - 0.1).toFixed(2))))}
+              onIncrease={() => setBoardBrightness((current) => Math.min(1.35, Number((current + 0.1).toFixed(2))))}
+              value={`${Math.round(boardBrightness * 100)}%`}
+            />
+            <div className="h-8 w-px bg-white/15" />
             <button
-              className="secondary-button px-3 py-1"
-              onClick={() => setBoardZoom((current) => Math.max(0.65, Number((current - 0.1).toFixed(2))))}
+              className="secondary-button px-3 py-2 text-xs uppercase tracking-[0.14em]"
+              onClick={onToggleTheme}
               type="button"
             >
-              -
-            </button>
-            <span className="w-14 text-center text-sm font-black text-white">{Math.round(boardZoom * 100)}%</span>
-            <button
-              className="secondary-button px-3 py-1"
-              onClick={() => setBoardZoom((current) => Math.min(1.35, Number((current + 0.1).toFixed(2))))}
-              type="button"
-            >
-              +
+              {isLightTheme ? 'Giao diện tối' : 'Giao diện sáng'}
             </button>
           </div>
+
+          <div
+            className={`relative isolate max-h-[calc(100vh-176px)] overflow-auto rounded-xl border p-5 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.16)] ${
+              isLightTheme ? 'border-slate-900/10 bg-slate-200' : 'border-cyan/20 bg-[#162836]'
+            }`}
+          >
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center"
+              style={{ backgroundImage: 'url("/images/board/board-outer-blue.png")', filter: `brightness(${boardBrightness})` }}
+            />
+            <div className={`pointer-events-none absolute inset-0 z-0 ${isLightTheme ? 'bg-white/10' : 'bg-black/5'}`} />
+
           <div
             className="mx-auto shrink-0"
             style={{
@@ -262,9 +281,8 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
             }}
           >
           <div
-            className="grid shrink-0 origin-top-left overflow-visible rounded-lg bg-[#ff914d] bg-cover bg-center outline outline-4 outline-[#5c9e1c] shadow-[0_0_0_6px_rgba(22,75,42,0.35)]"
+            className="relative isolate grid shrink-0 origin-top-left overflow-visible rounded-lg bg-[#223a3d] outline outline-4 outline-[#3e8f73] shadow-[0_0_0_6px_rgba(7,20,24,0.32)]"
             style={{
-              backgroundImage: 'linear-gradient(rgba(255,145,77,0.9),rgba(255,145,77,0.9)), url("/images/board/board-inner-orange.png")',
               gridTemplateColumns: `${boardCornerSize}px repeat(9, ${boardEdgeTileSize}px) ${boardCornerSize}px`,
               gridTemplateRows: `${boardCornerSize}px repeat(9, ${boardEdgeTileSize}px) ${boardCornerSize}px`,
               height: boardSize,
@@ -272,6 +290,12 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
               width: boardSize,
             }}
           >
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-0 rounded-[inherit] bg-cover bg-center"
+              style={{ backgroundImage: 'url("/images/board/board-inner-orange.png")', filter: `brightness(${boardBrightness})` }}
+            />
+            <div className="pointer-events-none absolute inset-0 z-0 rounded-[inherit] bg-black/5" />
             {gameState.tiles.map((tile) => (
               <BoardTileAtPosition
                 currentPlayerId={currentPlayer?.id ?? null}
@@ -285,8 +309,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
               />
             ))}
 
-            <div className="col-start-3 col-end-10 row-start-3 row-end-10 overflow-hidden rounded-md border-4 border-[#2b7f62] bg-[linear-gradient(135deg,#31c7d0_0%,#4fc294_48%,#275a91_100%)] p-4 text-center">
-              <div className="grid h-full place-items-center rounded-md bg-[radial-gradient(circle_at_center,rgba(255,244,170,0.22),transparent_32%),linear-gradient(135deg,rgba(10,34,58,0.16),rgba(10,34,58,0.5))]">
+            <div className="relative z-10 col-start-3 col-end-10 row-start-3 row-end-10 grid place-items-center p-4 text-center">
                 <div className="w-full space-y-5">
                   <div>
                     <p className="text-xs font-black uppercase tracking-[0.24em] text-yellow-100">Data Monopoly</p>
@@ -307,8 +330,8 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
                     />
                   )}
                 </div>
-              </div>
             </div>
+          </div>
           </div>
           </div>
         </div>
@@ -326,9 +349,9 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
               onUpgradeAsset={handleUpgradeAsset}
             />
           )}
-          <GameManagementCard isBusy={isTurnBusy} onFinish={onFinish} onReset={onReset} />
           <PlayerPanel currentPlayerId={currentPlayer?.id ?? null} gameState={gameState} />
           <GameLog entries={gameState.log} />
+          <GameManagementCard isBusy={isTurnBusy} onFinish={onFinish} onReset={onReset} />
         </aside>
       </div>
 
@@ -357,7 +380,7 @@ function BoardTileAtPosition({ currentPlayerId, movingPlayerId, owner, ownerColo
   const playersOnTile = players.filter((player) => (visualPositions[player.id] ?? player.position) === tile.index);
 
   return (
-    <div className="min-h-0 min-w-0" style={{ gridColumn: position.col, gridRow: position.row }}>
+    <div className="relative z-10 min-h-0 min-w-0" style={{ gridColumn: position.col, gridRow: position.row }}>
       <BoardTile
         currentPlayerId={currentPlayerId}
         movingPlayerId={movingPlayerId}
@@ -366,6 +389,31 @@ function BoardTileAtPosition({ currentPlayerId, movingPlayerId, owner, ownerColo
         playersOnTile={playersOnTile}
         tile={tile}
       />
+    </div>
+  );
+}
+
+function BoardControl({
+  label,
+  onDecrease,
+  onIncrease,
+  value,
+}: {
+  label: string;
+  onDecrease: () => void;
+  onIncrease: () => void;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="px-2 text-xs font-black uppercase tracking-[0.14em] text-cyan">{label}</span>
+      <button className="secondary-button px-3 py-1" onClick={onDecrease} type="button">
+        -
+      </button>
+      <span className="w-14 text-center text-sm font-black text-white">{value}</span>
+      <button className="secondary-button px-3 py-1" onClick={onIncrease} type="button">
+        +
+      </button>
     </div>
   );
 }

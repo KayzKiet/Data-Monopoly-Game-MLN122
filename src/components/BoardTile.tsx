@@ -27,46 +27,39 @@ export function BoardTile({ currentPlayerId, movingPlayerId, owner, ownerColor, 
 
   return (
     <article
-      className={`relative flex h-full min-h-0 min-w-0 flex-col rounded-sm border-2 p-1.5 text-white shadow-[inset_0_0_0_2px_rgba(255,255,255,0.22)] transition ${
+      className={`relative flex h-full min-h-0 min-w-0 overflow-hidden rounded-sm border-2 text-white shadow-[inset_0_0_0_2px_rgba(255,255,255,0.22)] transition ${
         hasPlayers ? 'z-20 scale-[1.02] shadow-[0_0_0_2px_rgba(255,255,255,0.36),0_10px_18px_rgba(0,0,0,0.28)]' : 'z-0'
       } ${eraAccent}`}
       title={`${tile.index}. ${tile.name}\n${tile.description}`}
     >
       <div aria-hidden="true" className="absolute inset-0 overflow-hidden rounded-[inherit]">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-70"
-          style={{ backgroundImage: `url("${imagePath}")` }}
+          className="absolute inset-0 bg-center bg-no-repeat"
+          style={{ backgroundImage: `url("${imagePath}")`, backgroundSize: '100% 100%' }}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.26),rgba(20,15,8,0.22))]" />
-        <div className="absolute inset-0 bg-black/10" />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
       </div>
-      {ownerColor && <div className={`absolute inset-x-1 bottom-1 h-1.5 rounded-full ${ownerColor}`} />}
+      {ownerColor && <div className={`absolute inset-x-1 bottom-1 z-20 h-1.5 rounded-full ${ownerColor}`} />}
 
-      <div className="relative flex min-w-0 items-start justify-between gap-1">
-        <div className="min-w-0 pr-1">
-          <p className="text-[10px] font-black uppercase leading-none tracking-[0.08em] text-white/80">#{tile.index}</p>
-          <h2
-            className="mt-1 line-clamp-2 text-[13px] font-black leading-[15px] text-white drop-shadow-[1px_1px_0_rgba(50,31,17,0.85)]"
-            title={tile.name}
-          >
-            {displayName}
-          </h2>
-        </div>
-      </div>
-
-      <div className="relative mt-auto space-y-1 pb-7 pt-1">
+      <div className={`relative z-10 mt-auto space-y-1 p-1.5 ${hasPlayers ? 'pb-10' : 'pb-2'}`}>
+        <h2
+          className="line-clamp-2 text-[12px] font-black leading-[14px] text-white drop-shadow-[1px_1px_0_rgba(0,0,0,0.95)] min-[1360px]:text-[13px] min-[1360px]:leading-[15px]"
+          title={tile.name}
+        >
+          {displayName}
+        </h2>
         <div className="flex flex-wrap items-center gap-1">
           {shouldShowTypeLabel && (
-            <span className="max-w-full truncate rounded bg-black/42 px-1.5 py-0.5 text-[10px] font-bold capitalize leading-4 text-white">
+            <span className="max-w-full truncate rounded bg-black/55 px-1.5 py-0.5 text-[10px] font-bold capitalize leading-4 text-white shadow-sm">
               {typeLabel}
             </span>
           )}
-          <span className="max-w-full truncate rounded bg-black/42 px-1.5 py-0.5 text-[10px] font-black leading-4 text-yellow-100">
+          <span className="max-w-full truncate rounded bg-black/55 px-1.5 py-0.5 text-[10px] font-black leading-4 text-yellow-100 shadow-sm">
             {metaLabel}
           </span>
         </div>
 
-        {owner && <p className="truncate rounded bg-black/30 px-1.5 py-0.5 text-[10px] font-bold leading-4 text-white/90">Chủ: {owner.name}</p>}
+        {owner && <p className="truncate rounded bg-black/45 px-1.5 py-0.5 text-[10px] font-bold leading-4 text-white/90">Chủ: {owner.name}</p>}
       </div>
 
       {hasPlayers && (
