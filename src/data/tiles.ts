@@ -20,6 +20,7 @@ const asset = (
   upgradeCost: Math.round(purchasePrice * 0.45),
   level: 1,
   maxLevel: 3,
+  lapsHeld: 0,
   theoryConnection,
 });
 

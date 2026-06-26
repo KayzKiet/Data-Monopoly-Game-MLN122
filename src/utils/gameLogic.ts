@@ -45,6 +45,8 @@ export function createInitialGameState(players: PlayerSetupInput[]): GameState {
       round: 1,
       maxRounds: 25,
       diceValue: null,
+      rollsThisTurn: 0,
+      extraRollsAvailable: 0,
       selectedTileId: null,
       activeEventId: null,
       activeEventDeck: null,
@@ -82,6 +84,7 @@ export function movePlayer(state: GameState, diceValue: number, playerId = getCu
       ...item,
       position: nextPosition,
       money: item.money + (passedStart ? START_BONUS : 0),
+      assets: passedStart ? item.assets.map((asset) => ({ ...asset, lapsHeld: asset.lapsHeld + 1 })) : item.assets,
     };
   });
 
@@ -89,6 +92,7 @@ export function movePlayer(state: GameState, diceValue: number, playerId = getCu
     ...state,
     players: updatedPlayers,
     diceValue,
+    rollsThisTurn: state.rollsThisTurn + 1,
     selectedTileId: state.tiles[nextPosition]?.id ?? null,
   };
 
@@ -160,7 +164,7 @@ export function buyAsset(state: GameState, playerId: string, tileId: string): Ga
       users: item.users + resourceGain.users,
       data: item.data + resourceGain.data,
       influence: item.influence + resourceGain.influence,
-      assets: [...item.assets, cloneAsset(tileAsset)],
+      assets: [...item.assets, { ...cloneAsset(tileAsset), lapsHeld: 0 }],
     };
   });
 
@@ -176,6 +180,9 @@ export function upgradeAsset(state: GameState, playerId: string, assetId: string
   const player = findPlayer(state, playerId);
   const ownedAsset = player?.assets.find((asset) => asset.id === assetId);
   if (!player || !ownedAsset || ownedAsset.level >= ownedAsset.maxLevel) return state;
+  if (ownedAsset.lapsHeld < 1) {
+    return addLog(state, 'purchase', `${player.name} cần đi đủ 1 vòng sau khi mua ${ownedAsset.name} mới được nâng cấp.`, playerId);
+  }
 
   const cloudDiscount = player.assets.some((asset) => asset.type === 'cloud-infrastructure') ? 0.85 : 1;
   const upgradeCost = Math.round(ownedAsset.upgradeCost * cloudDiscount);
@@ -232,7 +239,7 @@ export function payRent(state: GameState, payerId: string, ownerId: string, tile
     return item;
   });
 
-  return addLog({ ...state, players: updatedPlayers }, 'rent', `${payer.name} trả ${paid} rent cho ${owner.name} tại ${asset.name}.`, payerId);
+  return addLog({ ...state, players: updatedPlayers }, 'rent', `${payer.name} trả ${paid} tiền thuê cho ${owner.name} tại ${asset.name}.`, payerId);
 }
 
 export function applyEvent(state: GameState, eventId: string): GameState {
@@ -496,6 +503,11 @@ export function answerQuiz(state: GameState, playerId: string, quizId: string, a
 
 export function endTurn(state: GameState): GameState {
   if (state.status !== 'playing') return state;
+  const currentPlayer = getCurrentPlayer(state);
+
+  if (state.rollsThisTurn <= 0) {
+    return addLog(state, 'system', `${currentPlayer.name} cần tung xúc xắc ít nhất 1 lần trước khi kết thúc lượt.`, currentPlayer.id);
+  }
 
   const winner = checkWinner(state);
   if (winner) {
@@ -511,11 +523,34 @@ export function endTurn(state: GameState): GameState {
     currentPlayerIndex: nextPlayerIndex,
     round: nextRound,
     diceValue: null,
+    rollsThisTurn: 0,
+    extraRollsAvailable: 0,
     selectedTileId: null,
     activeEventId: null,
     activeEventDeck: null,
     activeQuizId: null,
   }, 'system', `Chuyển lượt sang ${nextPlayer?.name ?? 'người chơi tiếp theo'}.`, nextPlayer?.id);
+}
+
+export function applyDicePairRule(state: GameState, diceFaces: [number, number], playerId = getCurrentPlayer(state).id): GameState {
+  const player = findPlayer(state, playerId);
+  if (!player) return state;
+
+  const isExtraRollPair = (diceFaces[0] === 1 && diceFaces[1] === 1) || (diceFaces[0] === 6 && diceFaces[1] === 6);
+  if (!isExtraRollPair) {
+    return { ...state, extraRollsAvailable: 0 };
+  }
+
+  return addLog(
+    {
+      ...state,
+      diceValue: null,
+      extraRollsAvailable: 1,
+    },
+    'movement',
+    `${player.name} tung cặp ${diceFaces[0]}:${diceFaces[1]} nên được tung thêm 1 lần.`,
+    playerId,
+  );
 }
 
 export function checkWinner(state: GameState): Player | null {

@@ -52,21 +52,21 @@ export function LandingPage({ hasSavedGame, onContinue, onStart, onLearnTheory, 
         <div className="flex flex-wrap gap-3">
           {hasSavedGame && (
             <button className="primary-button" onClick={onContinue} type="button">
-              Continue Game
+              Tiếp tục
             </button>
           )}
           <button className="primary-button" onClick={onStart} type="button">
-            New Game
+            Ván mới
           </button>
           <button className="secondary-button" onClick={onLearnTheory} type="button">
-            Learn Theory
+            Lý thuyết
           </button>
           <button
             className="rounded-md border border-white/15 bg-white/5 px-4 py-2 font-bold text-slate-100 transition hover:border-cyan hover:text-cyan"
             onClick={handleHowToPlay}
             type="button"
           >
-            How to Play
+            Cách chơi
           </button>
         </div>
 
@@ -109,8 +109,8 @@ export function LandingPage({ hasSavedGame, onContinue, onStart, onLearnTheory, 
 
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: 'Oil Age', value: 'Tài nguyên + hạ tầng', color: 'border-gold/40 text-gold' },
-            { label: 'Data Age', value: 'Dữ liệu + nền tảng', color: 'border-cyan/40 text-cyan' },
+            { label: 'Thời đại dầu mỏ', value: 'Tài nguyên + hạ tầng', color: 'border-gold/40 text-gold' },
+            { label: 'Thời đại dữ liệu', value: 'Dữ liệu + nền tảng', color: 'border-cyan/40 text-cyan' },
           ].map((item) => (
             <div className={`rounded-lg border bg-white/[0.06] p-4 ${item.color}`} key={item.label}>
               <p className="text-xs font-bold uppercase tracking-[0.18em]">{item.label}</p>

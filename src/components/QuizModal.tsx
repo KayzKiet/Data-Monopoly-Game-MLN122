@@ -30,7 +30,7 @@ export function QuizModal({ quiz, onAnswer }: QuizModalProps) {
       <section className="w-full max-w-3xl rounded-lg border border-gold/30 bg-midnight p-6 shadow-gold">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.2em] text-gold">Theory Quiz</p>
+            <p className="text-sm font-black uppercase tracking-[0.2em] text-gold">Quiz lý luận</p>
             <h2 className="mt-3 text-2xl font-black leading-9 text-white">{quiz.question}</h2>
           </div>
           <span className="rounded-md border border-cyan/40 bg-cyan/10 px-3 py-2 text-sm font-black text-cyan">

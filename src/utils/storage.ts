@@ -50,12 +50,15 @@ function migrateGameState(gameState: GameState): GameState {
     ...gameState,
     tiles,
     activeEventDeck: gameState.activeEventDeck ?? null,
+    rollsThisTurn: gameState.rollsThisTurn ?? (gameState.diceValue !== null ? 1 : 0),
+    extraRollsAvailable: gameState.extraRollsAvailable ?? 0,
     eventDecks,
     players: gameState.players.map((player) => ({
       ...player,
       avatar: normalizeAvatar(player.avatar, Number(player.id.replace('player-', '')) - 1),
       heldEventCards: player.heldEventCards ?? [],
       position: player.position % tiles.length,
+      assets: player.assets.map((asset) => ({ ...asset, lapsHeld: asset.lapsHeld ?? 1 })),
     })),
   };
 }

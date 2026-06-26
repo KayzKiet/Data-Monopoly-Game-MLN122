@@ -32,6 +32,7 @@ export interface Asset {
   upgradeCost: number;
   level: number;
   maxLevel: number;
+  lapsHeld: number;
   theoryConnection: string;
 }
 
@@ -108,6 +109,8 @@ export interface GameState {
   round: number;
   maxRounds: number;
   diceValue: number | null;
+  rollsThisTurn: number;
+  extraRollsAvailable: number;
   selectedTileId: string | null;
   activeEventId: string | null;
   activeEventDeck: EventDeckType | null;

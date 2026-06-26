@@ -33,7 +33,7 @@ const theorySections = [
   },
   {
     title: '8. Game này mô phỏng lý luận như thế nào?',
-    body: 'Người chơi mua tài sản dầu mỏ hoặc dữ liệu, trả phí khi phụ thuộc vào tài sản của người khác, gặp sự kiện chính sách và trả lời quiz lý luận. Cơ chế điểm market power cho thấy tiền, tài sản, người dùng, dữ liệu và điểm lý luận cùng phản ánh quá trình tập trung quyền lực thị trường.',
+    body: 'Người chơi mua tài sản dầu mỏ hoặc dữ liệu, trả phí khi phụ thuộc vào tài sản của người khác, gặp sự kiện chính sách và trả lời quiz lý luận. Cơ chế điểm quyền lực thị trường cho thấy tiền, tài sản, người dùng, dữ liệu và điểm lý luận cùng phản ánh quá trình tập trung quyền lực thị trường.',
   },
 ];
 
@@ -75,7 +75,7 @@ export function TheoryPage({ onBack }: TheoryPageProps) {
     <section className="screen-shell space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-4xl">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan">MLN122 Theory</p>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan">Lý thuyết MLN122</p>
           <h1 className="section-title mt-2">Từ độc quyền dầu mỏ đến độc quyền dữ liệu</h1>
           <p className="mt-3 text-base leading-7 text-slate-300">
             Trang này tóm tắt phần lý luận để dùng khi thuyết trình: rõ ý, ngắn gọn và liên hệ trực tiếp với cơ chế game.
@@ -98,7 +98,7 @@ export function TheoryPage({ onBack }: TheoryPageProps) {
       <div className="panel overflow-x-auto">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">Comparison</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">So sánh</p>
             <h2 className="mt-2 text-2xl font-black text-white">Bảng so sánh độc quyền dầu mỏ và độc quyền dữ liệu</h2>
           </div>
         </div>

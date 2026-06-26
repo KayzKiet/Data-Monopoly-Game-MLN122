@@ -15,6 +15,8 @@ Trước khi bắt đầu, mỗi người chơi cần:
 - Nhập tên.
 - Chọn ảnh nhân vật.
 - Bắt đầu với cùng lượng tài nguyên ban đầu.
+- Tên người chơi không được trùng nhau.
+- Avatar không được chọn trùng nhau.
 
 Ảnh nhân vật đặt trong `public/images/players`. Ảnh từng ô đặt trong `public/images/tiles`.
 
@@ -22,14 +24,14 @@ Trước khi bắt đầu, mỗi người chơi cần:
 
 Mỗi người chơi có các chỉ số sau:
 
-- Money: tiền dùng để mua tài sản, nâng cấp tài sản và trả phí.
-- Influence: mức ảnh hưởng xã hội/thị trường.
-- Users: số lượng người dùng, quan trọng với tài sản dữ liệu.
-- Data: lượng dữ liệu sở hữu, là tài nguyên chiến lược trong kinh tế số.
-- Theory Points: điểm lý luận nhận được khi trả lời đúng quiz MLN122.
-- Assets: danh sách tài sản đã mua.
-- Position: vị trí hiện tại trên bàn cờ.
-- Under Investigation: trạng thái bị điều tra chống độc quyền.
+- Vốn: tiền dùng để mua tài sản, nâng cấp tài sản và trả phí.
+- Ảnh hưởng: mức ảnh hưởng xã hội/thị trường.
+- Người dùng: số lượng người dùng, quan trọng với tài sản dữ liệu.
+- Dữ liệu: lượng dữ liệu sở hữu, là tài nguyên chiến lược trong kinh tế số.
+- Điểm lý luận: điểm nhận được khi trả lời đúng quiz MLN122.
+- Tài sản: danh sách tài sản đã mua.
+- Vị trí: vị trí hiện tại trên bàn cờ.
+- Đang bị điều tra: trạng thái bị điều tra chống độc quyền.
 
 ## 4. Cấu trúc bàn cờ
 
@@ -39,11 +41,11 @@ Các ô được đánh số từ 0 đến 39. Ô số 0 là Khởi nghiệp. Kh
 
 Kích thước hiển thị mục tiêu trên màn 16.5 inch, độ phân giải 1920 x 1080:
 
-- Toàn bộ bàn cờ: khoảng 740 x 740 px.
-- 4 ô góc: khoảng 100 x 100 px.
-- 9 ô nhỏ ở cạnh trên và 9 ô nhỏ ở cạnh dưới: khoảng 60 x 100 px mỗi ô.
-- 9 ô nhỏ ở cạnh trái và 9 ô nhỏ ở cạnh phải: khoảng 100 x 60 px mỗi ô.
-- Bàn cờ được đặt cân đối ở giữa vùng chơi để dễ quan sát toàn bộ cục diện.
+- Toàn bộ bàn cờ gốc: khoảng 1180 x 1180 px.
+- 4 ô góc: khoảng 150 x 150 px.
+- 9 ô nhỏ ở cạnh trên và 9 ô nhỏ ở cạnh dưới: khoảng 98 x 150 px mỗi ô.
+- 9 ô nhỏ ở cạnh trái và 9 ô nhỏ ở cạnh phải: khoảng 150 x 98 px mỗi ô.
+- Bàn cờ có nút phóng to / thu nhỏ để người chơi đọc rõ thông tin từng ô.
 
 Vị trí đặc biệt:
 
@@ -63,10 +65,10 @@ Các loại ô chính:
 - E-commerce Platform: sàn thương mại điện tử.
 - Cloud Infrastructure: hạ tầng đám mây.
 - AI Lab: phòng thí nghiệm AI.
-- Tax / Regulation: thuế hoặc quy định.
-- Crisis: khủng hoảng.
+- Thuế / Quy định: thuế hoặc quy định.
+- Khủng hoảng: khủng hoảng.
 - Khí vận / Cơ hội: rút thẻ may rủi hoặc biến động thị trường.
-- Theory Quiz: câu hỏi lý luận.
+- Quiz lý luận: câu hỏi lý luận.
 - Antitrust Investigation: điều tra chống độc quyền.
 
 ## 5. Cách chơi mỗi lượt
@@ -78,10 +80,17 @@ Mỗi lượt diễn ra theo thứ tự:
 3. Token của người chơi di chuyển từng ô theo kết quả xúc xắc.
 4. Khi dừng ở ô mới, game xử lý hiệu ứng của ô đó.
 5. Người chơi có thể mua tài sản nếu ô chưa có chủ.
-6. Người chơi có thể nâng cấp tài sản đang sở hữu nếu đủ tiền.
+6. Người chơi chỉ có thể nâng cấp nếu đang đứng trên ô tài sản của chính mình, tài sản đó đã sở hữu ít nhất 1 vòng và người chơi đủ tiền.
 7. Người chơi bấm Kết thúc lượt để chuyển sang người tiếp theo.
 
-Mỗi lượt chỉ được tung xúc xắc một lần.
+Người chơi phải tung xúc xắc ít nhất 1 lần mới được kết thúc lượt.
+
+Luật cặp đặc biệt:
+
+- Nếu tung được cặp 1:1, người chơi được tung thêm 1 lần.
+- Nếu tung được cặp 6:6, người chơi được tung thêm 1 lần.
+- Lượt tung thêm vẫn phải chờ token di chuyển xong và hiệu ứng ô hiện tại được xử lý xong.
+- Nếu lượt tung thêm tiếp tục ra 1:1 hoặc 6:6, người chơi lại được thêm 1 lần tung.
 
 ## 6. Đi qua ô Khởi nghiệp
 
@@ -89,9 +98,18 @@ Khi người chơi đi qua ô Khởi nghiệp, người chơi nhận thêm tiề
 
 Ý nghĩa lý luận: Khởi nghiệp tượng trưng cho chu kỳ tái đầu tư. Tư bản tiếp tục vận động qua các vòng sản xuất, lưu thông và tích lũy.
 
+Trong gameplay hiện tại, đi qua Khởi nghiệp còn có tác dụng mở quyền nâng cấp cho tài sản đã mua. Một tài sản mới mua phải được giữ qua ít nhất 1 vòng trước khi nâng cấp.
+
 ## 7. Mua tài sản
 
 Nếu người chơi dừng ở một ô tài sản chưa có chủ và đủ tiền, người chơi có thể mua tài sản đó.
+
+Khi mua, người chơi:
+
+- Trả giá mua hiển thị trên ô.
+- Nhận lợi ích ban đầu tùy loại tài sản.
+- Trở thành chủ sở hữu của ô đó.
+- Chưa được nâng cấp ngay; phải đi đủ 1 vòng sau khi mua.
 
 Tài sản dầu mỏ gồm:
 
@@ -122,13 +140,19 @@ Với tài sản dữ liệu, người chơi có thể mất thêm users hoặc 
 
 ## 9. Nâng cấp tài sản
 
-Người chơi có thể nâng cấp tài sản đã sở hữu nếu đủ tiền.
+Người chơi chỉ có thể nâng cấp tài sản khi đáp ứng đủ các điều kiện:
+
+- Đang đứng trên ô tài sản của chính mình.
+- Tài sản đó chưa đạt cấp tối đa.
+- Tài sản đã được sở hữu qua ít nhất 1 vòng, tức là người chơi đã đi qua Khởi nghiệp sau khi mua.
+- Người chơi đủ vốn để trả chi phí nâng cấp.
 
 Nâng cấp giúp:
 
 - Tăng giá trị tài sản.
-- Tăng tiền thuê.
+- Tăng tiền thuê mà người chơi khác phải trả khi dừng ở ô đó.
 - Tăng quyền lực thị trường.
+- Với tài sản dữ liệu, nâng cấp còn làm người chơi khác mất thêm dữ liệu hoặc người dùng khi dừng ở ô đó.
 
 Nếu người chơi sở hữu Cloud Infrastructure, một số chi phí nâng cấp được giảm.
 
@@ -163,19 +187,19 @@ Quy luật lặp lại của thẻ:
 
 Ví dụ thẻ Khí vận / Cơ hội:
 
-- Cá mập cắn cáp: nếu sở hữu tài sản dữ liệu, mất tiền và data.
+- Cá mập cắn cáp: nếu sở hữu tài sản dữ liệu, mất tiền và dữ liệu.
 - Trúng số khởi nghiệp: nhận thêm tiền.
 - Đầu tư chứng khoán có lời hoặc thua lỗ.
 - Bão lũ làm gián đoạn logistics.
-- Tăng tốc thị trường: nhận thêm influence, tượng trưng cho lợi thế đi trước.
-- Án phạt chống độc quyền: người dẫn đầu bị trừ tiền và influence.
+- Tăng tốc thị trường: nhận thêm ảnh hưởng, tượng trưng cho lợi thế đi trước.
+- Án phạt chống độc quyền: người dẫn đầu bị trừ tiền và ảnh hưởng.
 
 Các thẻ có thể tác động đến:
 
-- Money.
-- Influence.
-- Users.
-- Data.
+- Vốn.
+- Ảnh hưởng.
+- Người dùng.
+- Dữ liệu.
 - Tài sản.
 - Người chơi đang dẫn đầu hoặc cuối bảng.
 
@@ -185,12 +209,12 @@ Ví dụ:
 
 ## 12. Ô Quiz
 
-Khi dừng ở ô Theory Quiz, người chơi trả lời câu hỏi MLN122.
+Khi dừng ở ô Quiz lý luận, người chơi trả lời câu hỏi MLN122.
 
 Nếu trả lời đúng:
 
-- Nhận Theory Points.
-- Tăng nhẹ Influence.
+- Nhận điểm lý luận.
+- Tăng nhẹ ảnh hưởng.
 
 Nếu trả lời sai:
 
@@ -199,41 +223,70 @@ Nếu trả lời sai:
 
 Bộ câu hỏi được lấy từ file Source Question.md và đã được đưa vào dữ liệu quiz của game.
 
-## 13. Ô Regulation và Antitrust Investigation
+## 13. Ô Thuế, Quy định và Điều trần
 
 Các ô này mô phỏng sự điều tiết khi quyền lực thị trường quá lớn.
 
-Tác động có thể gồm:
+Ô Thuế / Quy định:
 
-- Trừ tiền.
-- Giảm influence.
-- Đánh dấu người chơi bị điều tra.
+- Người chơi đang đứng trên ô phải trả phí.
+- Người chơi mất ảnh hưởng.
+- Nếu sở hữu Cloud Infrastructure, phí có thể được giảm vì hạ tầng vận hành tốt hơn.
+
+Ô Điều trần / Chống độc quyền:
+
+- Người đang dẫn đầu quyền lực thị trường bị nhắm đến.
+- Người đó bị trừ vốn.
+- Người đó mất ảnh hưởng.
+- Người đó bị đánh dấu đang bị điều tra.
+
+Ô Khủng hoảng:
+
+- Người chơi mất chi phí vận hành bằng `$10 x số tài sản đang sở hữu`.
+- Nếu là ô Khủng hoảng chuỗi cung ứng, người chơi mất `5 dữ liệu`.
+- Nếu là ô Khủng hoảng niềm tin, người chơi mất `15% dữ liệu hiện có`, làm tròn lên.
+- Người chơi mất `2 điểm ảnh hưởng`.
 
 Ý nghĩa lý luận: trong CNTB hiện đại, khi độc quyền phát triển mạnh, nhà nước và xã hội có thể phải can thiệp thông qua thuế, quy định, chống độc quyền hoặc chính sách dữ liệu mở.
 
-## 14. Market Power
+## 14. Bảng thông tin người chơi
 
-Market Power là điểm thể hiện quyền lực thị trường của người chơi.
+Mỗi người chơi có một bảng thông tin riêng trong game.
+
+Bảng này hiển thị:
+
+- Vốn hiện có.
+- Ảnh hưởng.
+- Người dùng.
+- Dữ liệu.
+- Điểm lý luận.
+- Quyền lực thị trường.
+- Danh sách ô đất/tài sản đã mua.
+- Số ô, tên tài sản, cấp hiện tại, tiền thuê cơ bản và trạng thái đã đủ vòng nâng cấp hay chưa.
+
+## 15. Quyền lực thị trường
+
+Quyền lực thị trường là điểm thể hiện mức chi phối thị trường của người chơi.
 
 Điểm này được tính dựa trên:
 
-- Money.
+- Vốn.
 - Giá trị tài sản.
-- Users.
-- Data.
-- Theory Points.
+- Người dùng.
+- Dữ liệu.
+- Điểm lý luận.
 
 Công thức được scale khoảng 0 đến 100 để dễ đọc trên giao diện.
 
-## 15. Điều kiện thắng
+## 16. Điều kiện thắng
 
 Một người chơi thắng nếu đạt một trong các điều kiện:
 
-1. Kiểm soát ít nhất 60% tổng market power.
-2. Đạt 100 theory points và có điểm kinh tế cao nhất.
+1. Kiểm soát ít nhất 60% tổng quyền lực thị trường.
+2. Đạt 100 điểm lý luận và có điểm kinh tế cao nhất.
 3. Sau 25 vòng, người có tổng điểm cao nhất thắng.
 
-## 16. Ý nghĩa màn kết quả
+## 17. Ý nghĩa màn kết quả
 
 Khi kết thúc, game hiển thị câu hỏi:
 
@@ -246,7 +299,7 @@ Khi kết thúc, game hiển thị câu hỏi:
 - Hình thức độc quyền thay đổi, nhưng sự tập trung quyền lực thị trường vẫn tồn tại.
 - Đây là một giới hạn của CNTB hiện đại.
 
-## 17. Gợi ý thuyết trình
+## 18. Gợi ý thuyết trình
 
 Khi trình bày trên lớp, có thể giải thích game theo 3 bước:
 

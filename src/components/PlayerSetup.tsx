@@ -27,6 +27,7 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
   const [error, setError] = useState('');
 
   const activePlayers = useMemo(() => players.slice(0, playerCount), [playerCount, players]);
+  const selectedAvatarIds = useMemo(() => activePlayers.map((player) => player.avatarId), [activePlayers]);
 
   const updatePlayerName = (index: number, name: string) => {
     setPlayers((current) => current.map((player, itemIndex) => (itemIndex === index ? { ...player, name } : player)));
@@ -34,13 +35,31 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
   };
 
   const updatePlayerAvatar = (index: number, avatarId: string) => {
+    const isTaken = activePlayers.some((player, itemIndex) => itemIndex !== index && player.avatarId === avatarId);
+    if (isTaken) {
+      setError('Avatar này đã có người chơi khác chọn.');
+      return;
+    }
+
     setPlayers((current) => current.map((player, itemIndex) => (itemIndex === index ? { ...player, avatarId } : player)));
+    setError('');
   };
 
   const handleStart = () => {
-    const hasEmptyName = activePlayers.some((player) => player.name.trim().length === 0);
+    const normalizedNames = activePlayers.map((player) => player.name.trim().toLocaleLowerCase());
+    const hasEmptyName = normalizedNames.some((name) => name.length === 0);
     if (hasEmptyName) {
       setError('Tên người chơi không được để trống.');
+      return;
+    }
+
+    if (new Set(normalizedNames).size !== normalizedNames.length) {
+      setError('Tên người chơi không được trùng nhau.');
+      return;
+    }
+
+    if (new Set(selectedAvatarIds).size !== selectedAvatarIds.length) {
+      setError('Avatar người chơi không được trùng nhau.');
       return;
     }
 
@@ -105,7 +124,7 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
           <div className="rounded-lg border border-gold/30 bg-gold/10 p-4">
             <p className="text-sm font-bold text-gold">Mục tiêu chiến thắng</p>
             <p className="mt-2 text-sm leading-6 text-slate-300">
-              Kiểm soát market power, đạt điểm lý luận cao, hoặc dẫn đầu tổng điểm sau 25 vòng.
+              Kiểm soát quyền lực thị trường, đạt điểm lý luận cao, hoặc dẫn đầu tổng điểm sau 25 vòng.
             </p>
           </div>
 
@@ -152,27 +171,35 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
                 <div className="mt-4">
                   <p className="text-sm font-bold text-slate-200">Chọn ảnh nhân vật</p>
                   <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8 md:grid-cols-4 xl:grid-cols-8">
-                    {avatars.map((avatar) => (
-                      <button
-                        aria-label={avatar.label}
-                        className={`grid h-11 w-full place-items-center rounded-md border text-xl transition ${
-                          player.avatarId === avatar.id
-                            ? 'border-gold bg-gold/20 shadow-gold'
-                            : 'border-white/10 bg-white/5 hover:border-cyan/50'
-                        }`}
-                        key={avatar.id}
-                        onClick={() => updatePlayerAvatar(index, avatar.id)}
-                        title={avatar.label}
-                        type="button"
-                      >
-                        <PlayerAvatar
-                          alt={avatar.label}
-                          className="h-8 w-8 rounded-md"
-                          imagePath={avatar.imagePath}
-                          label={avatar.label}
-                        />
-                      </button>
-                    ))}
+                    {avatars.map((avatar) => {
+                      const isSelected = player.avatarId === avatar.id;
+                      const isTaken = selectedAvatarIds.includes(avatar.id) && !isSelected;
+
+                      return (
+                        <button
+                          aria-label={avatar.label}
+                          className={`relative grid h-11 w-full place-items-center rounded-md border text-xl transition ${
+                            isSelected
+                              ? 'border-gold bg-gold/20 shadow-gold'
+                              : isTaken
+                                ? 'cursor-not-allowed border-white/5 bg-white/[0.03] opacity-35'
+                                : 'border-white/10 bg-white/5 hover:border-cyan/50'
+                          }`}
+                          disabled={isTaken}
+                          key={avatar.id}
+                          onClick={() => updatePlayerAvatar(index, avatar.id)}
+                          title={isTaken ? 'Avatar đã được chọn' : avatar.label}
+                          type="button"
+                        >
+                          <PlayerAvatar
+                            alt={avatar.label}
+                            className="h-8 w-8 rounded-md"
+                            imagePath={avatar.imagePath}
+                            label={avatar.label}
+                          />
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </section>

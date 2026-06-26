@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { events } from '../data/events';
 import { quizzes } from '../data/quizzes';
 import type { GameState, Player, Tile } from '../types/game';
-import { answerQuiz, applyEvent, buyAsset, endTurn, handleTileLanding, movePlayer, upgradeAsset } from '../utils/gameLogic';
+import { answerQuiz, applyDicePairRule, applyEvent, buyAsset, endTurn, handleTileLanding, movePlayer, upgradeAsset } from '../utils/gameLogic';
 import { ActionPanel } from './ActionPanel';
 import { BoardTile } from './BoardTile';
 import { Dice } from './Dice';
@@ -22,6 +22,10 @@ interface GameBoardProps {
 }
 
 const playerColors = ['bg-cyan', 'bg-gold', 'bg-emerald-400', 'bg-rose-400'];
+type TurnAnimationPhase = 'idle' | 'rolling' | 'revealed' | 'moving';
+const boardSize = 1180;
+const boardCornerSize = 150;
+const boardEdgeTileSize = 98;
 
 const perimeterPositions = Array.from({ length: 40 }, (_, index) => {
   if (index <= 10) return { row: 11, col: 11 - index };
@@ -33,10 +37,22 @@ const perimeterPositions = Array.from({ length: 40 }, (_, index) => {
 export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onSetup, onTheory }: GameBoardProps) {
   const currentPlayer = gameState?.players[gameState.currentPlayerIndex] ?? null;
   const [diceFaces, setDiceFaces] = useState<[number, number] | null>(null);
-  const [isRolling, setIsRolling] = useState(false);
+  const [turnAnimationPhase, setTurnAnimationPhase] = useState<TurnAnimationPhase>('idle');
   const [movingPlayerId, setMovingPlayerId] = useState<string | null>(null);
+  const [boardZoom, setBoardZoom] = useState(0.9);
   const [visualPositions, setVisualPositions] = useState<Record<string, number>>({});
   const timers = useRef<number[]>([]);
+  const isRolling = turnAnimationPhase === 'rolling';
+  const isMoving = turnAnimationPhase === 'moving';
+  const isTurnBusy = turnAnimationPhase !== 'idle';
+  const canRollDice = Boolean(
+    gameState &&
+      currentPlayer &&
+      !gameState.activeEventId &&
+      !gameState.activeQuizId &&
+      !isTurnBusy &&
+      (gameState.rollsThisTurn === 0 || gameState.extraRollsAvailable > 0),
+  );
 
   const ownerByTileId = useMemo(() => {
     const owners = new Map<string, Player>();
@@ -53,12 +69,18 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const activeQuiz = gameState?.activeQuizId ? quizzes.find((quiz) => quiz.id === gameState.activeQuizId) ?? null : null;
 
   useEffect(() => {
-    if (!gameState || isRolling) return;
+    if (!gameState || isTurnBusy) return;
 
     setVisualPositions(
       Object.fromEntries(gameState.players.map((player) => [player.id, player.position])),
     );
-  }, [gameState, isRolling]);
+  }, [gameState, isTurnBusy]);
+
+  useEffect(() => {
+    if (gameState?.diceValue === null && !isTurnBusy) {
+      setDiceFaces(null);
+    }
+  }, [gameState?.currentPlayerIndex, gameState?.diceValue, isTurnBusy]);
 
   useEffect(() => {
     return () => {
@@ -78,7 +100,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   };
 
   const handleRoll = () => {
-    if (!gameState || !currentPlayer || gameState.diceValue !== null || isRolling) return;
+    if (!gameState || !currentPlayer || !canRollDice) return;
 
     const rolledFaces: [number, number] = [randomDieFace(), randomDieFace()];
     const diceValue = rolledFaces[0] + rolledFaces[1];
@@ -86,42 +108,50 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
     const startPosition = currentPlayer.position;
     let previewTick = 0;
 
-    setIsRolling(true);
-    setMovingPlayerId(playerId);
+    setTurnAnimationPhase('rolling');
 
     const previewInterval = window.setInterval(() => {
       previewTick += 1;
       setDiceFaces([((previewTick + 1) % 6) + 1, ((previewTick + 4) % 6) + 1]);
-    }, 90);
+    }, 80);
     timers.current.push(previewInterval);
 
     const revealTimer = window.setTimeout(() => {
       window.clearInterval(previewInterval);
       setDiceFaces(rolledFaces);
+      setTurnAnimationPhase('revealed');
 
-      let step = 0;
-      const movementInterval = window.setInterval(() => {
-        step += 1;
-        const nextPosition = (startPosition + step) % gameState.tiles.length;
-        setVisualPositions((current) => ({ ...current, [playerId]: nextPosition }));
+      const movementDelayTimer = window.setTimeout(() => {
+        setTurnAnimationPhase('moving');
+        setMovingPlayerId(playerId);
 
-        if (step >= diceValue) {
-          window.clearInterval(movementInterval);
+        let step = 0;
+        const movementInterval = window.setInterval(() => {
+          step += 1;
+          const nextPosition = (startPosition + step) % gameState.tiles.length;
+          setVisualPositions((current) => ({ ...current, [playerId]: nextPosition }));
 
-          const settleTimer = window.setTimeout(() => {
-            const movedState = movePlayer(gameState, diceValue, playerId);
-            const landedState = handleTileLanding(movedState, playerId);
-            setIsRolling(false);
-            setMovingPlayerId(null);
-            setDiceFaces(null);
-            commitGameState(landedState);
-          }, 160);
+          if (step >= diceValue) {
+            window.clearInterval(movementInterval);
 
-          timers.current.push(settleTimer);
-        }
-      }, 180);
-      timers.current.push(movementInterval);
-    }, 700);
+            const settleTimer = window.setTimeout(() => {
+              const movedState = movePlayer(gameState, diceValue, playerId);
+              const landedState = handleTileLanding(movedState, playerId);
+              const nextState = applyDicePairRule(landedState, rolledFaces, playerId);
+              setTurnAnimationPhase('idle');
+              setMovingPlayerId(null);
+              setDiceFaces(rolledFaces);
+              commitGameState(nextState);
+            }, 180);
+
+            timers.current.push(settleTimer);
+          }
+        }, 240);
+        timers.current.push(movementInterval);
+      }, 420);
+
+      timers.current.push(movementDelayTimer);
+    }, 980);
 
     timers.current.push(revealTimer);
   };
@@ -201,13 +231,45 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(780px,1fr)_minmax(360px,28vw)]">
-        <div className="overflow-auto rounded-xl border border-cyan/20 bg-[#75bceb] p-4 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.22)]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(960px,1fr)_minmax(420px,28vw)]">
+        <div
+          className="max-h-[calc(100vh-124px)] overflow-auto rounded-xl border border-cyan/20 bg-[#75bceb] bg-cover bg-center p-5 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.22)]"
+          style={{ backgroundImage: 'linear-gradient(rgba(117,188,235,0.88),rgba(117,188,235,0.88)), url("/images/board/board-outer-blue.png")' }}
+        >
+          <div className="sticky left-0 top-0 z-40 mb-3 flex w-fit items-center gap-2 rounded-lg border border-white/20 bg-oil/80 p-2 shadow-lg backdrop-blur">
+            <span className="px-2 text-xs font-black uppercase tracking-[0.14em] text-cyan">Phóng bàn</span>
+            <button
+              className="secondary-button px-3 py-1"
+              onClick={() => setBoardZoom((current) => Math.max(0.65, Number((current - 0.1).toFixed(2))))}
+              type="button"
+            >
+              -
+            </button>
+            <span className="w-14 text-center text-sm font-black text-white">{Math.round(boardZoom * 100)}%</span>
+            <button
+              className="secondary-button px-3 py-1"
+              onClick={() => setBoardZoom((current) => Math.min(1.35, Number((current + 0.1).toFixed(2))))}
+              type="button"
+            >
+              +
+            </button>
+          </div>
           <div
-            className="mx-auto grid h-[740px] w-[740px] shrink-0 overflow-hidden rounded-lg bg-[#ff914d] outline outline-4 outline-[#5c9e1c] shadow-[0_0_0_6px_rgba(22,75,42,0.35)]"
+            className="mx-auto shrink-0"
             style={{
-              gridTemplateColumns: '100px repeat(9, 60px) 100px',
-              gridTemplateRows: '100px repeat(9, 60px) 100px',
+              height: boardSize * boardZoom,
+              width: boardSize * boardZoom,
+            }}
+          >
+          <div
+            className="grid shrink-0 origin-top-left overflow-visible rounded-lg bg-[#ff914d] bg-cover bg-center outline outline-4 outline-[#5c9e1c] shadow-[0_0_0_6px_rgba(22,75,42,0.35)]"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(255,145,77,0.9),rgba(255,145,77,0.9)), url("/images/board/board-inner-orange.png")',
+              gridTemplateColumns: `${boardCornerSize}px repeat(9, ${boardEdgeTileSize}px) ${boardCornerSize}px`,
+              gridTemplateRows: `${boardCornerSize}px repeat(9, ${boardEdgeTileSize}px) ${boardCornerSize}px`,
+              height: boardSize,
+              transform: `scale(${boardZoom})`,
+              width: boardSize,
             }}
           >
             {gameState.tiles.map((tile) => (
@@ -234,9 +296,12 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
                   </div>
                   {currentPlayer && (
                     <Dice
+                      canRoll={canRollDice}
                       currentPlayerName={currentPlayer.name}
                       diceFaces={diceFaces}
                       gameState={gameState}
+                      isBusy={isTurnBusy}
+                      isMoving={isMoving}
                       isRolling={isRolling}
                       onRoll={handleRoll}
                     />
@@ -244,6 +309,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
 
@@ -253,7 +319,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
             <ActionPanel
               currentPlayer={currentPlayer}
               gameState={gameState}
-              isBusy={isRolling}
+              isBusy={isTurnBusy}
               onApplyEvent={handleApplyEvent}
               onBuyAsset={handleBuyAsset}
               onEndTurn={handleEndTurn}
@@ -329,8 +395,8 @@ function CurrentPlayersCard({ gameState }: { gameState: GameState }) {
               </div>
               <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-300">
                 <span>${player.money}</span>
-                <span>{player.assets.length} assets</span>
-                <span>{player.theoryPoints} theory</span>
+                <span>{player.assets.length} tài sản</span>
+                <span>{player.theoryPoints} lý luận</span>
               </div>
             </div>
           );
