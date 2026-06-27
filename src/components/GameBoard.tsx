@@ -53,6 +53,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const [visualPositions, setVisualPositions] = useState<Record<string, number>>({});
   const [offscreenPlayerGuides, setOffscreenPlayerGuides] = useState<OffscreenPlayerGuide[]>([]);
   const [isTheoryOpen, setIsTheoryOpen] = useState(false);
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
   const boardViewportRef = useRef<HTMLDivElement | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
   const playersSectionRef = useRef<HTMLDivElement | null>(null);
@@ -346,6 +347,9 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
           <button className="secondary-button" onClick={() => setIsTheoryOpen(true)} type="button">
             Lý thuyết
           </button>
+          <button className="secondary-button" onClick={() => setIsRulesOpen(true)} type="button">
+            Luật chơi
+          </button>
           <button className="primary-button" disabled={gameState.status !== 'finished'} onClick={onFinish} type="button">
             Xem kết quả
           </button>
@@ -497,6 +501,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
       <EventModal event={activeEvent} onApply={handleApplyEvent} />
       <QuizModal quiz={activeQuiz} onAnswer={handleQuizAnswer} />
       <GameTheoryModal isOpen={isTheoryOpen} onClose={() => setIsTheoryOpen(false)} />
+      <GameRulesModal isOpen={isRulesOpen} onClose={() => setIsRulesOpen(false)} />
     </section>
   );
 }
@@ -715,6 +720,147 @@ function GameTheoryModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                     <td className="border-b border-white/10 px-4 py-4 font-bold text-white">{row.criterion}</td>
                     <td className="border-b border-white/10 px-4 py-4 leading-6">{row.oil}</td>
                     <td className="border-b border-white/10 px-4 py-4 leading-6">{row.data}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  if (!isOpen) return null;
+
+  const ruleSections = [
+    {
+      title: '1. Mục tiêu học tập',
+      content: [
+        'Data Monopoly mô phỏng quá trình cạnh tranh, tích lũy tài sản và hình thành quyền lực thị trường.',
+        'Người chơi bắt đầu với vốn khởi nghiệp; ảnh hưởng, người dùng, dữ liệu, điểm lý luận và tài sản đều bắt đầu từ 0.',
+        'Thông điệp chính: hình thức độc quyền có thể chuyển từ tài nguyên vật chất sang dữ liệu/nền tảng, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn cần được phân tích.',
+      ],
+    },
+    {
+      title: '2. Mỗi lượt chơi',
+      content: [
+        'Bấm Tung xúc xắc để di chuyển theo tổng 2 xúc xắc.',
+        'Khung bàn cờ tự đi theo nhân vật. Khi di chuyển xong, bảng bên phải tự chuyển đến phần Hành động.',
+        'Xử lý ô đang đứng: mua tài sản, trả phí, rút thẻ, trả lời quiz hoặc chịu điều tiết/khủng hoảng.',
+        'Sau khi xử lý xong, bấm Kết thúc lượt. Bảng bên phải sẽ quay về phần Người chơi.',
+      ],
+    },
+    {
+      title: '3. Hiệu ứng khi di chuyển',
+      content: [
+        'Nếu tung tổng từ 10 trở lên: tài sản dữ liệu có thể tạo thêm users/data; hạ tầng dầu mỏ, logistics hoặc cloud có thể tăng ảnh hưởng.',
+        'Nếu tung tổng từ 3 trở xuống và đã có tài sản: phát sinh chi phí vận hành nhỏ.',
+        'Nếu tung cặp 1:1 hoặc 6:6: được tung thêm một lần sau khi xử lý xong lượt di chuyển hiện tại.',
+      ],
+    },
+    {
+      title: '4. Mua và nâng cấp tài sản',
+      content: [
+        'Nếu dừng ở tài sản chưa có chủ và đủ vốn, người chơi có thể mua tài sản đó.',
+        'Tài sản dầu mỏ thường tạo vốn và ảnh hưởng. Tài sản dữ liệu tạo users, data và ảnh hưởng.',
+        'Tài sản mới mua chưa nâng cấp ngay; phải đi qua Khởi nghiệp ít nhất 1 vòng sau khi mua.',
+        'Nâng cấp làm tăng giá trị tài sản, tiền thuê và quyền lực thị trường.',
+      ],
+    },
+    {
+      title: '5. Users, data và vòng lặp nền tảng',
+      content: [
+        'Cuối lượt, nếu người chơi có tài sản dữ liệu và có users, users sẽ tạo thêm data hành vi.',
+        'Nhiều users -> nhiều data; data có thể làm thuật toán/AI mạnh hơn; AI và nền tảng mạnh hơn có thể tiếp tục hút users.',
+        'Đây là phần mô phỏng độc quyền dữ liệu hiện đại, không phải khái niệm nguyên văn trong giáo trình MLN.',
+      ],
+    },
+    {
+      title: '6. Khí vận và Cơ hội',
+      content: [
+        'Khí vận thiên về biến động cá nhân: trúng vốn, thua lỗ, KOL đánh giá, tín dụng cloud, sự cố cáp, bão lũ, chi phí vận hành.',
+        'Cơ hội thiên về biến động thị trường: hiệu ứng mạng lưới, vòng lặp users-data, dữ liệu mở, tẩy chay nền tảng, sandbox chính sách, khóa nhà cung ứng, phạt chống độc quyền.',
+        'Thẻ thường được đưa xuống đáy xấp sau khi dùng; thẻ giữ lại không quay lại xấp ngay.',
+      ],
+    },
+    {
+      title: '7. Quiz, điều tiết và khủng hoảng',
+      content: [
+        'Quiz MLN122: trả lời đúng nhận điểm lý luận và tăng nhẹ ảnh hưởng; trả lời sai vẫn hiện giải thích để học lại.',
+        'Thuế/Quy định: người đứng trên ô trả phí và mất ảnh hưởng; sở hữu cloud có thể giảm phí.',
+        'Điều trần/Chống độc quyền: người dẫn đầu quyền lực thị trường bị nhắm đến.',
+        'Khủng hoảng: mất chi phí vận hành, dữ liệu và ảnh hưởng.',
+      ],
+    },
+    {
+      title: '8. Điều kiện thắng',
+      content: [
+        'Từ vòng 5 trở đi, nếu một người chơi có ít nhất 4 tài sản và kiểm soát ít nhất 60% tổng quyền lực thị trường, người đó thắng.',
+        'Hoặc đạt 100 điểm lý luận và dẫn đầu kinh tế.',
+        'Hoặc sau 25 vòng, người có tổng điểm cao nhất thắng.',
+        'Nút Xem kết quả chỉ mở sau khi game thật sự kết thúc.',
+      ],
+    },
+    {
+      title: '9. Cách đọc bài học từ game',
+      content: [
+        'Dầu mỏ: quyền lực đến từ tài nguyên vật chất và hạ tầng sản xuất - lưu thông.',
+        'Dữ liệu: quyền lực đến từ người dùng, dữ liệu, nền tảng, thuật toán, AI và hiệu ứng mạng lưới.',
+        'Điều tiết, khủng hoảng, tẩy chay và dữ liệu mở cho thấy độc quyền không phải sức mạnh tuyệt đối; nó luôn gặp giới hạn xã hội, chính sách và kỹ thuật.',
+      ],
+    },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-40 grid place-items-center bg-oil/80 px-4 py-5 backdrop-blur-md">
+      <section className="flex max-h-[calc(100vh-2.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-gold/30 bg-midnight shadow-gold">
+        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-white/10 p-5">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.2em] text-gold">Luật chơi đầy đủ</p>
+            <h2 className="mt-2 text-2xl font-black text-white">Data Monopoly</h2>
+          </div>
+          <button className="secondary-button px-3 py-2" onClick={onClose} type="button">
+            Đóng
+          </button>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto p-5">
+          <div className="grid gap-4 lg:grid-cols-2">
+            {ruleSections.map((section) => (
+              <article className="rounded-lg border border-white/10 bg-oil/60 p-4" key={section.title}>
+                <h3 className="text-lg font-black text-white">{section.title}</h3>
+                <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-300">
+                  {section.content.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-5 overflow-x-auto rounded-lg border border-white/10">
+            <table className="w-full min-w-[760px] border-separate border-spacing-0 text-left text-sm">
+              <thead className="text-cyan">
+                <tr>
+                  <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Chỉ số</th>
+                  <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Bắt đầu</th>
+                  <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Ý nghĩa</th>
+                </tr>
+              </thead>
+              <tbody className="text-slate-300">
+                {[
+                  ['Vốn', '$500', 'Mua tài sản, nâng cấp, trả phí và chịu biến động thị trường.'],
+                  ['Ảnh hưởng', '0', 'Sức nặng xã hội/thị trường, tăng qua tài sản, quiz và sự kiện.'],
+                  ['Người dùng', '0', 'Nguồn tạo dữ liệu cho tài sản dữ liệu và nền tảng số.'],
+                  ['Dữ liệu', '0', 'Tài nguyên chiến lược trong kinh tế số, gắn với thuật toán/AI.'],
+                  ['Điểm lý luận', '0', 'Thể hiện việc trả lời đúng quiz và hiểu nội dung MLN122.'],
+                ].map(([metric, start, meaning]) => (
+                  <tr key={metric}>
+                    <td className="border-b border-white/10 px-4 py-4 font-bold text-white">{metric}</td>
+                    <td className="border-b border-white/10 px-4 py-4">{start}</td>
+                    <td className="border-b border-white/10 px-4 py-4 leading-6">{meaning}</td>
                   </tr>
                 ))}
               </tbody>
