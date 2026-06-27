@@ -9,9 +9,9 @@ interface LandingPageProps {
 }
 
 const learningPoints = [
-  'Độc quyền dầu mỏ hình thành qua tài nguyên khan hiếm, nhà máy lọc dầu, đường ống và logistics.',
-  'Độc quyền dữ liệu hình thành qua nền tảng số, người dùng, thuật toán, AI và hiệu ứng mạng lưới.',
-  'Hình thức thay đổi, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn tiếp tục tồn tại.',
+  'Độc quyền dầu mỏ trong game mô phỏng quyền lực từ tài nguyên vật chất và hạ tầng.',
+  'Độc quyền dữ liệu là phần vận dụng hiện đại: nền tảng số, người dùng, dữ liệu, thuật toán và AI.',
+  'Trọng tâm MLN122 là xu hướng tích tụ, tập trung tư bản và khả năng hình thành quyền lực độc quyền.',
 ];
 
 const howToPlaySteps = [
@@ -44,8 +44,8 @@ export function LandingPage({ hasSavedGame, onContinue, onStart, onLearnTheory, 
             Từ độc quyền dầu mỏ đến độc quyền dữ liệu
           </p>
           <p className="max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
-            Trò chơi giúp người học nhìn thấy cách cạnh tranh trong CNTB hiện đại có thể dẫn
-            tới tích tụ tư bản, tập trung tư bản, độc quyền và rào cản gia nhập thị trường.
+            Trò chơi giúp người học phân tích cách cạnh tranh trong CNTB có thể gắn với tích tụ tư bản,
+            tập trung tư bản, quyền lực độc quyền và rào cản gia nhập thị trường.
           </p>
         </div>
 

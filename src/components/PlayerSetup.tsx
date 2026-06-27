@@ -86,7 +86,7 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
           <h1 className="section-title mt-2">Thiết lập người chơi</h1>
           <p className="mt-3 text-sm leading-6 text-slate-300">
             Chọn đội hình thuyết trình, đặt tên đại diện và ảnh nhân vật. Khi bắt đầu, hệ thống sẽ tạo
-            trạng thái game ban đầu với vốn, ảnh hưởng, users, data và điểm lý luận.
+            trạng thái game ban đầu với vốn khởi nghiệp; ảnh hưởng, users, data, tài sản và điểm lý luận đều bắt đầu từ 0.
           </p>
         </div>
         <button className="secondary-button" onClick={onBack} type="button">

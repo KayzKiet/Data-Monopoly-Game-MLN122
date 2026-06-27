@@ -56,8 +56,22 @@ function App() {
     setPage('setup');
   };
 
+  const canViewResult = gameState?.status === 'finished';
+
+  const handleNav = (targetPage: Page) => {
+    if (targetPage === 'result' && !canViewResult) {
+      window.alert('Chỉ xem kết quả sau khi ván chơi đã kết thúc.');
+      return;
+    }
+
+    setPage(targetPage);
+  };
+
   return (
-    <main className={`min-h-screen transition-colors duration-300 ${isLightTheme ? 'bg-slate-100 text-slate-950' : 'bg-oil text-slate-100'}`}>
+    <main
+      className={`min-h-screen transition-colors duration-300 ${isLightTheme ? 'bg-slate-100 text-slate-950' : 'bg-oil text-slate-100'}`}
+      data-theme={themeMode}
+    >
       <div
         className={`fixed inset-0 -z-10 transition-colors duration-300 ${
           isLightTheme
@@ -75,22 +89,40 @@ function App() {
             Data Monopoly
           </button>
           <div className="flex flex-wrap gap-2">
-            {navItems.map((item) => (
-              <button
-                className={`rounded-md px-3 py-2 text-sm font-semibold transition ${
-                  page === item.page
-                    ? 'bg-cyan text-oil shadow-glow'
-                    : isLightTheme
-                      ? 'border border-slate-900/10 bg-white/70 text-slate-700 hover:border-cyan/50 hover:text-cyan'
-                      : 'border border-white/10 bg-white/5 text-slate-200 hover:border-cyan/50 hover:text-cyan'
-                }`}
-                key={item.page}
-                onClick={() => setPage(item.page)}
-                type="button"
-              >
-                {item.label}
-              </button>
-            ))}
+            {navItems.map((item) => {
+              const isDisabled = item.page === 'result' && !canViewResult;
+
+              return (
+                <button
+                  className={`rounded-md px-3 py-2 text-sm font-semibold transition ${
+                    page === item.page
+                      ? 'bg-cyan text-oil shadow-glow'
+                      : isDisabled
+                        ? 'cursor-not-allowed border border-slate-500/20 bg-slate-500/10 text-slate-500'
+                        : isLightTheme
+                          ? 'border border-slate-900/10 bg-white/70 text-slate-700 hover:border-cyan/50 hover:text-cyan'
+                          : 'border border-white/10 bg-white/5 text-slate-200 hover:border-cyan/50 hover:text-cyan'
+                  }`}
+                  disabled={isDisabled}
+                  key={item.page}
+                  onClick={() => handleNav(item.page)}
+                  type="button"
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+            <button
+              className={`rounded-md px-3 py-2 text-sm font-semibold transition ${
+                isLightTheme
+                  ? 'border border-slate-900/10 bg-slate-900 text-white hover:bg-slate-800'
+                  : 'border border-gold/50 bg-gold/10 text-gold hover:bg-gold/20'
+              }`}
+              onClick={() => setThemeMode((current) => (current === 'dark' ? 'light' : 'dark'))}
+              type="button"
+            >
+              {isLightTheme ? 'Giao diện tối' : 'Giao diện sáng'}
+            </button>
           </div>
         </div>
       </nav>
@@ -112,8 +144,6 @@ function App() {
           onFinish={() => setPage('result')}
           onReset={handleResetGame}
           onSetup={() => setPage('setup')}
-          onToggleTheme={() => setThemeMode((current) => (current === 'dark' ? 'light' : 'dark'))}
-          onTheory={() => setPage('theory')}
           themeMode={themeMode}
         />
       )}

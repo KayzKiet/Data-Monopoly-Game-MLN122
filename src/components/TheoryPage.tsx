@@ -1,72 +1,73 @@
+import { getSourceReferencesByIds, sourceReferences } from '../data/sources';
+
 interface TheoryPageProps {
   onBack: () => void;
 }
 
 const theorySections = [
   {
-    title: '1. Độc quyền là gì?',
-    body: 'Độc quyền là trạng thái một hoặc một nhóm rất nhỏ doanh nghiệp nắm quyền chi phối thị trường. Khi quyền lực tập trung, doanh nghiệp có thể tác động tới giá cả, nguồn cung, điều kiện cạnh tranh và khả năng gia nhập thị trường của đối thủ mới.',
+    title: '1. Độc quyền trong kinh tế chính trị Mác - Lênin',
+    body:
+      'Trong phần chủ nghĩa tư bản độc quyền, độc quyền được trình bày gắn với sự tập trung sản xuất và tư bản ở trình độ cao, làm xuất hiện các tổ chức độc quyền có khả năng chi phối sản xuất, thị trường và giá cả để thu lợi nhuận độc quyền cao. Vì vậy, game không hiểu độc quyền đơn giản là “một công ty bán một món hàng”, mà là quyền lực thị trường được tạo ra từ quy mô, kiểm soát nguồn lực và rào cản cạnh tranh.',
+    sourceIds: ['mln-textbook', 'lenin-imperialism'],
   },
   {
-    title: '2. Độc quyền dầu mỏ: kiểm soát tài nguyên vật chất',
-    body: 'Trong thời đại dầu mỏ, quyền lực độc quyền thường đến từ việc kiểm soát mỏ dầu, nhà máy lọc dầu, đường ống, cảng biển và mạng lưới vận chuyển. Ai nắm tài nguyên khan hiếm và hạ tầng vật chất thì có lợi thế lớn trong sản xuất và phân phối.',
+    title: '2. Tích tụ, tập trung tư bản và cạnh tranh',
+    body:
+      'Lý luận MLN nhấn mạnh cạnh tranh trong chủ nghĩa tư bản có thể thúc đẩy tích tụ và tập trung tư bản: doanh nghiệp mở rộng quy mô, doanh nghiệp yếu bị loại bỏ hoặc bị thâu tóm, tư bản dồn vào các chủ thể lớn hơn. Đây là cơ sở để game cho phép mua tài sản, nâng cấp, thu phí và tạo quyền lực thị trường sau nhiều vòng chơi.',
+    sourceIds: ['mln-textbook'],
   },
   {
-    title: '3. Độc quyền dữ liệu: kiểm soát người dùng, dữ liệu, thuật toán và nền tảng',
-    body: 'Trong kinh tế số, quyền lực không chỉ nằm ở tài nguyên vật chất mà còn nằm ở nền tảng số. Doanh nghiệp càng có nhiều người dùng thì càng thu thập nhiều dữ liệu, cải thiện thuật toán, phát triển AI và củng cố vị thế thị trường.',
+    title: '3. Độc quyền dầu mỏ trong game',
+    body:
+      'Các ô mỏ dầu, nhà máy lọc dầu, đường ống và logistics là ví dụ mô phỏng cách một chủ thể có thể tăng sức mạnh khi kiểm soát tài nguyên vật chất và các khâu quan trọng của chuỗi sản xuất - lưu thông. Đây là phần vận dụng vào chủ đề dầu mỏ, không phải một trích dẫn nguyên văn từ giáo trình.',
+    sourceIds: ['mln-textbook', 'lenin-imperialism'],
   },
   {
-    title: '4. So sánh độc quyền tài nguyên và độc quyền dữ liệu',
-    body: 'Độc quyền dầu mỏ và độc quyền dữ liệu khác nhau về hình thức, nhưng giống nhau ở bản chất: đều tạo ra quyền lực thị trường thông qua kiểm soát nguồn lực then chốt và tạo rào cản cho đối thủ.',
+    title: '4. Độc quyền dữ liệu là phần vận dụng hiện đại',
+    body:
+      'Các ô nền tảng số, cloud, dữ liệu, quảng cáo và AI dùng để mô phỏng quyền lực thị trường trong kinh tế số. Nguồn OECD và EU cho thấy nền tảng số có thể có lợi thế từ hiệu ứng mạng lưới, dữ liệu, quy mô và vị trí trung gian. Khi liên hệ với MLN, cần nói rõ đây là vận dụng phân tích độc quyền vào bối cảnh mới, không phải khái niệm cổ điển được nêu nguyên văn trong giáo trình.',
+    sourceIds: ['oecd-digital-market-power', 'eu-dma'],
   },
   {
-    title: '5. Hiệu ứng mạng lưới',
-    body: 'Hiệu ứng mạng lưới xảy ra khi một nền tảng càng đông người dùng thì càng có giá trị với người dùng mới. Điều này khiến nền tảng lớn tiếp tục lớn hơn, còn nền tảng nhỏ khó thu hút người dùng dù có sản phẩm tương tự.',
+    title: '5. Hiệu ứng mạng lưới và rào cản gia nhập',
+    body:
+      'Hiệu ứng mạng lưới nghĩa là giá trị của một nền tảng có thể tăng khi có thêm người dùng hoặc bên tham gia. Trong game, người chơi có nhiều users và data sẽ có lợi thế, nhưng điều này không có nghĩa nền tảng lớn luôn thắng tuyệt đối; sự kiện, điều tiết và khủng hoảng được thêm vào để người học thấy thị trường còn chịu tác động của chính sách và phản ứng xã hội.',
+    sourceIds: ['oecd-digital-market-power', 'eu-dma'],
   },
   {
-    title: '6. Dữ liệu như một loại tài nguyên chiến lược mới',
-    body: 'Dữ liệu giúp doanh nghiệp hiểu hành vi người dùng, dự đoán nhu cầu, tối ưu quảng cáo, huấn luyện AI và tự động hóa quyết định. Vì vậy, dữ liệu trở thành một nguồn lực chiến lược giống như dầu mỏ từng là nguồn lực chiến lược của công nghiệp hiện đại.',
-  },
-  {
-    title: '7. Giới hạn lịch sử của CNTB hiện đại',
-    body: 'CNTB hiện đại thúc đẩy cạnh tranh và đổi mới, nhưng cạnh tranh cũng có xu hướng dẫn tới tích tụ tư bản, tập trung tư bản và độc quyền. Khi quyền lực thị trường tập trung, bất bình đẳng quyền lực và rào cản gia nhập trở thành giới hạn nội tại của hệ thống.',
-  },
-  {
-    title: '8. Game này mô phỏng lý luận như thế nào?',
-    body: 'Người chơi mua tài sản dầu mỏ hoặc dữ liệu, trả phí khi phụ thuộc vào tài sản của người khác, gặp sự kiện chính sách và trả lời quiz lý luận. Cơ chế điểm quyền lực thị trường cho thấy tiền, tài sản, người dùng, dữ liệu và điểm lý luận cùng phản ánh quá trình tập trung quyền lực thị trường.',
+    title: '6. Giới hạn lịch sử của CNTB hiện đại',
+    body:
+      'Thông điệp của game là: hình thức độc quyền có thể thay đổi từ tài nguyên vật chất sang dữ liệu và nền tảng, nhưng xu hướng tập trung tư bản, quyền lực thị trường và rào cản cạnh tranh vẫn là vấn đề cần phân tích. Đây là cách liên hệ với nội dung MLN về chủ nghĩa tư bản độc quyền và các mâu thuẫn của nó, đồng thời đặt trong bối cảnh kinh tế số hiện nay.',
+    sourceIds: ['mln-textbook', 'lenin-imperialism', 'oecd-digital-market-power'],
   },
 ];
 
 const comparisonRows = [
   {
-    criterion: 'Tài nguyên chính',
-    oil: 'Dầu mỏ, mỏ khai thác, nhiên liệu khan hiếm',
-    data: 'Người dùng, dữ liệu hành vi, dữ liệu giao dịch',
+    criterion: 'Nguồn lực chính trong mô phỏng',
+    oil: 'Mỏ dầu, nhiên liệu, nhà máy lọc dầu, đường ống, vận tải',
+    data: 'Người dùng, dữ liệu, cloud, thuật toán, nền tảng trung gian',
   },
   {
-    criterion: 'Hạ tầng kiểm soát',
-    oil: 'Nhà máy lọc dầu, đường ống, cảng, logistics',
-    data: 'Nền tảng số, cloud, thuật toán, hệ sinh thái ứng dụng',
-  },
-  {
-    criterion: 'Cách tạo lợi nhuận',
-    oil: 'Bán tài nguyên, kiểm soát nguồn cung, thu phí vận chuyển',
-    data: 'Quảng cáo, phí nền tảng, phân tích dữ liệu, dịch vụ AI',
+    criterion: 'Cách tạo quyền lực thị trường',
+    oil: 'Kiểm soát tài nguyên và các khâu sản xuất - lưu thông quan trọng',
+    data: 'Tận dụng hiệu ứng mạng lưới, dữ liệu tích lũy, quy mô và hệ sinh thái',
   },
   {
     criterion: 'Rào cản gia nhập',
-    oil: 'Vốn lớn, giấy phép, hạ tầng vật chất, quyền tiếp cận mỏ',
-    data: 'Hiệu ứng mạng lưới, dữ liệu tích lũy, thuật toán, chi phí cloud',
+    oil: 'Vốn lớn, giấy phép, hạ tầng vật chất, quyền tiếp cận tài nguyên',
+    data: 'Tệp người dùng lớn, dữ liệu tích lũy, chi phí hạ tầng số, vị trí cổng vào thị trường',
   },
   {
-    criterion: 'Vai trò công nghệ',
-    oil: 'Tăng năng suất khai thác, lọc dầu và vận chuyển',
-    data: 'Tối ưu đề xuất, quảng cáo, dự đoán, AI và tự động hóa',
+    criterion: 'Điểm cần nói khi thuyết trình',
+    oil: 'Là ví dụ dễ hiểu về độc quyền dựa trên tài nguyên vật chất',
+    data: 'Là vận dụng hiện đại, cần tránh nói như khái niệm nguyên văn trong giáo trình MLN',
   },
   {
-    criterion: 'Tác động xã hội',
-    oil: 'Phụ thuộc năng lượng, bất bình đẳng tiếp cận tài nguyên, ô nhiễm',
-    data: 'Phụ thuộc nền tảng, riêng tư dữ liệu, quyền lực thuật toán',
+    criterion: 'Vai trò điều tiết',
+    oil: 'Thuế, giấy phép, kiểm soát môi trường, cạnh tranh và hạ tầng',
+    data: 'Luật cạnh tranh, dữ liệu mở, quyền riêng tư, quy định nền tảng lớn',
   },
 ];
 
@@ -78,7 +79,7 @@ export function TheoryPage({ onBack }: TheoryPageProps) {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan">Lý thuyết MLN122</p>
           <h1 className="section-title mt-2">Từ độc quyền dầu mỏ đến độc quyền dữ liệu</h1>
           <p className="mt-3 text-base leading-7 text-slate-300">
-            Trang này tóm tắt phần lý luận để dùng khi thuyết trình: rõ ý, ngắn gọn và liên hệ trực tiếp với cơ chế game.
+            Trang này tách rõ khái niệm kinh tế chính trị Mác - Lênin với phần vận dụng trong game, để người học không nhầm mô phỏng gameplay với trích dẫn giáo trình.
           </p>
         </div>
         <button className="secondary-button" onClick={onBack} type="button">
@@ -91,6 +92,7 @@ export function TheoryPage({ onBack }: TheoryPageProps) {
           <article className="panel" key={section.title}>
             <h2 className="text-xl font-black leading-7 text-white">{section.title}</h2>
             <p className="mt-3 text-sm leading-7 text-slate-300">{section.body}</p>
+            <SourceBadges sourceIds={section.sourceIds} />
           </article>
         ))}
       </div>
@@ -99,7 +101,7 @@ export function TheoryPage({ onBack }: TheoryPageProps) {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">So sánh</p>
-            <h2 className="mt-2 text-2xl font-black text-white">Bảng so sánh độc quyền dầu mỏ và độc quyền dữ liệu</h2>
+            <h2 className="mt-2 text-2xl font-black text-white">Bảng so sánh phần mô phỏng trong game</h2>
           </div>
         </div>
 
@@ -107,8 +109,8 @@ export function TheoryPage({ onBack }: TheoryPageProps) {
           <thead>
             <tr className="text-cyan">
               <th className="rounded-tl-lg border border-white/10 bg-oil/80 px-4 py-3">Tiêu chí</th>
-              <th className="border-y border-r border-white/10 bg-oil/80 px-4 py-3">Độc quyền dầu mỏ</th>
-              <th className="rounded-tr-lg border-y border-r border-white/10 bg-oil/80 px-4 py-3">Độc quyền dữ liệu</th>
+              <th className="border-y border-r border-white/10 bg-oil/80 px-4 py-3">Dầu mỏ</th>
+              <th className="rounded-tr-lg border-y border-r border-white/10 bg-oil/80 px-4 py-3">Dữ liệu</th>
             </tr>
           </thead>
           <tbody className="text-slate-300">
@@ -130,10 +132,46 @@ export function TheoryPage({ onBack }: TheoryPageProps) {
       <div className="rounded-lg border border-cyan/30 bg-cyan/10 p-5">
         <p className="text-sm font-black uppercase tracking-[0.2em] text-cyan">Kết luận thuyết trình</p>
         <p className="mt-3 text-lg font-semibold leading-8 text-white">
-          Hình thức độc quyền chuyển từ tài nguyên vật chất sang dữ liệu và nền tảng, nhưng bản chất tập trung tư bản
-          và quyền lực thị trường vẫn tồn tại. Đây là điểm then chốt để liên hệ với giới hạn lịch sử của CNTB hiện đại.
+          Game dùng dầu mỏ và dữ liệu như hai bối cảnh so sánh. Phần lý luận cốt lõi là xu hướng tích tụ, tập trung tư bản và hình thành quyền lực độc quyền; phần dữ liệu là vận dụng hiện đại để người học thấy chủ đề vẫn có ý nghĩa trong kinh tế số.
         </p>
       </div>
+
+      <div className="panel">
+        <h2 className="text-xl font-black text-white">Nguồn tham khảo</h2>
+        <div className="mt-4 grid gap-3">
+          {sourceReferences.map((source) => (
+            <a
+              className="rounded-lg border border-white/10 bg-oil/60 p-4 text-sm font-semibold leading-6 text-slate-200 transition hover:border-cyan hover:text-cyan"
+              href={source.href}
+              key={source.id}
+              rel="noreferrer"
+              target="_blank"
+            >
+              {source.label}
+            </a>
+          ))}
+        </div>
+      </div>
     </section>
+  );
+}
+
+function SourceBadges({ sourceIds }: { sourceIds: string[] }) {
+  const sources = getSourceReferencesByIds(sourceIds);
+
+  return (
+    <div className="mt-4 flex flex-wrap gap-2">
+      {sources.map((source) => (
+        <a
+          className="rounded border border-gold/30 bg-gold/10 px-2 py-1 text-[11px] font-bold leading-5 text-gold transition hover:border-cyan hover:text-cyan"
+          href={source.href}
+          key={source.id}
+          rel="noreferrer"
+          target="_blank"
+        >
+          Nguồn: {source.label}
+        </a>
+      ))}
+    </div>
   );
 }

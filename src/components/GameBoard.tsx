@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import { events } from '../data/events';
 import { quizzes } from '../data/quizzes';
 import type { GameState, Player, Tile } from '../types/game';
 import { answerQuiz, applyDicePairRule, applyEvent, buyAsset, endTurn, handleTileLanding, movePlayer, upgradeAsset } from '../utils/gameLogic';
 import { ActionPanel } from './ActionPanel';
-import { BoardTile } from './BoardTile';
+import { BoardTile, getTileDisplayName } from './BoardTile';
 import { Dice } from './Dice';
 import { EventModal } from './EventModal';
 import { GameLog } from './GameLog';
 import { PlayerAvatar } from './PlayerAvatar';
 import { PlayerPanel } from './PlayerPanel';
 import { QuizModal } from './QuizModal';
+import { calculateTotalScore } from '../utils/scoring';
 
 interface GameBoardProps {
   gameState: GameState | null;
@@ -18,16 +19,22 @@ interface GameBoardProps {
   onFinish: () => void;
   onReset: () => void;
   onSetup: () => void;
-  onToggleTheme: () => void;
-  onTheory: () => void;
   themeMode: 'dark' | 'light';
 }
 
 const playerColors = ['bg-cyan', 'bg-gold', 'bg-emerald-400', 'bg-rose-400'];
 type TurnAnimationPhase = 'idle' | 'rolling' | 'revealed' | 'moving';
+interface OffscreenPlayerGuide {
+  direction: string;
+  edge: 'top' | 'right' | 'bottom' | 'left';
+  player: Player;
+  tile: Tile;
+}
+
 const boardSize = 1180;
 const boardCornerSize = 150;
 const boardEdgeTileSize = 98;
+const boardOuterGutter = 36;
 
 const perimeterPositions = Array.from({ length: 40 }, (_, index) => {
   if (index <= 10) return { row: 11, col: 11 - index };
@@ -36,7 +43,7 @@ const perimeterPositions = Array.from({ length: 40 }, (_, index) => {
   return { row: index - 29, col: 11 };
 });
 
-export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onSetup, onTheory, onToggleTheme, themeMode }: GameBoardProps) {
+export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onSetup, themeMode }: GameBoardProps) {
   const currentPlayer = gameState?.players[gameState.currentPlayerIndex] ?? null;
   const [diceFaces, setDiceFaces] = useState<[number, number] | null>(null);
   const [turnAnimationPhase, setTurnAnimationPhase] = useState<TurnAnimationPhase>('idle');
@@ -44,6 +51,10 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const [boardZoom, setBoardZoom] = useState(0.9);
   const [boardBrightness, setBoardBrightness] = useState(1);
   const [visualPositions, setVisualPositions] = useState<Record<string, number>>({});
+  const [offscreenPlayerGuides, setOffscreenPlayerGuides] = useState<OffscreenPlayerGuide[]>([]);
+  const [isTheoryOpen, setIsTheoryOpen] = useState(false);
+  const boardViewportRef = useRef<HTMLDivElement | null>(null);
+  const tileRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const timers = useRef<number[]>([]);
   const isRolling = turnAnimationPhase === 'rolling';
   const isMoving = turnAnimationPhase === 'moving';
@@ -85,6 +96,63 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
       setDiceFaces(null);
     }
   }, [gameState?.currentPlayerIndex, gameState?.diceValue, isTurnBusy]);
+
+  useEffect(() => {
+    if (!gameState) {
+      setOffscreenPlayerGuides([]);
+      return;
+    }
+
+    let animationFrame = 0;
+    const updateOffscreenGuides = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(() => {
+        const viewport = boardViewportRef.current;
+        if (!viewport) return;
+
+        const viewportRect = viewport.getBoundingClientRect();
+        const nextGuides = gameState.players.flatMap((player) => {
+          const position = visualPositions[player.id] ?? player.position;
+          const tileElement = tileRefs.current[position];
+          const tile = gameState.tiles[position];
+          if (!tileElement || !tile) return [];
+
+          const tileRect = tileElement.getBoundingClientRect();
+          const tokenX = tileRect.left + tileRect.width / 2;
+          const tokenY = tileRect.top + tileRect.height * 0.78;
+          const isVisible =
+            tokenX >= viewportRect.left &&
+            tokenX <= viewportRect.right &&
+            tokenY >= viewportRect.top &&
+            tokenY <= viewportRect.bottom;
+
+          if (isVisible) return [];
+
+          return [
+            {
+              direction: getOffscreenDirection(tokenX, tokenY, viewportRect),
+              edge: getOffscreenEdge(tokenX, tokenY, viewportRect),
+              player,
+              tile,
+            },
+          ];
+        });
+
+        setOffscreenPlayerGuides(nextGuides);
+      });
+    };
+
+    updateOffscreenGuides();
+    const viewport = boardViewportRef.current;
+    viewport?.addEventListener('scroll', updateOffscreenGuides, { passive: true });
+    window.addEventListener('resize', updateOffscreenGuides);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      viewport?.removeEventListener('scroll', updateOffscreenGuides);
+      window.removeEventListener('resize', updateOffscreenGuides);
+    };
+  }, [boardZoom, gameState, visualPositions]);
 
   useEffect(() => {
     return () => {
@@ -180,6 +248,30 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
     commitGameState(endTurn(gameState));
   };
 
+  const handleFinishEarly = () => {
+    if (!gameState || isTurnBusy) return;
+    const confirmed = window.confirm('Kết thúc ván hiện tại và chuyển sang màn kết quả?');
+    if (!confirmed) return;
+
+    const winner = [...gameState.players].sort((left, right) => calculateTotalScore(right) - calculateTotalScore(left))[0] ?? null;
+    commitGameState({
+      ...gameState,
+      winnerId: winner?.id ?? null,
+      status: 'finished',
+      log: [
+        ...gameState.log,
+        {
+          id: `log-${Date.now()}`,
+          round: gameState.round,
+          playerId: winner?.id,
+          message: winner ? `Ván chơi kết thúc sớm. ${winner.name} đang dẫn đầu tổng điểm.` : 'Ván chơi kết thúc sớm.',
+          type: 'win',
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    });
+  };
+
   const handleQuizAnswer = (answer: NonNullable<typeof activeQuiz>['correctAnswer']) => {
     if (!gameState || !currentPlayer || !gameState.activeQuizId) return;
     commitGameState(answerQuiz(gameState, currentPlayer.id, gameState.activeQuizId, answer));
@@ -225,13 +317,21 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
             </p>
           )}
         </div>
-        <div className="flex gap-3">
-          <button className="secondary-button" onClick={onTheory} type="button">
+        <div className="flex flex-wrap gap-3">
+          <button className="secondary-button" onClick={() => setIsTheoryOpen(true)} type="button">
             Lý thuyết
           </button>
-          <button className="primary-button" onClick={onFinish} type="button">
+          <button className="primary-button" disabled={gameState.status !== 'finished'} onClick={onFinish} type="button">
             Xem kết quả
           </button>
+          <details className="relative">
+            <summary className="cursor-pointer rounded-md border border-red-300/30 bg-red-500/10 px-4 py-2 font-bold text-red-100 transition hover:bg-red-500/20">
+              Quản lý ván
+            </summary>
+            <div className="absolute right-0 z-30 mt-2 w-72 rounded-lg border border-red-200/20 bg-oil p-4 shadow-gold">
+              <GameManagementCard isBusy={isTurnBusy} onFinish={handleFinishEarly} onReset={onReset} />
+            </div>
+          </details>
         </div>
       </div>
 
@@ -251,88 +351,96 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
               onIncrease={() => setBoardBrightness((current) => Math.min(1.35, Number((current + 0.1).toFixed(2))))}
               value={`${Math.round(boardBrightness * 100)}%`}
             />
-            <div className="h-8 w-px bg-white/15" />
-            <button
-              className="secondary-button px-3 py-2 text-xs uppercase tracking-[0.14em]"
-              onClick={onToggleTheme}
-              type="button"
+          </div>
+
+          <div className="relative">
+            <div
+              className={`relative isolate max-h-[calc(100vh-176px)] overflow-auto rounded-xl border shadow-[inset_0_0_0_2px_rgba(255,255,255,0.16)] ${
+                isLightTheme ? 'border-slate-900/10 bg-slate-200' : 'border-cyan/20 bg-[#162836]'
+              }`}
+              ref={boardViewportRef}
             >
-              {isLightTheme ? 'Giao diện tối' : 'Giao diện sáng'}
-            </button>
-          </div>
-
-          <div
-            className={`relative isolate max-h-[calc(100vh-176px)] overflow-auto rounded-xl border p-5 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.16)] ${
-              isLightTheme ? 'border-slate-900/10 bg-slate-200' : 'border-cyan/20 bg-[#162836]'
-            }`}
-          >
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center"
-              style={{ backgroundImage: 'url("/images/board/board-outer-blue.png")', filter: `brightness(${boardBrightness})` }}
-            />
-            <div className={`pointer-events-none absolute inset-0 z-0 ${isLightTheme ? 'bg-white/10' : 'bg-black/5'}`} />
-
-          <div
-            className="mx-auto shrink-0"
-            style={{
-              height: boardSize * boardZoom,
-              width: boardSize * boardZoom,
-            }}
-          >
-          <div
-            className="relative isolate grid shrink-0 origin-top-left overflow-visible rounded-lg bg-[#223a3d] outline outline-4 outline-[#3e8f73] shadow-[0_0_0_6px_rgba(7,20,24,0.32)]"
-            style={{
-              gridTemplateColumns: `${boardCornerSize}px repeat(9, ${boardEdgeTileSize}px) ${boardCornerSize}px`,
-              gridTemplateRows: `${boardCornerSize}px repeat(9, ${boardEdgeTileSize}px) ${boardCornerSize}px`,
-              height: boardSize,
-              transform: `scale(${boardZoom})`,
-              width: boardSize,
-            }}
-          >
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-0 rounded-[inherit] bg-cover bg-center"
-              style={{ backgroundImage: 'url("/images/board/board-inner-orange.png")', filter: `brightness(${boardBrightness})` }}
-            />
-            <div className="pointer-events-none absolute inset-0 z-0 rounded-[inherit] bg-black/5" />
-            {gameState.tiles.map((tile) => (
-              <BoardTileAtPosition
-                currentPlayerId={currentPlayer?.id ?? null}
-                key={tile.id}
-                owner={tile.asset ? ownerByTileId.get(tile.asset.tileId) ?? null : null}
-                ownerColor={getOwnerColor(gameState.players, tile, ownerByTileId)}
-                movingPlayerId={movingPlayerId}
-                players={gameState.players}
-                tile={tile}
-                visualPositions={visualPositions}
-              />
-            ))}
-
-            <div className="relative z-10 col-start-3 col-end-10 row-start-3 row-end-10 grid place-items-center p-4 text-center">
-                <div className="w-full space-y-5">
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-[0.24em] text-yellow-100">Data Monopoly</p>
-                    <h2 className="mt-2 text-2xl font-black uppercase text-[#ffe66f] drop-shadow-[3px_3px_0_rgba(32,38,80,0.85)] min-[1360px]:text-3xl">
-                      Cạnh tranh / Độc quyền
-                    </h2>
-                  </div>
-                  {currentPlayer && (
-                    <Dice
-                      canRoll={canRollDice}
-                      currentPlayerName={currentPlayer.name}
-                      diceFaces={diceFaces}
-                      gameState={gameState}
-                      isBusy={isTurnBusy}
-                      isMoving={isMoving}
-                      isRolling={isRolling}
-                      onRoll={handleRoll}
+              <div
+                className="relative min-h-full min-w-full p-5"
+                style={{
+                  minHeight: boardSize * boardZoom + boardOuterGutter * 2 + 40,
+                  minWidth: boardSize * boardZoom + boardOuterGutter * 2 + 40,
+                }}
+              >
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+                  style={{ backgroundImage: 'url("/images/board/board-outer-blue.png")', filter: `brightness(${boardBrightness})` }}
+                />
+                <div className={`pointer-events-none absolute inset-0 z-0 ${isLightTheme ? 'bg-white/10' : 'bg-black/5'}`} />
+                <div
+                  className="relative z-10 mx-auto shrink-0"
+                  style={{
+                    height: boardSize * boardZoom + boardOuterGutter * 2,
+                    width: boardSize * boardZoom + boardOuterGutter * 2,
+                  }}
+                >
+                  <div
+                    className="absolute isolate z-10 grid shrink-0 origin-top-left overflow-visible rounded-lg bg-[#223a3d] outline outline-4 outline-[#3e8f73] shadow-[0_0_0_6px_rgba(7,20,24,0.32)]"
+                    style={{
+                      gridTemplateColumns: `${boardCornerSize}px repeat(9, ${boardEdgeTileSize}px) ${boardCornerSize}px`,
+                      gridTemplateRows: `${boardCornerSize}px repeat(9, ${boardEdgeTileSize}px) ${boardCornerSize}px`,
+                      height: boardSize,
+                      left: boardOuterGutter,
+                      top: boardOuterGutter,
+                      transform: `scale(${boardZoom})`,
+                      width: boardSize,
+                    }}
+                  >
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 z-0 rounded-[inherit] bg-cover bg-center"
+                      style={{ backgroundImage: 'url("/images/board/board-inner-orange.png")', filter: `brightness(${boardBrightness})` }}
                     />
-                  )}
+                    <div className="pointer-events-none absolute inset-0 z-0 rounded-[inherit] bg-black/5" />
+                    {gameState.tiles.map((tile) => (
+                      <BoardTileAtPosition
+                        currentPlayerId={currentPlayer?.id ?? null}
+                        key={tile.id}
+                        owner={tile.asset ? ownerByTileId.get(tile.asset.tileId) ?? null : null}
+                        ownerColor={getOwnerColor(gameState.players, tile, ownerByTileId)}
+                        movingPlayerId={movingPlayerId}
+                        players={gameState.players}
+                        registerTileRef={(element) => {
+                          tileRefs.current[tile.index] = element;
+                        }}
+                        tile={tile}
+                        visualPositions={visualPositions}
+                      />
+                    ))}
+
+                    <div className="relative z-10 col-start-3 col-end-10 row-start-3 row-end-10 grid place-items-center p-4 text-center">
+                      <div className="w-full space-y-5">
+                        <div>
+                          <p className="text-xs font-black uppercase tracking-[0.24em] text-yellow-100">Data Monopoly</p>
+                          <h2 className="mt-2 text-2xl font-black uppercase text-[#ffe66f] drop-shadow-[3px_3px_0_rgba(32,38,80,0.85)] min-[1360px]:text-3xl">
+                            Cạnh tranh / Độc quyền
+                          </h2>
+                        </div>
+                        {currentPlayer && (
+                          <Dice
+                            canRoll={canRollDice}
+                            currentPlayerName={currentPlayer.name}
+                            diceFaces={diceFaces}
+                            gameState={gameState}
+                            isBusy={isTurnBusy}
+                            isMoving={isMoving}
+                            isRolling={isRolling}
+                            onRoll={handleRoll}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
-          </div>
-          </div>
+            <OffscreenPlayerGuidePanel guides={offscreenPlayerGuides} />
           </div>
         </div>
 
@@ -351,12 +459,12 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
           )}
           <PlayerPanel currentPlayerId={currentPlayer?.id ?? null} gameState={gameState} />
           <GameLog entries={gameState.log} />
-          <GameManagementCard isBusy={isTurnBusy} onFinish={onFinish} onReset={onReset} />
         </aside>
       </div>
 
       <EventModal event={activeEvent} onApply={handleApplyEvent} />
       <QuizModal quiz={activeQuiz} onAnswer={handleQuizAnswer} />
+      <GameTheoryModal isOpen={isTheoryOpen} onClose={() => setIsTheoryOpen(false)} />
     </section>
   );
 }
@@ -371,16 +479,17 @@ interface BoardTileAtPositionProps {
   owner: Player | null;
   ownerColor: string | null;
   players: Player[];
+  registerTileRef: (element: HTMLDivElement | null) => void;
   tile: Tile;
   visualPositions: Record<string, number>;
 }
 
-function BoardTileAtPosition({ currentPlayerId, movingPlayerId, owner, ownerColor, players, tile, visualPositions }: BoardTileAtPositionProps) {
+function BoardTileAtPosition({ currentPlayerId, movingPlayerId, owner, ownerColor, players, registerTileRef, tile, visualPositions }: BoardTileAtPositionProps) {
   const position = perimeterPositions[tile.index];
   const playersOnTile = players.filter((player) => (visualPositions[player.id] ?? player.position) === tile.index);
 
   return (
-    <div className="relative z-10 min-h-0 min-w-0" style={{ gridColumn: position.col, gridRow: position.row }}>
+    <div className="relative z-10 min-h-0 min-w-0" ref={registerTileRef} style={{ gridColumn: position.col, gridRow: position.row }}>
       <BoardTile
         currentPlayerId={currentPlayerId}
         movingPlayerId={movingPlayerId}
@@ -391,6 +500,71 @@ function BoardTileAtPosition({ currentPlayerId, movingPlayerId, owner, ownerColo
       />
     </div>
   );
+}
+
+function OffscreenPlayerGuidePanel({ guides }: { guides: OffscreenPlayerGuide[] }) {
+  if (guides.length === 0) return null;
+
+  return (
+    <div className="pointer-events-none absolute inset-0 z-30">
+      {guides.map(({ direction, edge, player, tile }, index) => {
+        const edgeStyle = getGuideEdgeStyle(edge, index);
+
+        return (
+          <div
+            aria-label={`${direction} tới ${player.name}, ô ${tile.index + 1}: ${getTileDisplayName(tile)}`}
+            className="absolute flex h-12 w-12 items-center justify-center rounded-full border border-cyan/50 bg-oil/88 text-cyan shadow-[0_12px_28px_rgba(0,0,0,0.38)] backdrop-blur"
+            key={player.id}
+            style={edgeStyle}
+            title={`${direction} tới ${player.name} - ô ${tile.index + 1}: ${getTileDisplayName(tile)}`}
+          >
+            <span aria-hidden="true" className="absolute grid h-5 w-5 place-items-center rounded-full bg-cyan text-[13px] font-black leading-none text-oil shadow-glow">
+              {getGuideArrow(edge)}
+            </span>
+            <PlayerAvatar alt={player.name} className="h-8 w-8 rounded-full ring-2 ring-white/80" imagePath={player.avatar} label={player.name} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function getGuideArrow(edge: OffscreenPlayerGuide['edge']): string {
+  if (edge === 'top') return '^';
+  if (edge === 'right') return '>';
+  if (edge === 'bottom') return 'v';
+  return '<';
+}
+
+function getGuideEdgeStyle(edge: OffscreenPlayerGuide['edge'], index: number): CSSProperties {
+  const offset = 14 + index * 54;
+
+  if (edge === 'top') return { left: offset, top: 12 };
+  if (edge === 'right') return { right: 12, top: offset };
+  if (edge === 'bottom') return { bottom: 12, left: offset };
+  return { left: 12, top: offset };
+}
+
+function getOffscreenDirection(x: number, y: number, viewportRect: DOMRect): string {
+  const vertical = y < viewportRect.top ? 'lên' : y > viewportRect.bottom ? 'xuống' : '';
+  const horizontal = x < viewportRect.left ? 'trái' : x > viewportRect.right ? 'phải' : '';
+
+  if (vertical && horizontal) return `Cuộn ${vertical} ${horizontal}`;
+  if (vertical) return `Cuộn ${vertical}`;
+  if (horizontal) return `Cuộn sang ${horizontal}`;
+
+  return 'Cuộn tới';
+}
+
+function getOffscreenEdge(x: number, y: number, viewportRect: DOMRect): OffscreenPlayerGuide['edge'] {
+  const distances = [
+    { edge: 'top' as const, value: Math.max(0, viewportRect.top - y) },
+    { edge: 'right' as const, value: Math.max(0, x - viewportRect.right) },
+    { edge: 'bottom' as const, value: Math.max(0, y - viewportRect.bottom) },
+    { edge: 'left' as const, value: Math.max(0, viewportRect.left - x) },
+  ];
+
+  return distances.sort((left, right) => right.value - left.value)[0]?.edge ?? 'bottom';
 }
 
 function BoardControl({
@@ -436,6 +610,87 @@ function GameManagementCard({ isBusy, onFinish, onReset }: { isBusy: boolean; on
         </button>
       </div>
     </section>
+  );
+}
+
+function GameTheoryModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  if (!isOpen) return null;
+
+  const rows = [
+    {
+      criterion: 'Cơ sở phân tích MLN',
+      oil: 'Tích tụ, tập trung tư bản; kiểm soát tư liệu và khâu sản xuất - lưu thông quan trọng.',
+      data: 'Vận dụng hiện đại: nền tảng lớn có thể tích lũy dữ liệu, người dùng và hạ tầng số.',
+    },
+    {
+      criterion: 'Nguồn lực trong game',
+      oil: 'Mỏ dầu, nhà máy lọc dầu, đường ống, cảng và logistics.',
+      data: 'Nền tảng số, cloud, dữ liệu, thuật toán, AI và người dùng.',
+    },
+    {
+      criterion: 'Rào cản cạnh tranh',
+      oil: 'Vốn lớn, hạ tầng vật chất, quyền tiếp cận tài nguyên.',
+      data: 'Hiệu ứng mạng lưới, dữ liệu tích lũy, chi phí cloud, vị trí trung gian.',
+    },
+    {
+      criterion: 'Điều cần nhớ',
+      oil: 'Đây là ví dụ mô phỏng độc quyền dựa trên tài nguyên vật chất.',
+      data: 'Đây là phần liên hệ kinh tế số, không phải khái niệm nguyên văn trong giáo trình.',
+    },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-40 grid place-items-center bg-oil/80 px-4 py-5 backdrop-blur-md">
+      <section className="flex max-h-[calc(100vh-2.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-cyan/30 bg-midnight shadow-gold">
+        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-white/10 p-5">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.2em] text-cyan">Lý thuyết nhanh</p>
+            <h2 className="mt-2 text-2xl font-black text-white">Độc quyền dầu mỏ và độc quyền dữ liệu</h2>
+          </div>
+          <button className="secondary-button px-3 py-2" onClick={onClose} type="button">
+            Đóng
+          </button>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto p-5">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="rounded-lg border border-white/10 bg-oil/60 p-4">
+              <h3 className="text-lg font-black text-white">Ý chính MLN122</h3>
+              <p className="mt-3 text-sm leading-7 text-slate-300">
+                Game tập trung vào xu hướng tích tụ, tập trung tư bản và khả năng hình thành quyền lực độc quyền. Các nội dung về dữ liệu, AI và nền tảng là phần vận dụng vào kinh tế số để hỗ trợ thảo luận.
+              </p>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-oil/60 p-4">
+              <h3 className="text-lg font-black text-white">Cách đọc gameplay</h3>
+              <p className="mt-3 text-sm leading-7 text-slate-300">
+                Mua tài sản, thu phí, nâng cấp và gặp điều tiết là các cơ chế mô phỏng quyền lực thị trường. Kết quả game không thay thế giáo trình, mà giúp người học minh họa và phản biện chủ đề.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 overflow-x-auto rounded-lg border border-white/10">
+            <table className="w-full min-w-[780px] border-separate border-spacing-0 text-left text-sm">
+              <thead className="text-cyan">
+                <tr>
+                  <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Tiêu chí</th>
+                  <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Dầu mỏ</th>
+                  <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Dữ liệu</th>
+                </tr>
+              </thead>
+              <tbody className="text-slate-300">
+                {rows.map((row) => (
+                  <tr key={row.criterion}>
+                    <td className="border-b border-white/10 px-4 py-4 font-bold text-white">{row.criterion}</td>
+                    <td className="border-b border-white/10 px-4 py-4 leading-6">{row.oil}</td>
+                    <td className="border-b border-white/10 px-4 py-4 leading-6">{row.data}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
 

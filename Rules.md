@@ -2,7 +2,7 @@
 
 ## 1. Mục tiêu của game
 
-Data Monopoly là web game giáo dục cho chủ đề MLN122: từ độc quyền dầu mỏ đến độc quyền dữ liệu. Người chơi cạnh tranh để tích lũy tiền, tài sản, người dùng, dữ liệu, ảnh hưởng và điểm lý luận.
+Data Monopoly là web game giáo dục cho chủ đề MLN122: từ độc quyền dầu mỏ đến độc quyền dữ liệu. Người chơi bắt đầu với vốn khởi nghiệp, sau đó cạnh tranh để tích lũy tài sản, người dùng, dữ liệu, ảnh hưởng và điểm lý luận.
 
 Thông điệp chính của game là: hình thức độc quyền có thể thay đổi từ tài nguyên vật chất sang dữ liệu và nền tảng số, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn tồn tại.
 
@@ -14,7 +14,7 @@ Trước khi bắt đầu, mỗi người chơi cần:
 
 - Nhập tên.
 - Chọn ảnh nhân vật.
-- Bắt đầu với cùng lượng tài nguyên ban đầu.
+- Bắt đầu với cùng lượng vốn ban đầu.
 - Tên người chơi không được trùng nhau.
 - Avatar không được chọn trùng nhau.
 
@@ -32,6 +32,17 @@ Mỗi người chơi có các chỉ số sau:
 - Tài sản: danh sách tài sản đã mua.
 - Vị trí: vị trí hiện tại trên bàn cờ.
 - Đang bị điều tra: trạng thái bị điều tra chống độc quyền.
+
+Khi bắt đầu ván:
+
+- Vốn: có sẵn để mua tài sản ban đầu.
+- Ảnh hưởng: 0.
+- Người dùng: 0.
+- Dữ liệu: 0.
+- Điểm lý luận: 0.
+- Tài sản: 0.
+
+Các chỉ số không giảm xuống dưới 0. Nếu người chơi bị phạt vượt quá lượng vốn hoặc dữ liệu đang có, game chỉ trừ đến 0.
 
 ## 4. Cấu trúc bàn cờ
 
@@ -78,10 +89,11 @@ Mỗi lượt diễn ra theo thứ tự:
 1. Người chơi hiện tại bấm Tung xúc xắc.
 2. Game tung 2 xúc xắc và lấy tổng số điểm.
 3. Token của người chơi di chuyển từng ô theo kết quả xúc xắc.
-4. Khi dừng ở ô mới, game xử lý hiệu ứng của ô đó.
-5. Người chơi có thể mua tài sản nếu ô chưa có chủ.
-6. Người chơi chỉ có thể nâng cấp nếu đang đứng trên ô tài sản của chính mình, tài sản đó đã sở hữu ít nhất 1 vòng và người chơi đủ tiền.
-7. Người chơi bấm Kết thúc lượt để chuyển sang người tiếp theo.
+4. Trong lúc di chuyển, một số tình huống thị trường có thể phát sinh theo nhịp di chuyển.
+5. Khi dừng ở ô mới, game xử lý hiệu ứng của ô đó.
+6. Người chơi có thể mua tài sản nếu ô chưa có chủ.
+7. Người chơi chỉ có thể nâng cấp nếu đang đứng trên ô tài sản của chính mình, tài sản đó đã sở hữu ít nhất 1 vòng và người chơi đủ tiền.
+8. Người chơi bấm Kết thúc lượt để chuyển sang người tiếp theo.
 
 Người chơi phải tung xúc xắc ít nhất 1 lần mới được kết thúc lượt.
 
@@ -91,6 +103,13 @@ Luật cặp đặc biệt:
 - Nếu tung được cặp 6:6, người chơi được tung thêm 1 lần.
 - Lượt tung thêm vẫn phải chờ token di chuyển xong và hiệu ứng ô hiện tại được xử lý xong.
 - Nếu lượt tung thêm tiếp tục ra 1:1 hoặc 6:6, người chơi lại được thêm 1 lần tung.
+
+Hiệu ứng trong lúc di chuyển:
+
+- Nếu tung được tổng từ 10 trở lên, người chơi có tài sản dữ liệu nhận thêm một ít users/data vì độ phủ thị trường tăng; người chơi có hạ tầng dầu mỏ/logistics/cloud nhận thêm ảnh hưởng.
+- Nếu tung tổng từ 3 trở xuống và đã có tài sản, người chơi phát sinh chi phí vận hành nhỏ.
+
+Ý nghĩa học tập: thị trường không chỉ thay đổi ở điểm dừng cuối cùng. Tốc độ mở rộng, độ phủ, chi phí vận hành và hạ tầng đều ảnh hưởng đến quá trình tích lũy.
 
 ## 6. Đi qua ô Khởi nghiệp
 
@@ -166,6 +185,8 @@ Tài sản dữ liệu chủ yếu tạo ra users, data và influence.
 
 AI Lab làm tăng giá trị của tài sản dữ liệu, vì dữ liệu nhiều giúp AI mạnh hơn, còn AI mạnh hơn lại giúp nền tảng thu hút thêm người dùng.
 
+Cuối mỗi lượt, nếu người chơi có tài sản dữ liệu và đã có users, game tự chuyển một phần users thành data mới. Nói cách khác: càng nhiều người dùng, nền tảng càng tạo thêm dữ liệu hành vi; dữ liệu đó lại có thể làm mạnh thuật toán, AI và quyền lực thị trường.
+
 Ý nghĩa lý luận: độc quyền dầu mỏ dựa vào tài nguyên khan hiếm và hạ tầng vật chất; độc quyền dữ liệu dựa vào người dùng, dữ liệu, thuật toán, AI và nền tảng.
 
 ## 11. Ô Khí vận và Cơ hội
@@ -191,8 +212,14 @@ Ví dụ thẻ Khí vận / Cơ hội:
 - Trúng số khởi nghiệp: nhận thêm tiền.
 - Đầu tư chứng khoán có lời hoặc thua lỗ.
 - Bão lũ làm gián đoạn logistics.
+- KOL đánh giá tích cực: nhận thêm users, và nếu có tài sản dữ liệu thì nhận thêm data.
+- Tín dụng cloud miễn phí: hỗ trợ mở rộng hạ tầng hoặc nhận vốn thay thế.
 - Tăng tốc thị trường: nhận thêm ảnh hưởng, tượng trưng cho lợi thế đi trước.
 - Án phạt chống độc quyền: người dẫn đầu bị trừ tiền và ảnh hưởng.
+- Vòng lặp users - data: người có nhiều users nhất tiếp tục tăng users và data.
+- Tẩy chay nền tảng: người có nhiều data nhất mất users và ảnh hưởng.
+- Sandbox chính sách: người cuối bảng nhận users, data và điểm lý luận để mô phỏng chính sách mở cơ hội cạnh tranh.
+- Khóa nhà cung ứng: người dẫn đầu tăng ảnh hưởng, người khác chịu chi phí tiếp cận thị trường.
 
 Các thẻ có thể tác động đến:
 
@@ -282,9 +309,11 @@ Công thức được scale khoảng 0 đến 100 để dễ đọc trên giao d
 
 Một người chơi thắng nếu đạt một trong các điều kiện:
 
-1. Kiểm soát ít nhất 60% tổng quyền lực thị trường.
+1. Từ vòng 5 trở đi, sở hữu ít nhất 4 tài sản và kiểm soát ít nhất 60% tổng quyền lực thị trường.
 2. Đạt 100 điểm lý luận và có điểm kinh tế cao nhất.
 3. Sau 25 vòng, người có tổng điểm cao nhất thắng.
+
+Lưu ý: game không xét thắng độc quyền ngay ở các vòng đầu, vì lúc đó thị trường chưa đủ thời gian tích lũy. Điều này tránh trường hợp một người vừa mua tài sản đầu tiên đã bị tính là độc quyền.
 
 ## 17. Ý nghĩa màn kết quả
 
@@ -305,6 +334,8 @@ Khi trình bày trên lớp, có thể giải thích game theo 3 bước:
 
 1. Người chơi cạnh tranh để mua tài sản và mở rộng quyền lực.
 2. Cạnh tranh dần tạo ra người dẫn đầu nhờ tích lũy tiền, tài sản, users và data.
-3. Người thắng có thể rất mạnh về thị trường, nhưng game đặt câu hỏi về tác động xã hội của độc quyền.
+3. Với nền tảng số, nhiều users tạo thêm data; data giúp thuật toán/AI mạnh hơn; lợi thế này có thể tiếp tục hút users mới.
+4. Các thẻ điều tiết, tẩy chay, khủng hoảng và dữ liệu mở nhắc người học rằng quyền lực độc quyền luôn có giới hạn xã hội, chính sách và kỹ thuật.
+5. Người thắng có thể rất mạnh về thị trường, nhưng game đặt câu hỏi về tác động xã hội của độc quyền.
 
 Kết luận: từ dầu mỏ đến dữ liệu, hình thức kiểm soát thay đổi, nhưng logic tập trung tư bản và quyền lực thị trường vẫn là vấn đề cần phân tích trong MLN122.

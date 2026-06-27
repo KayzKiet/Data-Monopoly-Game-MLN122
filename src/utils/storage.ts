@@ -2,12 +2,13 @@ import { avatars } from '../data/avatars';
 import { events } from '../data/events';
 import { tiles } from '../data/tiles';
 import type { GameState } from '../types/game';
+import { sanitizeGameState } from './gameLogic';
 
 const storageKey = 'data-monopoly-progress';
 
 export function saveGameState(gameState: GameState) {
   try {
-    localStorage.setItem(storageKey, JSON.stringify(gameState));
+    localStorage.setItem(storageKey, JSON.stringify(sanitizeGameState(gameState)));
   } catch {
     // localStorage can fail in private browsing or full storage; gameplay should continue in memory.
   }
@@ -46,7 +47,7 @@ function migrateGameState(gameState: GameState): GameState {
     chance: events.filter((event) => event.deck === 'chance').map((event) => event.id),
   };
 
-  return {
+  return sanitizeGameState({
     ...gameState,
     tiles,
     activeEventDeck: gameState.activeEventDeck ?? null,
@@ -60,7 +61,7 @@ function migrateGameState(gameState: GameState): GameState {
       position: player.position % tiles.length,
       assets: player.assets.map((asset) => ({ ...asset, lapsHeld: asset.lapsHeld ?? 1 })),
     })),
-  };
+  });
 }
 
 function normalizeAvatar(avatar: string, index: number): string {

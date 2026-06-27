@@ -6,10 +6,12 @@ import { calculateMarketPower, calculateTotalScore, getLastPlacePlayer, getLeadi
 
 const START_BONUS = 100;
 const INITIAL_MONEY = 500;
-const INITIAL_INFLUENCE = 10;
-const INITIAL_USERS = 20;
-const INITIAL_DATA = 20;
+const INITIAL_INFLUENCE = 0;
+const INITIAL_USERS = 0;
+const INITIAL_DATA = 0;
 const THEORY_REWARD = 10;
+const MONOPOLY_WIN_MIN_ROUND = 5;
+const MONOPOLY_WIN_MIN_ASSETS = 4;
 
 type PlayerSetupInput = Pick<Player, 'name' | 'avatar'> & Partial<Pick<Player, 'id'>>;
 
@@ -57,7 +59,7 @@ export function createInitialGameState(players: PlayerSetupInput[]): GameState {
       log: [],
     },
     'system',
-    'Game bắt đầu. Mỗi người chơi khởi đầu với vốn, ảnh hưởng, người dùng, dữ liệu và 0 tài sản.',
+    'Game bắt đầu. Mỗi người chơi có vốn ban đầu, nhưng ảnh hưởng, người dùng, dữ liệu và tài sản đều bắt đầu từ 0.',
   );
 }
 
@@ -76,6 +78,7 @@ export function movePlayer(state: GameState, diceValue: number, playerId = getCu
   const boardSize = state.tiles.length;
   const nextPosition = (player.position + diceValue) % boardSize;
   const passedStart = player.position + diceValue >= boardSize;
+  const movementGain = getMovementGain(player, diceValue);
 
   const updatedPlayers = state.players.map((item) => {
     if (item.id !== playerId) return item;
@@ -83,7 +86,10 @@ export function movePlayer(state: GameState, diceValue: number, playerId = getCu
     return {
       ...item,
       position: nextPosition,
-      money: item.money + (passedStart ? START_BONUS : 0),
+      money: item.money + (passedStart ? START_BONUS : 0) + movementGain.money,
+      users: item.users + movementGain.users,
+      data: item.data + movementGain.data,
+      influence: item.influence + movementGain.influence,
       assets: passedStart ? item.assets.map((asset) => ({ ...asset, lapsHeld: asset.lapsHeld + 1 })) : item.assets,
     };
   });
@@ -97,7 +103,8 @@ export function movePlayer(state: GameState, diceValue: number, playerId = getCu
   };
 
   const startMessage = passedStart ? ` và nhận ${START_BONUS} vốn khi đi qua Khởi nghiệp` : '';
-  return addLog(movedState, 'movement', `${player.name} tung ${diceValue}, di chuyển đến ô ${nextPosition + 1}${startMessage}.`, playerId);
+  const movementMessage = movementGain.message ? ` ${movementGain.message}` : '';
+  return addLog(movedState, 'movement', `${player.name} tung ${diceValue}, di chuyển đến ô ${nextPosition + 1}${startMessage}.${movementMessage}`, playerId);
 }
 
 export function handleTileLanding(state: GameState, playerId = getCurrentPlayer(state).id): GameState {
@@ -249,6 +256,7 @@ export function applyEvent(state: GameState, eventId: string): GameState {
   const currentPlayer = getCurrentPlayer(state);
   const leadingPlayer = getLeadingPlayer(state.players);
   const lastPlacePlayer = getLastPlacePlayer(state.players);
+  const mostDataPlayer = getPlayerWithMostData(state.players);
 
   let updatedPlayers = state.players;
   let message = event.effect;
@@ -394,6 +402,26 @@ export function applyEvent(state: GameState, eventId: string): GameState {
         data: player.data + 8,
       }));
       break;
+    case 'fortune-influencer-review':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => {
+        const ownsDataAsset = player.assets.some((asset) => asset.era === 'data');
+        return {
+          ...player,
+          users: player.users + 12,
+          data: player.data + (ownsDataAsset ? 5 : 0),
+        };
+      });
+      break;
+    case 'fortune-server-credit':
+      updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => {
+        const ownsCloud = player.assets.some((asset) => asset.type === 'cloud-infrastructure');
+        return {
+          ...player,
+          money: player.money + (ownsCloud ? 0 : 45),
+          data: player.data + (ownsCloud ? 14 : 0),
+        };
+      });
+      break;
     case 'fortune-operating-cost':
       updatedPlayers = updatePlayer(state.players, currentPlayer.id, (player) => ({ ...player, money: Math.max(0, player.money - 40) }));
       break;
@@ -435,6 +463,23 @@ export function applyEvent(state: GameState, eventId: string): GameState {
         data: player.data + 8,
       }));
       break;
+    case 'chance-user-data-flywheel':
+      updatedPlayers = updatePlayer(state.players, getPlayerWithMostUsers(state.players)?.id, (player) => {
+        const userGain = Math.max(4, Math.ceil(player.users * 0.2));
+        return {
+          ...player,
+          users: player.users + userGain,
+          data: player.data + Math.ceil(userGain * 0.75),
+        };
+      });
+      break;
+    case 'chance-platform-boycott':
+      updatedPlayers = updatePlayer(state.players, mostDataPlayer?.id, (player) => ({
+        ...player,
+        users: Math.max(0, player.users - Math.ceil(player.users * 0.2)),
+        influence: Math.max(0, player.influence - 5),
+      }));
+      break;
     case 'chance-open-data':
       updatedPlayers = state.players.map((player) => ({ ...player, data: player.data + 12 }));
       break;
@@ -450,6 +495,23 @@ export function applyEvent(state: GameState, eventId: string): GameState {
         money: player.money + 120,
         theoryPoints: player.theoryPoints + 5,
       }));
+      break;
+    case 'chance-regulatory-sandbox':
+      updatedPlayers = updatePlayer(state.players, lastPlacePlayer?.id, (player) => ({
+        ...player,
+        users: player.users + 10,
+        data: player.data + 8,
+        theoryPoints: player.theoryPoints + 5,
+      }));
+      break;
+    case 'chance-supplier-lock-in':
+      updatedPlayers = state.players.map((player) => {
+        if (player.id === leadingPlayer?.id) {
+          return { ...player, influence: player.influence + 4 };
+        }
+
+        return { ...player, money: Math.max(0, player.money - 20) };
+      });
       break;
     case 'chance-merger-wave':
       updatedPlayers = state.players.map((player) => ({
@@ -509,17 +571,18 @@ export function endTurn(state: GameState): GameState {
     return addLog(state, 'system', `${currentPlayer.name} cần tung xúc xắc ít nhất 1 lần trước khi kết thúc lượt.`, currentPlayer.id);
   }
 
-  const winner = checkWinner(state);
+  const feedbackState = applyUserDataFeedback(state, currentPlayer.id);
+  const winner = checkWinner(feedbackState);
   if (winner) {
-    return addLog({ ...state, winnerId: winner.id, status: 'finished' }, 'win', `${winner.name} thắng với quyền lực thị trường vượt trội.`, winner.id);
+    return addLog({ ...feedbackState, winnerId: winner.id, status: 'finished' }, 'win', `${winner.name} thắng với quyền lực thị trường vượt trội.`, winner.id);
   }
 
-  const nextPlayerIndex = (state.currentPlayerIndex + 1) % state.players.length;
-  const nextRound = nextPlayerIndex === 0 ? state.round + 1 : state.round;
-  const nextPlayer = state.players[nextPlayerIndex];
+  const nextPlayerIndex = (feedbackState.currentPlayerIndex + 1) % feedbackState.players.length;
+  const nextRound = nextPlayerIndex === 0 ? feedbackState.round + 1 : feedbackState.round;
+  const nextPlayer = feedbackState.players[nextPlayerIndex];
 
   return addLog({
-    ...state,
+    ...feedbackState,
     currentPlayerIndex: nextPlayerIndex,
     round: nextRound,
     diceValue: null,
@@ -561,7 +624,13 @@ export function checkWinner(state: GameState): Player | null {
     marketPower: calculateMarketPower(player, state.players),
   }));
   const totalMarketPower = marketPowers.reduce((sum, item) => sum + item.marketPower, 0);
-  const monopolyWinner = marketPowers.find((item) => totalMarketPower > 0 && item.marketPower / totalMarketPower >= 0.6);
+  const monopolyWinner = marketPowers.find(
+    (item) =>
+      state.round >= MONOPOLY_WIN_MIN_ROUND &&
+      item.player.assets.length >= MONOPOLY_WIN_MIN_ASSETS &&
+      totalMarketPower > 0 &&
+      item.marketPower / totalMarketPower >= 0.6,
+  );
   if (monopolyWinner) return monopolyWinner.player;
 
   const leadingPlayer = getLeadingPlayer(state.players);
@@ -585,6 +654,33 @@ function applyOwnedAssetYield(state: GameState, player: Player, tile: Tile): Gam
   }));
 
   return addLog({ ...state, players: updatedPlayers }, 'system', `${player.name} khai thác ${tile.asset.name} và nhận lợi ích theo loại tài sản.`, player.id);
+}
+
+function applyUserDataFeedback(state: GameState, playerId: string): GameState {
+  const player = findPlayer(state, playerId);
+  if (!player || player.users <= 0) return state;
+
+  const ownsDataAsset = player.assets.some((asset) => asset.era === 'data');
+  if (!ownsDataAsset) return state;
+
+  const hasAiLab = player.assets.some((asset) => asset.type === 'ai-lab');
+  const dataGain = Math.min(18, Math.floor(player.users / 10) + (hasAiLab ? Math.floor(player.users / 25) : 0));
+  if (dataGain <= 0) return state;
+
+  const updatedState = {
+    ...state,
+    players: updatePlayer(state.players, playerId, (item) => ({
+      ...item,
+      data: item.data + dataGain,
+    })),
+  };
+
+  return addLog(
+    updatedState,
+    'system',
+    `${player.name} có ${player.users} người dùng nên tạo thêm ${dataGain} dữ liệu hành vi trước khi kết thúc lượt.`,
+    playerId,
+  );
 }
 
 function applyRegulationTile(state: GameState, player: Player, tile: Tile): GameState {
@@ -646,6 +742,33 @@ function getAssetResourceGain(asset: Asset) {
   }
 
   return { money: 0, users: 5, data: 6, influence: 1 };
+}
+
+function getMovementGain(player: Player, diceValue: number) {
+  const hasDataAsset = player.assets.some((asset) => asset.era === 'data');
+  const hasInfrastructureAsset = player.assets.some((asset) => asset.era === 'oil' || asset.type === 'logistics' || asset.type === 'cloud-infrastructure');
+
+  if (diceValue >= 10) {
+    return {
+      money: 0,
+      users: hasDataAsset ? 3 : 0,
+      data: hasDataAsset ? 2 : 0,
+      influence: hasInfrastructureAsset ? 1 : 0,
+      message: hasDataAsset || hasInfrastructureAsset ? 'Di chuyển xa tạo độ phủ thị trường: nền tảng có thêm users/data, hạ tầng có thêm ảnh hưởng.' : '',
+    };
+  }
+
+  if (diceValue <= 3 && player.assets.length > 0) {
+    return {
+      money: -10,
+      users: 0,
+      data: 0,
+      influence: 0,
+      message: 'Di chuyển chậm làm phát sinh $10 chi phí vận hành tài sản.',
+    };
+  }
+
+  return { money: 0, users: 0, data: 0, influence: 0, message: '' };
 }
 
 function createEventDecks(): Record<EventDeckType, string[]> {
@@ -715,6 +838,10 @@ function getPlayerWithMostUsers(players: Player[]): Player | null {
   return [...players].sort((left, right) => right.users - left.users)[0] ?? null;
 }
 
+function getPlayerWithMostData(players: Player[]): Player | null {
+  return [...players].sort((left, right) => right.data - left.data)[0] ?? null;
+}
+
 function cloneAsset(asset: Asset): Asset {
   return { ...asset };
 }
@@ -731,6 +858,25 @@ function addLog(state: GameState, type: GameLogEntry['type'], message: string, p
 
   return {
     ...state,
+    players: sanitizePlayers(state.players),
     log: [...state.log, logEntry],
   };
+}
+
+export function sanitizeGameState(state: GameState): GameState {
+  return {
+    ...state,
+    players: sanitizePlayers(state.players),
+  };
+}
+
+function sanitizePlayers(players: Player[]): Player[] {
+  return players.map((player) => ({
+    ...player,
+    money: Math.max(0, Math.round(player.money)),
+    influence: Math.max(0, Math.round(player.influence)),
+    users: Math.max(0, Math.round(player.users)),
+    data: Math.max(0, Math.round(player.data)),
+    theoryPoints: Math.max(0, Math.round(player.theoryPoints)),
+  }));
 }

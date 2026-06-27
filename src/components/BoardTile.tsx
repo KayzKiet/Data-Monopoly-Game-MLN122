@@ -34,8 +34,8 @@ export function BoardTile({ currentPlayerId, movingPlayerId, owner, ownerColor, 
     >
       <div aria-hidden="true" className="absolute inset-0 overflow-hidden rounded-[inherit]">
         <div
-          className="absolute inset-0 bg-center bg-no-repeat"
-          style={{ backgroundImage: `url("${imagePath}")`, backgroundSize: '100% 100%' }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url("${imagePath}")` }}
         />
         <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
       </div>
@@ -87,7 +87,7 @@ export function BoardTile({ currentPlayerId, movingPlayerId, owner, ownerColor, 
   );
 }
 
-function getTileDisplayName(tile: Tile): string {
+export function getTileDisplayName(tile: Tile): string {
   const shortNames: Record<string, string> = {
     'startup-start': 'Khởi nghiệp',
     'black-river-oil-field': 'Black River',

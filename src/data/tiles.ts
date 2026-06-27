@@ -97,7 +97,7 @@ export const tiles: Tile[] = [
   },
   ownableTile(11, 'shopgrid', 'ShopGrid', 'ecommerce-platform', 'data', 175, 27, 'Sàn thương mại điện tử gom dữ liệu giao dịch và thói quen tiêu dùng.', 'Nền tảng trung gian có thể kiểm soát cả người bán, người mua và dữ liệu.'),
   ownableTile(12, 'cloudnest', 'CloudNest', 'cloud-infrastructure', 'data', 190, 30, 'Hạ tầng đám mây trở thành đường ray của kinh tế số.', 'Kiểm soát hạ tầng số tạo quyền lực tương tự kiểm soát đường ống dầu.'),
-  ownableTile(13, 'petrorail-network', 'PetroRail Network', 'logistics', 'oil', 145, 22, 'Mạng vận tải nhiên liệu kết nối mỏ, nhà máy và cảng.', 'Tích tụ hạ tầng giúp doanh nghiệp lớn giảm chi phí và tăng quyền lực.'),
+  ownableTile(13, 'petrorail-network', 'PetroRail Network', 'logistics', 'oil', 145, 22, 'Mạng vận tải nhiên liệu kết nối mỏ, nhà máy và cảng.', 'Tập trung hạ tầng có thể giúp doanh nghiệp lớn giảm chi phí và tăng quyền lực thị trường.'),
   {
     id: 'supply-chain-crisis',
     index: 14,
@@ -150,7 +150,7 @@ export const tiles: Tile[] = [
     quizId: 'mln-capital-concentration-role',
   },
   ownableTile(26, 'streamloop', 'StreamLoop', 'social-network', 'data', 180, 29, 'Nền tảng nội dung giữ chân người dùng bằng thuật toán đề xuất.', 'Sự chú ý và dữ liệu hành vi làm tăng quyền lực nền tảng.'),
-  ownableTile(27, 'marketmind-ai', 'MarketMind AI', 'ai-lab', 'data', 220, 36, 'AI thị trường tối ưu giá, quảng cáo và dự đoán nhu cầu.', 'AI làm quyền lực dữ liệu trở nên tập trung hơn khi mô hình lớn cần dữ liệu lớn.'),
+  ownableTile(27, 'marketmind-ai', 'MarketMind AI', 'ai-lab', 'data', 220, 36, 'AI thị trường tối ưu giá, quảng cáo và dự đoán nhu cầu.', 'AI có thể làm lợi thế dữ liệu tập trung hơn khi mô hình lớn cần nhiều dữ liệu và hạ tầng tính toán.'),
   {
     id: 'open-data-regulation',
     index: 28,

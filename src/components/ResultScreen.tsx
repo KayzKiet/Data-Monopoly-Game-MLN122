@@ -10,10 +10,10 @@ interface ResultScreenProps {
 }
 
 const endingPoints = [
-  'Độc quyền dầu mỏ dựa trên tài nguyên khan hiếm và hạ tầng vật chất.',
-  'Độc quyền dữ liệu dựa trên người dùng, dữ liệu, thuật toán, AI và nền tảng.',
-  'Hình thức độc quyền thay đổi, nhưng sự tập trung quyền lực thị trường vẫn tồn tại.',
-  'Đây là một giới hạn của CNTB hiện đại.',
+  'Các tài sản dầu mỏ trong game mô phỏng quyền lực từ tài nguyên vật chất và hạ tầng.',
+  'Các tài sản dữ liệu là phần vận dụng hiện đại về nền tảng, dữ liệu, thuật toán và AI.',
+  'Điểm lý luận chính là xu hướng tích tụ, tập trung tư bản có thể tạo quyền lực độc quyền.',
+  'Kết quả game nên được đọc như mô phỏng học tập, không thay thế giáo trình MLN122.',
 ];
 
 export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultScreenProps) {
