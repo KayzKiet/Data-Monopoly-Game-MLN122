@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { events } from '../data/events';
 import { quizzes } from '../data/quizzes';
 import type { GameState, Player, Tile } from '../types/game';
@@ -54,6 +54,9 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const [offscreenPlayerGuides, setOffscreenPlayerGuides] = useState<OffscreenPlayerGuide[]>([]);
   const [isTheoryOpen, setIsTheoryOpen] = useState(false);
   const boardViewportRef = useRef<HTMLDivElement | null>(null);
+  const sidebarRef = useRef<HTMLElement | null>(null);
+  const playersSectionRef = useRef<HTMLDivElement | null>(null);
+  const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const tileRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const timers = useRef<number[]>([]);
   const isRolling = turnAnimationPhase === 'rolling';
@@ -171,6 +174,24 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
     }
   };
 
+  const scrollBoardToTile = (tileIndex: number, behavior: ScrollBehavior = 'smooth') => {
+    const tileElement = tileRefs.current[tileIndex];
+    if (!tileElement) return;
+
+    tileElement.scrollIntoView({ behavior, block: 'center', inline: 'center' });
+  };
+
+  const scrollSidebarTo = (targetRef: RefObject<HTMLElement | HTMLDivElement | null>) => {
+    const sidebar = sidebarRef.current;
+    const target = targetRef.current;
+    if (!sidebar || !target) return;
+
+    const sidebarRect = sidebar.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const nextTop = sidebar.scrollTop + targetRect.top - sidebarRect.top - 12;
+    sidebar.scrollTo({ behavior: 'smooth', top: Math.max(0, nextTop) });
+  };
+
   const handleRoll = () => {
     if (!gameState || !currentPlayer || !canRollDice) return;
 
@@ -202,6 +223,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
           step += 1;
           const nextPosition = (startPosition + step) % gameState.tiles.length;
           setVisualPositions((current) => ({ ...current, [playerId]: nextPosition }));
+          scrollBoardToTile(nextPosition, 'smooth');
 
           if (step >= diceValue) {
             window.clearInterval(movementInterval);
@@ -214,6 +236,8 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
               setMovingPlayerId(null);
               setDiceFaces(rolledFaces);
               commitGameState(nextState);
+              scrollBoardToTile(nextPosition);
+              window.setTimeout(() => scrollSidebarTo(actionSectionRef), 80);
             }, 180);
 
             timers.current.push(settleTimer);
@@ -246,6 +270,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const handleEndTurn = () => {
     if (!gameState) return;
     commitGameState(endTurn(gameState));
+    window.setTimeout(() => scrollSidebarTo(playersSectionRef), 80);
   };
 
   const handleFinishEarly = () => {
@@ -444,18 +469,25 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
           </div>
         </div>
 
-        <aside className="max-h-[calc(100vh-116px)] space-y-4 overflow-y-auto rounded-xl border border-red-300/20 bg-[linear-gradient(180deg,rgba(127,29,29,0.42),rgba(67,20,7,0.28))] p-3 pr-2">
-          <CurrentPlayersCard gameState={gameState} />
+        <aside
+          className="max-h-[calc(100vh-116px)] space-y-4 overflow-y-auto rounded-xl border border-red-300/20 bg-[linear-gradient(180deg,rgba(127,29,29,0.42),rgba(67,20,7,0.28))] p-3 pr-2"
+          ref={sidebarRef}
+        >
+          <div ref={playersSectionRef}>
+            <CurrentPlayersCard gameState={gameState} />
+          </div>
           {currentPlayer && (
-            <ActionPanel
-              currentPlayer={currentPlayer}
-              gameState={gameState}
-              isBusy={isTurnBusy}
-              onApplyEvent={handleApplyEvent}
-              onBuyAsset={handleBuyAsset}
-              onEndTurn={handleEndTurn}
-              onUpgradeAsset={handleUpgradeAsset}
-            />
+            <div ref={actionSectionRef}>
+              <ActionPanel
+                currentPlayer={currentPlayer}
+                gameState={gameState}
+                isBusy={isTurnBusy}
+                onApplyEvent={handleApplyEvent}
+                onBuyAsset={handleBuyAsset}
+                onEndTurn={handleEndTurn}
+                onUpgradeAsset={handleUpgradeAsset}
+              />
+            </div>
           )}
           <PlayerPanel currentPlayerId={currentPlayer?.id ?? null} gameState={gameState} />
           <GameLog entries={gameState.log} />
