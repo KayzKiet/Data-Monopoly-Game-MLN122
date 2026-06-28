@@ -1,10 +1,10 @@
-# PROJECT_CONTEXT.md
+﻿# PROJECT_CONTEXT.md
 
 ## Project Name
 
 **Data Monopoly: Từ độc quyền dầu mỏ đến độc quyền dữ liệu**
 
-Đây là một web game giáo dục cho môn **MLN122 - Đại học FPT**.
+Đây là một web game giáo dục cho môn **kinh tế chính trị Mác - Lênin**.
 
 ## Chủ đề
 
@@ -376,7 +376,7 @@ Một người chơi thắng nếu:
 README.md cần có:
 
 1. Mô tả project
-2. Chủ đề MLN122
+2. Chủ đề lý thuyết
 3. Tính năng chính
 4. Cách chạy local
 5. Cách build
@@ -393,3 +393,4 @@ README.md cần có:
 * Component tách hợp lý
 * Logic game có comment ở phần quan trọng
 * Không overengineering
+

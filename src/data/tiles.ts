@@ -92,7 +92,7 @@ export const tiles: Tile[] = [
     name: 'Câu hỏi lý luận',
     type: 'theory-quiz',
     era: 'system',
-    description: 'Trả lời câu hỏi để nhận điểm lý luận MLN122.',
+    description: 'Trả lời câu hỏi để nhận điểm lý luận.',
     quizId: 'mln-monopoly-definition',
   },
   ownableTile(11, 'shopgrid', 'ShopGrid', 'ecommerce-platform', 'data', 175, 27, 'Sàn thương mại điện tử gom dữ liệu giao dịch và thói quen tiêu dùng.', 'Nền tảng trung gian có thể kiểm soát cả người bán, người mua và dữ liệu.'),

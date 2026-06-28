@@ -13,7 +13,7 @@ const endingPoints = [
   'Các tài sản dầu mỏ trong game mô phỏng quyền lực từ tài nguyên vật chất và hạ tầng.',
   'Các tài sản dữ liệu là phần vận dụng hiện đại về nền tảng, dữ liệu, thuật toán và AI.',
   'Điểm lý luận chính là xu hướng tích tụ, tập trung tư bản có thể tạo quyền lực độc quyền.',
-  'Kết quả game nên được đọc như mô phỏng học tập, không thay thế giáo trình MLN122.',
+  'Kết quả game nên được đọc như mô phỏng học tập, không thay thế giáo trình.',
 ];
 
 export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultScreenProps) {

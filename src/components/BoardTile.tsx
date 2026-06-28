@@ -164,7 +164,7 @@ function getTileMetaLabel(tile: Tile): string {
   if (tile.asset) return `$${tile.asset.purchasePrice}`;
   if ('fee' in tile && typeof tile.fee === 'number') return `Phí $${tile.fee}`;
   if (tile.type === 'event') return 'Rút thẻ';
-  if (tile.type === 'theory-quiz') return 'MLN122';
+  if (tile.type === 'theory-quiz') return 'Lý luận';
   if (tile.type === 'start') return '+$100';
   if (tile.type === 'crisis') return 'Biến động';
 

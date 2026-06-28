@@ -3,11 +3,12 @@ import { getSourceReferencesForTopic } from '../data/sources';
 import type { QuizQuestion } from '../types/game';
 
 interface QuizModalProps {
+  mode?: 'theory' | 'purchase';
   quiz: QuizQuestion | null;
   onAnswer: (answer: QuizQuestion['correctAnswer']) => void;
 }
 
-export function QuizModal({ quiz, onAnswer }: QuizModalProps) {
+export function QuizModal({ mode = 'theory', quiz, onAnswer }: QuizModalProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<QuizQuestion['correctAnswer'] | null>(null);
 
   if (!quiz) return null;
@@ -15,6 +16,7 @@ export function QuizModal({ quiz, onAnswer }: QuizModalProps) {
   const isAnswered = selectedAnswer !== null;
   const isCorrect = selectedAnswer === quiz.correctAnswer;
   const sources = getSourceReferencesForTopic(quiz.topic);
+  const isPurchaseMode = mode === 'purchase';
 
   const handleAnswer = (answer: QuizQuestion['correctAnswer']) => {
     if (isAnswered) return;
@@ -33,11 +35,11 @@ export function QuizModal({ quiz, onAnswer }: QuizModalProps) {
         <div className="min-h-0 flex-1 overflow-y-auto p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-gold">Quiz lý luận</p>
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-gold">{isPurchaseMode ? 'Điều kiện mua tài sản' : 'Quiz lý luận'}</p>
               <h2 className="mt-3 text-2xl font-black leading-9 text-white">{quiz.question}</h2>
             </div>
             <span className="rounded-md border border-cyan/40 bg-cyan/10 px-3 py-2 text-sm font-black text-cyan">
-              +10 lý luận
+              {isPurchaseMode ? 'Đúng để mua' : '+10 lý luận'}
             </span>
           </div>
 
@@ -70,7 +72,13 @@ export function QuizModal({ quiz, onAnswer }: QuizModalProps) {
           {isAnswered && (
             <div className={`mt-5 rounded-lg border p-4 ${isCorrect ? 'border-emerald-300/40 bg-emerald-500/10' : 'border-rose-300/40 bg-rose-500/10'}`}>
               <p className={`text-lg font-black ${isCorrect ? 'text-emerald-200' : 'text-rose-200'}`}>
-                {isCorrect ? 'Chính xác. Nhận thêm điểm lý luận.' : 'Chưa đúng. Không nhận điểm thưởng.'}
+                {isCorrect
+                  ? isPurchaseMode
+                    ? 'Chính xác. Bạn được mua tài sản này.'
+                    : 'Chính xác. Nhận thêm điểm lý luận.'
+                  : isPurchaseMode
+                    ? 'Chưa đúng. Bạn chưa thể mua tài sản này trong lượt hiện tại.'
+                    : 'Chưa đúng. Không nhận điểm thưởng.'}
               </p>
               <p className="mt-2 text-sm leading-6 text-slate-200">{quiz.explanation}</p>
               <div className="mt-3 flex flex-wrap gap-2">

@@ -1,6 +1,6 @@
 # Data Monopoly: Từ độc quyền dầu mỏ đến độc quyền dữ liệu
 
-Web game giáo dục cho môn MLN122 - Đại học FPT. Dự án mô phỏng một board game chiến lược giúp người chơi so sánh độc quyền tài nguyên trong thời đại dầu mỏ với độc quyền dữ liệu trong CNTB hiện đại.
+Web game giáo dục về kinh tế chính trị Mác - Lênin. Dự án mô phỏng một board game chiến lược giúp người chơi so sánh độc quyền tài nguyên trong thời đại dầu mỏ với độc quyền dữ liệu trong CNTB hiện đại.
 
 ## Tính năng chính
 

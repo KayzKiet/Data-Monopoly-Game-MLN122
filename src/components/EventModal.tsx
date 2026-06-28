@@ -28,7 +28,7 @@ export function EventModal({ event, onApply }: EventModalProps) {
           <InfoBlock label="Tác động gameplay" tone="gold">
             {event.effect}
           </InfoBlock>
-          <InfoBlock label="Diễn giải MLN122" tone="slate">
+          <InfoBlock label="Diễn giải lý thuyết" tone="slate">
             {event.theoryConnection}
           </InfoBlock>
         </div>

@@ -24,10 +24,11 @@ export function ActionPanel({
   const currentTile = gameState.tiles[currentPlayer.position];
   const owner = currentTile?.asset ? findAssetOwner(gameState, currentTile.asset.tileId) : null;
   const currentOwnedAsset = currentTile?.asset && owner ? owner.assets.find((asset) => asset.tileId === currentTile.asset?.tileId) ?? null : null;
-  const canBuy = Boolean(currentTile?.asset && !owner && currentPlayer.money >= currentTile.asset.purchasePrice);
+  const isPurchaseQuizFailed = Boolean(currentTile && gameState.purchaseQuizFailedTileIds.includes(currentTile.id));
+  const canBuy = Boolean(currentTile?.asset && !owner && currentPlayer.money >= currentTile.asset.purchasePrice && !isPurchaseQuizFailed);
   const rentPreview = currentOwnedAsset && owner && owner.id !== currentPlayer.id ? getRentBreakdown(currentOwnedAsset, owner) : null;
   const ownedAssetOnCurrentTile = owner?.id === currentPlayer.id ? currentOwnedAsset : null;
-  const canEndTurn = gameState.rollsThisTurn > 0 && !gameState.activeEventId && !gameState.activeQuizId;
+  const canEndTurn = gameState.rollsThisTurn > 0 && !gameState.activeEventId && !gameState.activeQuizId && !gameState.activePurchaseQuiz;
   const buyLabel = getBuyLabel(currentTile, owner, currentPlayer.money);
 
   return (
@@ -56,7 +57,7 @@ export function ActionPanel({
           </div>
           <p className="mt-1 text-xs leading-5 text-slate-400">{currentTile.asset.theoryConnection}</p>
 
-          {!owner && <AssetEconomyPreview asset={currentTile.asset} canBuy={canBuy} money={currentPlayer.money} />}
+          {!owner && <AssetEconomyPreview asset={currentTile.asset} canBuy={canBuy} isPurchaseQuizFailed={isPurchaseQuizFailed} money={currentPlayer.money} />}
 
           {owner && (
             <>
@@ -133,14 +134,18 @@ export function ActionPanel({
         )}
 
         <button className="secondary-button" disabled={isBusy || !canEndTurn} onClick={onEndTurn} type="button">
-          {gameState.rollsThisTurn <= 0 ? 'Tung xúc xắc trước' : gameState.activeEventId || gameState.activeQuizId ? 'Xử lý ô hiện tại trước' : 'Kết thúc lượt'}
+          {gameState.rollsThisTurn <= 0
+            ? 'Tung xúc xắc trước'
+            : gameState.activeEventId || gameState.activeQuizId || gameState.activePurchaseQuiz
+              ? 'Xử lý ô hiện tại trước'
+              : 'Kết thúc lượt'}
         </button>
       </div>
     </section>
   );
 }
 
-function AssetEconomyPreview({ asset, canBuy, money }: { asset: Asset; canBuy: boolean; money: number }) {
+function AssetEconomyPreview({ asset, canBuy, isPurchaseQuizFailed, money }: { asset: Asset; canBuy: boolean; isPurchaseQuizFailed: boolean; money: number }) {
   const gain = getAssetResourceGain(asset);
   const missingMoney = Math.max(0, asset.purchasePrice - money);
 
@@ -149,6 +154,7 @@ function AssetEconomyPreview({ asset, canBuy, money }: { asset: Asset; canBuy: b
       <div className="rounded-md border border-cyan/20 bg-cyan/10 p-2">
         <p className="font-black text-cyan">Khi mua</p>
         <p>Trả ${asset.purchasePrice}; nhận ngay {formatGain(gain)}.</p>
+        <p>Trước khi mua phải trả lời đúng 1 câu hỏi lý luận ngẫu nhiên.</p>
         <p>Sau khi mua phải đi đủ 1 vòng mới được nâng cấp.</p>
       </div>
       <div className="rounded-md border border-gold/20 bg-gold/10 p-2">
@@ -156,6 +162,7 @@ function AssetEconomyPreview({ asset, canBuy, money }: { asset: Asset; canBuy: b
         <p>Trả tối thiểu ${asset.baseRent}{asset.era === 'data' ? ', mất thêm dữ liệu/người dùng theo cấp.' : '.'}</p>
       </div>
       {!canBuy && missingMoney > 0 && <p className="font-semibold text-rose-200">Bạn còn thiếu ${missingMoney} để mua.</p>}
+      {isPurchaseQuizFailed && <p className="font-semibold text-rose-200">Bạn đã trả lời sai thử thách mua ô này, hãy quay lại ở lượt sau.</p>}
     </div>
   );
 }
@@ -224,7 +231,7 @@ function TileImpactPreview({ tile, currentPlayer, gameState }: { tile: Tile; cur
   if (tile.type === 'theory-quiz') {
     return (
       <div className="mt-4 rounded-lg border border-cyan/20 bg-cyan/10 p-3 text-sm leading-6 text-slate-200">
-        <p className="font-black text-cyan">Quiz MLN122</p>
+        <p className="font-black text-cyan">Quiz lý luận</p>
         <p>Trả lời đúng để nhận điểm lý luận và tăng điểm ảnh hưởng.</p>
       </div>
     );
@@ -237,7 +244,7 @@ function getBuyLabel(tile: Tile | undefined, owner: Player | null, money: number
   if (!tile?.asset) return 'Không có tài sản để mua';
   if (owner) return 'Tài sản đã có chủ';
   if (money < tile.asset.purchasePrice) return 'Chưa đủ vốn để mua';
-  return 'Mua tài sản';
+  return 'Trả lời để mua';
 }
 
 function findAssetOwner(gameState: GameState, tileId: string): Player | null {
@@ -247,7 +254,7 @@ function findAssetOwner(gameState: GameState, tileId: string): Player | null {
 function describeTile(tile: Tile): string {
   if (tile.asset) return `Bạn đang ở ${tile.name}, một tài sản ${tile.era === 'oil' ? 'dầu mỏ' : 'dữ liệu'}.`;
   if (tile.type === 'event') return 'Ô sự kiện: rút thẻ và xử lý hiệu ứng.';
-  if (tile.type === 'theory-quiz') return 'Quiz MLN122: trả lời câu hỏi để nhận điểm.';
+  if (tile.type === 'theory-quiz') return 'Quiz lý luận: trả lời câu hỏi để nhận điểm.';
   if (tile.type === 'tax-regulation') return 'Ô Thuế / Quy định: trả phí và giảm ảnh hưởng.';
   if (tile.type === 'crisis') return 'Ô Khủng hoảng: mất chi phí vận hành, dữ liệu và ảnh hưởng.';
   if (tile.type === 'antitrust-investigation') return 'Ô Điều trần: người dẫn đầu bị phạt để giảm độc quyền.';

@@ -10,6 +10,7 @@ const INITIAL_INFLUENCE = 0;
 const INITIAL_USERS = 0;
 const INITIAL_DATA = 0;
 const THEORY_REWARD = 10;
+const PURCHASE_THEORY_REWARD = 5;
 const MONOPOLY_WIN_MIN_ROUND = 5;
 const MONOPOLY_WIN_MIN_ASSETS = 4;
 
@@ -53,6 +54,8 @@ export function createInitialGameState(players: PlayerSetupInput[]): GameState {
       activeEventId: null,
       activeEventDeck: null,
       activeQuizId: null,
+      activePurchaseQuiz: null,
+      purchaseQuizFailedTileIds: [],
       eventDecks: createEventDecks(),
       winnerId: null,
       status: 'playing',
@@ -141,7 +144,7 @@ export function handleTileLanding(state: GameState, playerId = getCurrentPlayer(
 
   if (tile.type === 'theory-quiz') {
     const quizId = tile.quizId ?? quizzes[0]?.id ?? null;
-    return addLog({ ...state, activeQuizId: quizId }, 'quiz', `${player.name} nhận câu hỏi lý luận MLN122.`, playerId);
+    return addLog({ ...state, activeQuizId: quizId }, 'quiz', `${player.name} nhận câu hỏi lý luận.`, playerId);
   }
 
   if (tile.type === 'antitrust-investigation') {
@@ -179,6 +182,73 @@ export function buyAsset(state: GameState, playerId: string, tileId: string): Ga
     { ...state, players: updatedPlayers, selectedTileId: null },
     'purchase',
     `${player.name} mua ${tileAsset.name}.`,
+    playerId,
+  );
+}
+
+export function startPurchaseQuiz(state: GameState, playerId: string, tileId: string): GameState {
+  const tile = state.tiles.find((item) => item.id === tileId);
+  const player = findPlayer(state, playerId);
+  const tileAsset = tile?.asset;
+
+  if (!tileAsset || !player || findAssetOwner(state, tileAsset.tileId)) return state;
+  if (state.activeEventId || state.activeQuizId || state.activePurchaseQuiz) return state;
+  if (state.purchaseQuizFailedTileIds.includes(tileId)) {
+    return addLog(state, 'purchase', `${player.name} đã trả lời sai thử thách mua ${tileAsset.name}; có thể thử lại khi ghé ô này ở lượt sau.`, playerId);
+  }
+
+  if (player.money < tileAsset.purchasePrice) {
+    return addLog(state, 'purchase', `${player.name} chưa đủ vốn để mua ${tileAsset.name}.`, playerId);
+  }
+
+  const quiz = getRandomQuiz();
+  if (!quiz) return buyAsset(state, playerId, tileId);
+
+  return addLog(
+    { ...state, activePurchaseQuiz: { tileId, quizId: quiz.id } },
+    'quiz',
+    `${player.name} cần trả lời đúng một câu hỏi ngẫu nhiên để mua ${tileAsset.name}.`,
+    playerId,
+  );
+}
+
+export function answerPurchaseQuiz(state: GameState, playerId: string, answer: QuizQuestion['correctAnswer']): GameState {
+  const player = findPlayer(state, playerId);
+  const purchaseQuiz = state.activePurchaseQuiz;
+  const tile = purchaseQuiz ? state.tiles.find((item) => item.id === purchaseQuiz.tileId) : null;
+  const quiz = purchaseQuiz ? quizzes.find((item) => item.id === purchaseQuiz.quizId) : null;
+
+  if (!player || !purchaseQuiz || !tile?.asset || !quiz) return state;
+
+  const isCorrect = quiz.correctAnswer === answer;
+  if (!isCorrect) {
+    return addLog(
+      {
+        ...state,
+        activePurchaseQuiz: null,
+        purchaseQuizFailedTileIds: [...new Set([...state.purchaseQuizFailedTileIds, purchaseQuiz.tileId])],
+      },
+      'quiz',
+      `${player.name} trả lời chưa đúng nên chưa thể mua ${tile.asset.name} trong lượt này. ${quiz.explanation}`,
+      playerId,
+    );
+  }
+
+  const rewardedState = {
+    ...state,
+    activePurchaseQuiz: null,
+    players: updatePlayer(state.players, playerId, (item) => ({
+      ...item,
+      theoryPoints: item.theoryPoints + PURCHASE_THEORY_REWARD,
+      influence: item.influence + 1,
+    })),
+  };
+  const purchasedState = buyAsset(rewardedState, playerId, purchaseQuiz.tileId);
+
+  return addLog(
+    purchasedState,
+    'quiz',
+    `${player.name} trả lời đúng, nhận ${PURCHASE_THEORY_REWARD} điểm lý luận và mở quyền mua ${tile.asset.name}.`,
     playerId,
   );
 }
@@ -592,6 +662,8 @@ export function endTurn(state: GameState): GameState {
     activeEventId: null,
     activeEventDeck: null,
     activeQuizId: null,
+    activePurchaseQuiz: null,
+    purchaseQuizFailedTileIds: [],
   }, 'system', `Chuyển lượt sang ${nextPlayer?.name ?? 'người chơi tiếp theo'}.`, nextPlayer?.id);
 }
 
@@ -789,6 +861,11 @@ function shuffleDeck(cardIds: string[]): string[] {
   return shuffled;
 }
 
+function getRandomQuiz(): QuizQuestion | null {
+  if (quizzes.length === 0) return null;
+  return quizzes[Math.floor(Math.random() * quizzes.length)] ?? null;
+}
+
 function drawEventCard(state: GameState, deckType: EventDeckType, player: Player): GameState {
   const rebuiltDeck = events.filter((event) => event.deck === deckType).map((event) => event.id);
   const currentDeck = state.eventDecks?.[deckType]?.length ? state.eventDecks[deckType] : shuffleDeck(rebuiltDeck);
@@ -866,6 +943,8 @@ function addLog(state: GameState, type: GameLogEntry['type'], message: string, p
 export function sanitizeGameState(state: GameState): GameState {
   return {
     ...state,
+    activePurchaseQuiz: state.activePurchaseQuiz ?? null,
+    purchaseQuizFailedTileIds: state.purchaseQuizFailedTileIds ?? [],
     players: sanitizePlayers(state.players),
   };
 }

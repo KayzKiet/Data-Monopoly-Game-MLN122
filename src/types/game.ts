@@ -115,6 +115,11 @@ export interface GameState {
   activeEventId: string | null;
   activeEventDeck: EventDeckType | null;
   activeQuizId: string | null;
+  activePurchaseQuiz: {
+    tileId: string;
+    quizId: string;
+  } | null;
+  purchaseQuizFailedTileIds: string[];
   eventDecks: Record<EventDeckType, string[]>;
   winnerId: string | null;
   status: 'setup' | 'playing' | 'finished';

@@ -2,7 +2,7 @@ import { type CSSProperties, type RefObject, useEffect, useMemo, useRef, useStat
 import { events } from '../data/events';
 import { quizzes } from '../data/quizzes';
 import type { GameState, Player, Tile } from '../types/game';
-import { answerQuiz, applyDicePairRule, applyEvent, buyAsset, endTurn, handleTileLanding, movePlayer, upgradeAsset } from '../utils/gameLogic';
+import { answerPurchaseQuiz, answerQuiz, applyDicePairRule, applyEvent, endTurn, handleTileLanding, movePlayer, startPurchaseQuiz, upgradeAsset } from '../utils/gameLogic';
 import { ActionPanel } from './ActionPanel';
 import { BoardTile, getTileDisplayName } from './BoardTile';
 import { Dice } from './Dice';
@@ -49,7 +49,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const [turnAnimationPhase, setTurnAnimationPhase] = useState<TurnAnimationPhase>('idle');
   const [movingPlayerId, setMovingPlayerId] = useState<string | null>(null);
   const [boardZoom, setBoardZoom] = useState(0.9);
-  const [boardBrightness, setBoardBrightness] = useState(1);
+  const [boardBrightness, setBoardBrightness] = useState(1.35);
   const [visualPositions, setVisualPositions] = useState<Record<string, number>>({});
   const [offscreenPlayerGuides, setOffscreenPlayerGuides] = useState<OffscreenPlayerGuide[]>([]);
   const [isTheoryOpen, setIsTheoryOpen] = useState(false);
@@ -58,6 +58,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const sidebarRef = useRef<HTMLElement | null>(null);
   const playersSectionRef = useRef<HTMLDivElement | null>(null);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const diceSectionRef = useRef<HTMLDivElement | null>(null);
   const tileRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const timers = useRef<number[]>([]);
   const isRolling = turnAnimationPhase === 'rolling';
@@ -69,6 +70,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
       currentPlayer &&
       !gameState.activeEventId &&
       !gameState.activeQuizId &&
+      !gameState.activePurchaseQuiz &&
       !isTurnBusy &&
       (gameState.rollsThisTurn === 0 || gameState.extraRollsAvailable > 0),
   );
@@ -84,8 +86,12 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
 
     return owners;
   }, [gameState]);
+  const purchaseQuizState = gameState?.activePurchaseQuiz ?? null;
   const activeEvent = gameState?.activeEventId ? events.find((event) => event.id === gameState.activeEventId) ?? null : null;
-  const activeQuiz = gameState?.activeQuizId ? quizzes.find((quiz) => quiz.id === gameState.activeQuizId) ?? null : null;
+  const activeTheoryQuiz = gameState?.activeQuizId ? quizzes.find((quiz) => quiz.id === gameState.activeQuizId) ?? null : null;
+  const activePurchaseQuiz = purchaseQuizState ? quizzes.find((quiz) => quiz.id === purchaseQuizState.quizId) ?? null : null;
+  const activeQuiz = activePurchaseQuiz ?? activeTheoryQuiz;
+  const activeQuizMode = activePurchaseQuiz ? 'purchase' : 'theory';
 
   useEffect(() => {
     if (!gameState || isTurnBusy) return;
@@ -193,6 +199,23 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
     sidebar.scrollTo({ behavior: 'smooth', top: Math.max(0, nextTop) });
   };
 
+  const scrollBoardToDice = () => {
+    const viewport = boardViewportRef.current;
+    const diceSection = diceSectionRef.current;
+    if (!viewport || !diceSection) return;
+
+    const viewportRect = viewport.getBoundingClientRect();
+    const diceRect = diceSection.getBoundingClientRect();
+    const nextLeft = viewport.scrollLeft + diceRect.left - viewportRect.left - viewport.clientWidth / 2 + diceRect.width / 2;
+    const nextTop = viewport.scrollTop + diceRect.top - viewportRect.top - viewport.clientHeight / 2 + diceRect.height / 2;
+
+    viewport.scrollTo({
+      behavior: 'smooth',
+      left: Math.max(0, nextLeft),
+      top: Math.max(0, nextTop),
+    });
+  };
+
   const handleRoll = () => {
     if (!gameState || !currentPlayer || !canRollDice) return;
 
@@ -255,7 +278,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
 
   const handleBuyAsset = (tileId: string) => {
     if (!gameState || !currentPlayer) return;
-    commitGameState(buyAsset(gameState, currentPlayer.id, tileId));
+    commitGameState(startPurchaseQuiz(gameState, currentPlayer.id, tileId));
   };
 
   const handleUpgradeAsset = (assetId: string) => {
@@ -271,7 +294,10 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const handleEndTurn = () => {
     if (!gameState) return;
     commitGameState(endTurn(gameState));
-    window.setTimeout(() => scrollSidebarTo(playersSectionRef), 80);
+    window.setTimeout(() => {
+      scrollSidebarTo(actionSectionRef);
+      scrollBoardToDice();
+    }, 80);
   };
 
   const handleFinishEarly = () => {
@@ -299,7 +325,14 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   };
 
   const handleQuizAnswer = (answer: NonNullable<typeof activeQuiz>['correctAnswer']) => {
-    if (!gameState || !currentPlayer || !gameState.activeQuizId) return;
+    if (!gameState || !currentPlayer) return;
+
+    if (gameState.activePurchaseQuiz) {
+      commitGameState(answerPurchaseQuiz(gameState, currentPlayer.id, answer));
+      return;
+    }
+
+    if (!gameState.activeQuizId) return;
     commitGameState(answerQuiz(gameState, currentPlayer.id, gameState.activeQuizId, answer));
   };
 
@@ -452,16 +485,18 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
                           </h2>
                         </div>
                         {currentPlayer && (
-                          <Dice
-                            canRoll={canRollDice}
-                            currentPlayerName={currentPlayer.name}
-                            diceFaces={diceFaces}
-                            gameState={gameState}
-                            isBusy={isTurnBusy}
-                            isMoving={isMoving}
-                            isRolling={isRolling}
-                            onRoll={handleRoll}
-                          />
+                          <div ref={diceSectionRef}>
+                            <Dice
+                              canRoll={canRollDice}
+                              currentPlayerName={currentPlayer.name}
+                              diceFaces={diceFaces}
+                              gameState={gameState}
+                              isBusy={isTurnBusy}
+                              isMoving={isMoving}
+                              isRolling={isRolling}
+                              onRoll={handleRoll}
+                            />
+                          </div>
                         )}
                       </div>
                     </div>
@@ -499,7 +534,7 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
       </div>
 
       <EventModal event={activeEvent} onApply={handleApplyEvent} />
-      <QuizModal quiz={activeQuiz} onAnswer={handleQuizAnswer} />
+      <QuizModal mode={activeQuizMode} quiz={activeQuiz} onAnswer={handleQuizAnswer} />
       <GameTheoryModal isOpen={isTheoryOpen} onClose={() => setIsTheoryOpen(false)} />
       <GameRulesModal isOpen={isRulesOpen} onClose={() => setIsRulesOpen(false)} />
     </section>
@@ -655,7 +690,7 @@ function GameTheoryModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 
   const rows = [
     {
-      criterion: 'Cơ sở phân tích MLN',
+      criterion: 'Cơ sở phân tích lý thuyết',
       oil: 'Tích tụ, tập trung tư bản; kiểm soát tư liệu và khâu sản xuất - lưu thông quan trọng.',
       data: 'Vận dụng hiện đại: nền tảng lớn có thể tích lũy dữ liệu, người dùng và hạ tầng số.',
     },
@@ -692,7 +727,7 @@ function GameTheoryModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
           <div className="grid gap-4 lg:grid-cols-2">
             <div className="rounded-lg border border-white/10 bg-oil/60 p-4">
-              <h3 className="text-lg font-black text-white">Ý chính MLN122</h3>
+              <h3 className="text-lg font-black text-white">Ý chính lý thuyết</h3>
               <p className="mt-3 text-sm leading-7 text-slate-300">
                 Game tập trung vào xu hướng tích tụ, tập trung tư bản và khả năng hình thành quyền lực độc quyền. Các nội dung về dữ liệu, AI và nền tảng là phần vận dụng vào kinh tế số để hỗ trợ thảo luận.
               </p>
@@ -748,7 +783,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       content: [
         'Bấm Tung xúc xắc để di chuyển theo tổng 2 xúc xắc.',
         'Khung bàn cờ tự đi theo nhân vật. Khi di chuyển xong, bảng bên phải tự chuyển đến phần Hành động.',
-        'Xử lý ô đang đứng: mua tài sản, trả phí, rút thẻ, trả lời quiz hoặc chịu điều tiết/khủng hoảng.',
+        'Xử lý ô đang đứng: mua tài sản bằng quiz, trả phí, rút thẻ, trả lời quiz hoặc chịu điều tiết/khủng hoảng.',
         'Sau khi xử lý xong, bấm Kết thúc lượt. Bảng bên phải sẽ quay về phần Người chơi.',
       ],
     },
@@ -763,7 +798,8 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     {
       title: '4. Mua và nâng cấp tài sản',
       content: [
-        'Nếu dừng ở tài sản chưa có chủ và đủ vốn, người chơi có thể mua tài sản đó.',
+        'Nếu dừng ở tài sản chưa có chủ và đủ vốn, người chơi bấm mua để nhận 1 câu hỏi lý luận ngẫu nhiên.',
+        'Trả lời đúng thì mua được tài sản, nhận thêm một ít điểm lý luận và ảnh hưởng; trả lời sai thì mất quyền mua ô đó trong lượt hiện tại.',
         'Tài sản dầu mỏ thường tạo vốn và ảnh hưởng. Tài sản dữ liệu tạo users, data và ảnh hưởng.',
         'Tài sản mới mua chưa nâng cấp ngay; phải đi qua Khởi nghiệp ít nhất 1 vòng sau khi mua.',
         'Nâng cấp làm tăng giá trị tài sản, tiền thuê và quyền lực thị trường.',
@@ -774,7 +810,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       content: [
         'Cuối lượt, nếu người chơi có tài sản dữ liệu và có users, users sẽ tạo thêm data hành vi.',
         'Nhiều users -> nhiều data; data có thể làm thuật toán/AI mạnh hơn; AI và nền tảng mạnh hơn có thể tiếp tục hút users.',
-        'Đây là phần mô phỏng độc quyền dữ liệu hiện đại, không phải khái niệm nguyên văn trong giáo trình MLN.',
+        'Đây là phần mô phỏng độc quyền dữ liệu hiện đại, không phải khái niệm nguyên văn trong giáo trình.',
       ],
     },
     {
@@ -788,7 +824,8 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     {
       title: '7. Quiz, điều tiết và khủng hoảng',
       content: [
-        'Quiz MLN122: trả lời đúng nhận điểm lý luận và tăng nhẹ ảnh hưởng; trả lời sai vẫn hiện giải thích để học lại.',
+        'Quiz lý luận: trả lời đúng nhận điểm lý luận và tăng nhẹ ảnh hưởng; trả lời sai vẫn hiện giải thích để học lại.',
+        'Quiz mua tài sản dùng cùng bộ câu hỏi nhưng có mục tiêu khác: đúng mới được mua, sai thì thử lại khi quay lại ô ở lượt sau.',
         'Thuế/Quy định: người đứng trên ô trả phí và mất ảnh hưởng; sở hữu cloud có thể giảm phí.',
         'Điều trần/Chống độc quyền: người dẫn đầu quyền lực thị trường bị nhắm đến.',
         'Khủng hoảng: mất chi phí vận hành, dữ liệu và ảnh hưởng.',
@@ -855,7 +892,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                   ['Ảnh hưởng', '0', 'Sức nặng xã hội/thị trường, tăng qua tài sản, quiz và sự kiện.'],
                   ['Người dùng', '0', 'Nguồn tạo dữ liệu cho tài sản dữ liệu và nền tảng số.'],
                   ['Dữ liệu', '0', 'Tài nguyên chiến lược trong kinh tế số, gắn với thuật toán/AI.'],
-                  ['Điểm lý luận', '0', 'Thể hiện việc trả lời đúng quiz và hiểu nội dung MLN122.'],
+                  ['Điểm lý luận', '0', 'Thể hiện việc trả lời đúng quiz và hiểu nội dung lý thuyết.'],
                 ].map(([metric, start, meaning]) => (
                   <tr key={metric}>
                     <td className="border-b border-white/10 px-4 py-4 font-bold text-white">{metric}</td>

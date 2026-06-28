@@ -11,7 +11,7 @@ interface LandingPageProps {
 const learningPoints = [
   'Độc quyền dầu mỏ trong game mô phỏng quyền lực từ tài nguyên vật chất và hạ tầng.',
   'Độc quyền dữ liệu là phần vận dụng hiện đại: nền tảng số, người dùng, dữ liệu, thuật toán và AI.',
-  'Trọng tâm MLN122 là xu hướng tích tụ, tập trung tư bản và khả năng hình thành quyền lực độc quyền.',
+  'Trọng tâm lý thuyết là xu hướng tích tụ, tập trung tư bản và khả năng hình thành quyền lực độc quyền.',
 ];
 
 const howToPlaySteps = [
@@ -33,7 +33,7 @@ export function LandingPage({ hasSavedGame, onContinue, onStart, onLearnTheory, 
     <section className="screen-shell grid min-h-[calc(100vh-74px)] items-center gap-8 lg:grid-cols-[1.08fr_0.92fr]">
       <div className="space-y-7">
         <div className="inline-flex rounded-full border border-cyan/30 bg-cyan/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-cyan">
-          MLN122 - Web game giáo dục
+          Web game giáo dục
         </div>
 
         <div className="space-y-5">

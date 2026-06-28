@@ -1,6 +1,6 @@
-# Bộ câu hỏi quiz cho web game Data Monopoly
+﻿# Bộ câu hỏi quiz cho web game Data Monopoly
 
-## Nhóm A — Câu hỏi lý thuyết trực tiếp từ MLN122 / Kinh tế chính trị Mác–Lênin
+## Nhóm A — Câu hỏi lý thuyết trực tiếp từ Kinh tế chính trị Mác–Lênin
 
 ### 1. Độc quyền trong kinh tế chính trị Mác–Lênin được hiểu đúng nhất là gì?
 
@@ -361,3 +361,4 @@ D. Độc quyền chỉ tồn tại trong quá khứ, không thể có biểu hi
 Giải thích: Game dùng dầu mỏ và dữ liệu để so sánh hai hình thức độc quyền khác nhau, qua đó làm rõ sự vận động và giới hạn của CNTB hiện đại.
 
 Tag: Tổng kết chủ đề
+

@@ -51,6 +51,8 @@ function migrateGameState(gameState: GameState): GameState {
     ...gameState,
     tiles,
     activeEventDeck: gameState.activeEventDeck ?? null,
+    activePurchaseQuiz: gameState.activePurchaseQuiz ?? null,
+    purchaseQuizFailedTileIds: gameState.purchaseQuizFailedTileIds ?? [],
     rollsThisTurn: gameState.rollsThisTurn ?? (gameState.diceValue !== null ? 1 : 0),
     extraRollsAvailable: gameState.extraRollsAvailable ?? 0,
     eventDecks,

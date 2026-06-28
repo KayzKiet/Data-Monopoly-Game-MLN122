@@ -1,4 +1,4 @@
-# Ảnh cho từng ô trên bàn cờ
+﻿# Ảnh cho từng ô trên bàn cờ
 
 Đặt ảnh từng ô vào thư mục này. Game tự đọc ảnh theo công thức:
 
@@ -93,7 +93,7 @@ Bạn có thể copy từng dòng để yêu cầu AI generate ảnh. Mỗi dòn
 07. chance-1.png | 392x600 | ô ngang khung dọc | Ô Cơ hội, lá bài cơ hội, dấu chấm than, biến động thị trường, chính sách, công nghệ; có thể dùng chung cho ô 22 và 36; có thể để số 07 nhỏ ở góc trên trái.
 08. continental-pipeline.png | 392x600 | ô ngang khung dọc | Continental Pipeline, đường ống dầu lớn chạy qua cánh đồng/núi, hạ tầng vận chuyển dầu xuyên lục địa; có thể để số 08 nhỏ ở góc trên trái.
 09. steel-port-logistics.png | 392x600 | ô ngang khung dọc | Steel Port Logistics, cảng thép, container, cần cẩu, vận tải hàng hóa, chuỗi cung ứng dầu mỏ/công nghiệp; có thể để số 09 nhỏ ở góc trên trái.
-10. theory-quiz-1.png | 600x600 | ô góc | Ô Quiz lý luận MLN122, sách vở, bút chì, dấu hỏi, lớp học/bàn học; có thể dùng chung cho ô 25 và 35; có thể để số 10 nhỏ ở góc trên trái.
+10. theory-quiz-1.png | 600x600 | ô góc | Ô Quiz lý luận, sách vở, bút chì, dấu hỏi, lớp học/bàn học; có thể dùng chung cho ô 25 và 35; có thể để số 10 nhỏ ở góc trên trái.
 11. shopgrid.png | 600x392 | ô dọc khung ngang | ShopGrid là sàn thương mại điện tử, giao diện mua sắm online, giỏ hàng, kiện hàng, dữ liệu giao dịch, người bán/người mua; có thể để số 11 nhỏ ở góc trên trái.
 12. cloudnest.png | 600x392 | ô dọc khung ngang | CloudNest là công ty hạ tầng dữ liệu đám mây, server, cloud infrastructure, trung tâm dữ liệu; không phải tổ chim; có thể để số 12 nhỏ ở góc trên trái.
 13. petrorail-network.png | 600x392 | ô dọc khung ngang | PetroRail Network, đường sắt vận chuyển nhiên liệu, toa tàu chở dầu, logistics dầu mỏ, nhà ga công nghiệp; có thể để số 13 nhỏ ở góc trên trái.
@@ -108,7 +108,7 @@ Bạn có thể copy từng dòng để yêu cầu AI generate ảnh. Mỗi dòn
 22. chance-2.png | 392x600 | ô ngang khung dọc | Ô Cơ hội, có thể copy từ chance-1.png hoặc vẽ biến thể lá bài cơ hội, dấu chấm than, biến động thị trường/chính sách/công nghệ; có thể để số 22 nhỏ ở góc trên trái.
 23. golden-barrel-depot.png | 392x600 | ô ngang khung dọc | Golden Barrel Depot, kho thùng dầu vàng, bồn chứa nhiên liệu, dự trữ năng lượng, cảm giác quý hiếm; có thể để số 23 nhỏ ở góc trên trái.
 24. datavault.png | 392x600 | ô ngang khung dọc | DataVault là kho dữ liệu lớn, bảo mật dữ liệu, server, két sắt/ổ cứng số, khóa bảo mật; có thể để số 24 nhỏ ở góc trên trái.
-25. theory-quiz-2.png | 392x600 | ô ngang khung dọc | Ô Quiz lý luận MLN122, có thể copy từ theory-quiz-1.png hoặc vẽ biến thể sách vở, câu hỏi, bút, lớp học; có thể để số 25 nhỏ ở góc trên trái.
+25. theory-quiz-2.png | 392x600 | ô ngang khung dọc | Ô Quiz lý luận, có thể copy từ theory-quiz-1.png hoặc vẽ biến thể sách vở, câu hỏi, bút, lớp học; có thể để số 25 nhỏ ở góc trên trái.
 26. streamloop.png | 392x600 | ô ngang khung dọc | StreamLoop là nền tảng nội dung/streaming, màn hình video, nút play, vòng lặp đề xuất, người dùng xem nội dung; có thể để số 26 nhỏ ở góc trên trái.
 27. marketmind-ai.png | 392x600 | ô ngang khung dọc | MarketMind AI là AI dự đoán thị trường, đầu AI, biểu đồ giá, dữ liệu phân tích, trí tuệ nhân tạo tối ưu thị trường; có thể để số 27 nhỏ ở góc trên trái.
 28. open-data-regulation.png | 392x600 | ô ngang khung dọc | Ô Quy định dữ liệu mở, biểu tượng open data, khóa mở, tòa nhà/chính sách, luật chia sẻ dữ liệu; có thể để số 28 nhỏ ở góc trên trái.
@@ -118,7 +118,7 @@ Bạn có thể copy từng dòng để yêu cầu AI generate ảnh. Mỗi dòn
 32. data-union-hub.png | 600x392 | ô dọc khung ngang | Data Union Hub là cộng đồng/liên minh dữ liệu, nhóm người dùng chia sẻ dữ liệu quanh hub số, hợp tác dữ liệu; có thể để số 32 nhỏ ở góc trên trái.
 33. fortune-3.png | 600x392 | ô dọc khung ngang | Ô Khí vận, có thể copy từ fortune-1.png hoặc vẽ biến thể lá bài may rủi, dấu hỏi, vận may cá nhân; có thể để số 33 nhỏ ở góc trên trái.
 34. green-fuel-grid.png | 600x392 | ô dọc khung ngang | Green Fuel Grid, lưới nhiên liệu xanh, turbine gió, tấm pin mặt trời, đường ống xanh, hạ tầng phân phối năng lượng mới; có thể để số 34 nhỏ ở góc trên trái.
-35. theory-quiz-3.png | 600x392 | ô dọc khung ngang | Ô Quiz lý luận MLN122, có thể copy từ theory-quiz-1.png hoặc vẽ biến thể sách vở, câu hỏi, bút, lớp học; có thể để số 35 nhỏ ở góc trên trái.
+35. theory-quiz-3.png | 600x392 | ô dọc khung ngang | Ô Quiz lý luận, có thể copy từ theory-quiz-1.png hoặc vẽ biến thể sách vở, câu hỏi, bút, lớp học; có thể để số 35 nhỏ ở góc trên trái.
 36. chance-3.png | 600x392 | ô dọc khung ngang | Ô Cơ hội, có thể copy từ chance-1.png hoặc vẽ biến thể lá bài cơ hội, dấu chấm than, biến động thị trường/chính sách/công nghệ; có thể để số 36 nhỏ ở góc trên trái.
 37. algorithm-exchange.png | 600x392 | ô dọc khung ngang | Algorithm Exchange là chợ thuật toán, mã lệnh, giao dịch thuật toán, nền tảng AI/data, cửa hàng số/marketplace; có thể để số 37 nhỏ ở góc trên trái.
 38. deep-sea-terminal.png | 600x392 | ô dọc khung ngang | Deep Sea Terminal, cảng biển sâu, tàu hàng lớn, cần cẩu container, logistics quốc tế, hoàng hôn công nghiệp; có thể để số 38 nhỏ ở góc trên trái.
@@ -159,7 +159,7 @@ Sau đó ghép thêm mô tả từng ô bên dưới:
 32. data-union-hub.png | Data Union Hub là cộng đồng/liên minh dữ liệu, nhóm người dùng chia sẻ dữ liệu quanh hub số, hợp tác dữ liệu.
 33. fortune-3.png | Ô Khí vận, lá bài may rủi, dấu hỏi, ánh sáng vàng, cảm giác vận may cá nhân.
 34. green-fuel-grid.png | Green Fuel Grid, lưới nhiên liệu xanh, turbine gió, tấm pin mặt trời, đường ống xanh, hạ tầng phân phối năng lượng mới.
-35. theory-quiz-3.png | Ô Quiz lý luận MLN122, sách vở, câu hỏi, bút, lớp học.
+35. theory-quiz-3.png | Ô Quiz lý luận, sách vở, câu hỏi, bút, lớp học.
 36. chance-3.png | Ô Cơ hội, lá bài cơ hội, dấu chấm than, biến động thị trường/chính sách/công nghệ.
 37. algorithm-exchange.png | Algorithm Exchange là chợ thuật toán, mã lệnh, giao dịch thuật toán, nền tảng AI/data, cửa hàng số/marketplace.
 38. deep-sea-terminal.png | Deep Sea Terminal, cảng biển sâu, tàu hàng lớn, cần cẩu container, logistics quốc tế, hoàng hôn công nghiệp.
@@ -169,3 +169,4 @@ Sau đó ghép thêm mô tả từng ô bên dưới:
 ## Có cần đủ ảnh ngay không?
 
 Không. Nếu thiếu ảnh, ô vẫn hiển thị màu nền và chữ. Khi bạn thêm đúng file PNG vào thư mục này, ảnh sẽ tự hiện sau khi refresh trang.
+

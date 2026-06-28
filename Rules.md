@@ -2,7 +2,7 @@
 
 ## 1. Mục tiêu của game
 
-Data Monopoly là web game giáo dục cho chủ đề MLN122: từ độc quyền dầu mỏ đến độc quyền dữ liệu. Người chơi bắt đầu với vốn khởi nghiệp, sau đó cạnh tranh để tích lũy tài sản, người dùng, dữ liệu, ảnh hưởng và điểm lý luận.
+Data Monopoly là web game giáo dục về chủ đề từ độc quyền dầu mỏ đến độc quyền dữ liệu. Người chơi bắt đầu với vốn khởi nghiệp, sau đó cạnh tranh để tích lũy tài sản, người dùng, dữ liệu, ảnh hưởng và điểm lý luận.
 
 Thông điệp chính của game là: hình thức độc quyền có thể thay đổi từ tài nguyên vật chất sang dữ liệu và nền tảng số, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn tồn tại.
 
@@ -28,7 +28,7 @@ Mỗi người chơi có các chỉ số sau:
 - Ảnh hưởng: mức ảnh hưởng xã hội/thị trường.
 - Người dùng: số lượng người dùng, quan trọng với tài sản dữ liệu.
 - Dữ liệu: lượng dữ liệu sở hữu, là tài nguyên chiến lược trong kinh tế số.
-- Điểm lý luận: điểm nhận được khi trả lời đúng quiz MLN122.
+- Điểm lý luận: điểm nhận được khi trả lời đúng quiz lý luận.
 - Tài sản: danh sách tài sản đã mua.
 - Vị trí: vị trí hiện tại trên bàn cờ.
 - Đang bị điều tra: trạng thái bị điều tra chống độc quyền.
@@ -91,7 +91,7 @@ Mỗi lượt diễn ra theo thứ tự:
 3. Token của người chơi di chuyển từng ô theo kết quả xúc xắc.
 4. Trong lúc di chuyển, một số tình huống thị trường có thể phát sinh theo nhịp di chuyển.
 5. Khi dừng ở ô mới, game xử lý hiệu ứng của ô đó.
-6. Người chơi có thể mua tài sản nếu ô chưa có chủ.
+6. Người chơi có thể mua tài sản nếu ô chưa có chủ, đủ vốn và trả lời đúng câu hỏi mua tài sản.
 7. Người chơi chỉ có thể nâng cấp nếu đang đứng trên ô tài sản của chính mình, tài sản đó đã sở hữu ít nhất 1 vòng và người chơi đủ tiền.
 8. Người chơi bấm Kết thúc lượt để chuyển sang người tiếp theo.
 
@@ -123,9 +123,12 @@ Trong gameplay hiện tại, đi qua Khởi nghiệp còn có tác dụng mở q
 
 Nếu người chơi dừng ở một ô tài sản chưa có chủ và đủ tiền, người chơi có thể mua tài sản đó.
 
+Trước khi mua, game sẽ chọn ngẫu nhiên 1 câu hỏi lý luận từ bộ quiz. Người chơi phải trả lời đúng mới được mua ô đó. Nếu trả lời sai, người chơi không mua được ô hiện tại trong lượt này, nhưng vẫn xem được giải thích để học lại và có thể thử lại khi quay lại ô đó ở lượt sau.
+
 Khi mua, người chơi:
 
 - Trả giá mua hiển thị trên ô.
+- Được cộng một phần nhỏ điểm lý luận và ảnh hưởng nếu vượt qua câu hỏi mua tài sản.
 - Nhận lợi ích ban đầu tùy loại tài sản.
 - Trở thành chủ sở hữu của ô đó.
 - Chưa được nâng cấp ngay; phải đi đủ 1 vòng sau khi mua.
@@ -145,7 +148,7 @@ Tài sản dữ liệu gồm:
 - Cloud.
 - AI Lab.
 
-Ý nghĩa lý luận: mua tài sản mô phỏng quá trình tích lũy tư bản và kiểm soát nguồn lực quan trọng của thị trường.
+Ý nghĩa lý luận: mua tài sản mô phỏng quá trình tích lũy tư bản và kiểm soát nguồn lực quan trọng của thị trường. Điều kiện trả lời câu hỏi giúp việc tích lũy tài sản gắn trực tiếp với hiểu biết lý luận, tránh việc chỉ mua theo may rủi.
 
 ## 8. Trả tiền thuê
 
@@ -236,7 +239,7 @@ Ví dụ:
 
 ## 12. Ô Quiz
 
-Khi dừng ở ô Quiz lý luận, người chơi trả lời câu hỏi MLN122.
+Khi dừng ở ô Quiz lý luận, người chơi trả lời câu hỏi lý luận.
 
 Nếu trả lời đúng:
 
@@ -249,6 +252,8 @@ Nếu trả lời sai:
 - Game vẫn hiển thị giải thích để người chơi học lại kiến thức.
 
 Bộ câu hỏi được lấy từ file Source Question.md và đã được đưa vào dữ liệu quiz của game.
+
+Bộ câu hỏi cũng được dùng cho thử thách mua tài sản. Mỗi lần bấm mua, câu hỏi được chọn ngẫu nhiên để tạo nhịp chơi khó đoán hơn.
 
 ## 13. Ô Thuế, Quy định và Điều trần
 
@@ -338,4 +343,4 @@ Khi trình bày trên lớp, có thể giải thích game theo 3 bước:
 4. Các thẻ điều tiết, tẩy chay, khủng hoảng và dữ liệu mở nhắc người học rằng quyền lực độc quyền luôn có giới hạn xã hội, chính sách và kỹ thuật.
 5. Người thắng có thể rất mạnh về thị trường, nhưng game đặt câu hỏi về tác động xã hội của độc quyền.
 
-Kết luận: từ dầu mỏ đến dữ liệu, hình thức kiểm soát thay đổi, nhưng logic tập trung tư bản và quyền lực thị trường vẫn là vấn đề cần phân tích trong MLN122.
+Kết luận: từ dầu mỏ đến dữ liệu, hình thức kiểm soát thay đổi, nhưng logic tập trung tư bản và quyền lực thị trường vẫn là vấn đề cần phân tích trong kinh tế chính trị Mác - Lênin.
