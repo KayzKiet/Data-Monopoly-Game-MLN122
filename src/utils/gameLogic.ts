@@ -826,7 +826,7 @@ function getMovementGain(player: Player, diceValue: number) {
       users: hasDataAsset ? 3 : 0,
       data: hasDataAsset ? 2 : 0,
       influence: hasInfrastructureAsset ? 1 : 0,
-      message: hasDataAsset || hasInfrastructureAsset ? 'Di chuyển xa tạo độ phủ thị trường: nền tảng có thêm users/data, hạ tầng có thêm ảnh hưởng.' : '',
+      message: hasDataAsset || hasInfrastructureAsset ? 'Di chuyển xa tạo độ phủ thị trường: nền tảng có thêm người dùng/dữ liệu, hạ tầng có thêm ảnh hưởng.' : '',
     };
   }
 

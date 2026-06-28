@@ -484,7 +484,7 @@ export const quizzes: QuizQuestion[] = [
   },
   {
     id: 'added-question-ai-data-feedback',
-    question: 'Vòng lặp users - data - AI trong game minh họa điều gì?',
+    question: 'Vòng lặp người dùng - dữ liệu - AI trong game minh họa điều gì?',
     options: [
       'A. Nhiều người dùng tạo nhiều dữ liệu; dữ liệu giúp AI tốt hơn; AI tốt hơn lại thu hút thêm người dùng',
       'B. AI càng phát triển thì dữ liệu càng mất hoàn toàn giá trị',

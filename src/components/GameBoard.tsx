@@ -697,12 +697,12 @@ function GameTheoryModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     {
       criterion: 'Nguồn lực trong game',
       oil: 'Mỏ dầu, nhà máy lọc dầu, đường ống, cảng và logistics.',
-      data: 'Nền tảng số, cloud, dữ liệu, thuật toán, AI và người dùng.',
+      data: 'Nền tảng số, hạ tầng đám mây, dữ liệu, thuật toán, AI và người dùng.',
     },
     {
       criterion: 'Rào cản cạnh tranh',
       oil: 'Vốn lớn, hạ tầng vật chất, quyền tiếp cận tài nguyên.',
-      data: 'Hiệu ứng mạng lưới, dữ liệu tích lũy, chi phí cloud, vị trí trung gian.',
+      data: 'Hiệu ứng mạng lưới, dữ liệu tích lũy, chi phí hạ tầng đám mây, vị trí trung gian.',
     },
     {
       criterion: 'Điều cần nhớ',
@@ -790,7 +790,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     {
       title: '3. Hiệu ứng khi di chuyển',
       content: [
-        'Nếu tung tổng từ 10 trở lên: tài sản dữ liệu có thể tạo thêm users/data; hạ tầng dầu mỏ, logistics hoặc cloud có thể tăng ảnh hưởng.',
+        'Nếu tung tổng từ 10 trở lên: tài sản dữ liệu có thể tạo thêm người dùng/dữ liệu; hạ tầng dầu mỏ, logistics hoặc đám mây có thể tăng ảnh hưởng.',
         'Nếu tung tổng từ 3 trở xuống và đã có tài sản: phát sinh chi phí vận hành nhỏ.',
         'Nếu tung cặp 1:1 hoặc 6:6: được tung thêm một lần sau khi xử lý xong lượt di chuyển hiện tại.',
       ],
@@ -800,16 +800,16 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       content: [
         'Nếu dừng ở tài sản chưa có chủ và đủ vốn, người chơi bấm mua để nhận 1 câu hỏi lý luận ngẫu nhiên.',
         'Trả lời đúng thì mua được tài sản, nhận thêm một ít điểm lý luận và ảnh hưởng; trả lời sai thì mất quyền mua ô đó trong lượt hiện tại.',
-        'Tài sản dầu mỏ thường tạo vốn và ảnh hưởng. Tài sản dữ liệu tạo users, data và ảnh hưởng.',
+        'Tài sản dầu mỏ thường tạo vốn và ảnh hưởng. Tài sản dữ liệu tạo người dùng, dữ liệu và ảnh hưởng.',
         'Tài sản mới mua chưa nâng cấp ngay; phải đi qua Khởi nghiệp ít nhất 1 vòng sau khi mua.',
         'Nâng cấp làm tăng giá trị tài sản, tiền thuê và quyền lực thị trường.',
       ],
     },
     {
-      title: '5. Users, data và vòng lặp nền tảng',
+      title: '5. Người dùng, dữ liệu và vòng lặp nền tảng',
       content: [
-        'Cuối lượt, nếu người chơi có tài sản dữ liệu và có users, users sẽ tạo thêm data hành vi.',
-        'Nhiều users -> nhiều data; data có thể làm thuật toán/AI mạnh hơn; AI và nền tảng mạnh hơn có thể tiếp tục hút users.',
+        'Cuối lượt, nếu người chơi có tài sản dữ liệu và có người dùng, người dùng sẽ tạo thêm dữ liệu hành vi.',
+        'Nhiều người dùng -> nhiều dữ liệu; dữ liệu có thể làm thuật toán/AI mạnh hơn; AI và nền tảng mạnh hơn có thể tiếp tục hút người dùng.',
         'Đây là phần mô phỏng độc quyền dữ liệu hiện đại, không phải khái niệm nguyên văn trong giáo trình.',
       ],
     },
@@ -817,7 +817,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       title: '6. Khí vận và Cơ hội',
       content: [
         'Khí vận thiên về biến động cá nhân: trúng vốn, thua lỗ, KOL đánh giá, tín dụng cloud, sự cố cáp, bão lũ, chi phí vận hành.',
-        'Cơ hội thiên về biến động thị trường: hiệu ứng mạng lưới, vòng lặp users-data, dữ liệu mở, tẩy chay nền tảng, sandbox chính sách, khóa nhà cung ứng, phạt chống độc quyền.',
+        'Cơ hội thiên về biến động thị trường: hiệu ứng mạng lưới, vòng lặp người dùng - dữ liệu, dữ liệu mở, tẩy chay nền tảng, thử nghiệm chính sách, khóa nhà cung ứng, phạt chống độc quyền.',
         'Thẻ thường được đưa xuống đáy xấp sau khi dùng; thẻ giữ lại không quay lại xấp ngay.',
       ],
     },

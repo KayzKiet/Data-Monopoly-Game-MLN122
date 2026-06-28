@@ -1,14 +1,14 @@
-# Luật chơi Data Monopoly
+﻿# Luật chơi Data Monopoly
 
-## 1. Mục tiêu của game
+## 1. Mục tiêu của trò chơi
 
-Data Monopoly là web game giáo dục về chủ đề từ độc quyền dầu mỏ đến độc quyền dữ liệu. Người chơi bắt đầu với vốn khởi nghiệp, sau đó cạnh tranh để tích lũy tài sản, người dùng, dữ liệu, ảnh hưởng và điểm lý luận.
+Data Monopoly là web trò chơi giáo dục về chủ đề từ độc quyền dầu mỏ đến độc quyền dữ liệu. Người chơi bắt đầu với vốn khởi nghiệp, sau đó cạnh tranh để tích lũy tài sản, người dùng, dữ liệu, ảnh hưởng và điểm lý luận.
 
-Thông điệp chính của game là: hình thức độc quyền có thể thay đổi từ tài nguyên vật chất sang dữ liệu và nền tảng số, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn tồn tại.
+Thông điệp chính của trò chơi là: hình thức độc quyền có thể thay đổi từ tài nguyên vật chất sang dữ liệu và nền tảng số, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn tồn tại.
 
 ## 2. Số người chơi
 
-Game hỗ trợ từ 2 đến 4 người chơi.
+Trò chơi hỗ trợ từ 2 đến 4 người chơi.
 
 Trước khi bắt đầu, mỗi người chơi cần:
 
@@ -28,7 +28,7 @@ Mỗi người chơi có các chỉ số sau:
 - Ảnh hưởng: mức ảnh hưởng xã hội/thị trường.
 - Người dùng: số lượng người dùng, quan trọng với tài sản dữ liệu.
 - Dữ liệu: lượng dữ liệu sở hữu, là tài nguyên chiến lược trong kinh tế số.
-- Điểm lý luận: điểm nhận được khi trả lời đúng quiz lý luận.
+- Điểm lý luận: điểm nhận được khi trả lời đúng câu hỏi lý luận.
 - Tài sản: danh sách tài sản đã mua.
 - Vị trí: vị trí hiện tại trên bàn cờ.
 - Đang bị điều tra: trạng thái bị điều tra chống độc quyền.
@@ -42,7 +42,7 @@ Khi bắt đầu ván:
 - Điểm lý luận: 0.
 - Tài sản: 0.
 
-Các chỉ số không giảm xuống dưới 0. Nếu người chơi bị phạt vượt quá lượng vốn hoặc dữ liệu đang có, game chỉ trừ đến 0.
+Các chỉ số không giảm xuống dưới 0. Nếu người chơi bị phạt vượt quá lượng vốn hoặc dữ liệu đang có, trò chơi chỉ trừ đến 0.
 
 ## 4. Cấu trúc bàn cờ
 
@@ -67,30 +67,30 @@ Vị trí đặc biệt:
 Các loại ô chính:
 
 - Khởi nghiệp: điểm xuất phát.
-- Oil Field: mỏ dầu.
-- Refinery: nhà máy lọc dầu.
-- Pipeline: đường ống.
+- Mỏ dầu: mỏ dầu.
+- Nhà máy lọc dầu: nhà máy lọc dầu.
+- Đường ống: đường ống.
 - Logistics: vận chuyển/cảng/kho.
-- Search Platform: nền tảng tìm kiếm.
-- Social Network: mạng xã hội.
-- E-commerce Platform: sàn thương mại điện tử.
-- Cloud Infrastructure: hạ tầng đám mây.
-- AI Lab: phòng thí nghiệm AI.
+- Nền tảng tìm kiếm: nền tảng tìm kiếm.
+- Mạng xã hội: mạng xã hội.
+- Sàn thương mại điện tử: sàn thương mại điện tử.
+- Hạ tầng đám mây: hạ tầng đám mây.
+- Phòng thí nghiệm AI: phòng thí nghiệm AI.
 - Thuế / Quy định: thuế hoặc quy định.
 - Khủng hoảng: khủng hoảng.
 - Khí vận / Cơ hội: rút thẻ may rủi hoặc biến động thị trường.
-- Quiz lý luận: câu hỏi lý luận.
-- Antitrust Investigation: điều tra chống độc quyền.
+- Câu hỏi lý luận: câu hỏi lý luận.
+- Điều tra chống độc quyền: điều tra chống độc quyền.
 
 ## 5. Cách chơi mỗi lượt
 
 Mỗi lượt diễn ra theo thứ tự:
 
 1. Người chơi hiện tại bấm Tung xúc xắc.
-2. Game tung 2 xúc xắc và lấy tổng số điểm.
+2. Trò chơi tung 2 xúc xắc và lấy tổng số điểm.
 3. Token của người chơi di chuyển từng ô theo kết quả xúc xắc.
 4. Trong lúc di chuyển, một số tình huống thị trường có thể phát sinh theo nhịp di chuyển.
-5. Khi dừng ở ô mới, game xử lý hiệu ứng của ô đó.
+5. Khi dừng ở ô mới, trò chơi xử lý hiệu ứng của ô đó.
 6. Người chơi có thể mua tài sản nếu ô chưa có chủ, đủ vốn và trả lời đúng câu hỏi mua tài sản.
 7. Người chơi chỉ có thể nâng cấp nếu đang đứng trên ô tài sản của chính mình, tài sản đó đã sở hữu ít nhất 1 vòng và người chơi đủ tiền.
 8. Người chơi bấm Kết thúc lượt để chuyển sang người tiếp theo.
@@ -106,7 +106,7 @@ Luật cặp đặc biệt:
 
 Hiệu ứng trong lúc di chuyển:
 
-- Nếu tung được tổng từ 10 trở lên, người chơi có tài sản dữ liệu nhận thêm một ít users/data vì độ phủ thị trường tăng; người chơi có hạ tầng dầu mỏ/logistics/cloud nhận thêm ảnh hưởng.
+- Nếu tung được tổng từ 10 trở lên, người chơi có tài sản dữ liệu nhận thêm một ít người dùng/dữ liệu vì độ phủ thị trường tăng; người chơi có hạ tầng dầu mỏ/logistics/hạ tầng đám mây nhận thêm ảnh hưởng.
 - Nếu tung tổng từ 3 trở xuống và đã có tài sản, người chơi phát sinh chi phí vận hành nhỏ.
 
 Ý nghĩa học tập: thị trường không chỉ thay đổi ở điểm dừng cuối cùng. Tốc độ mở rộng, độ phủ, chi phí vận hành và hạ tầng đều ảnh hưởng đến quá trình tích lũy.
@@ -117,13 +117,13 @@ Khi người chơi đi qua ô Khởi nghiệp, người chơi nhận thêm tiề
 
 Ý nghĩa lý luận: Khởi nghiệp tượng trưng cho chu kỳ tái đầu tư. Tư bản tiếp tục vận động qua các vòng sản xuất, lưu thông và tích lũy.
 
-Trong gameplay hiện tại, đi qua Khởi nghiệp còn có tác dụng mở quyền nâng cấp cho tài sản đã mua. Một tài sản mới mua phải được giữ qua ít nhất 1 vòng trước khi nâng cấp.
+Trong lối chơi hiện tại, đi qua Khởi nghiệp còn có tác dụng mở quyền nâng cấp cho tài sản đã mua. Một tài sản mới mua phải được giữ qua ít nhất 1 vòng trước khi nâng cấp.
 
 ## 7. Mua tài sản
 
 Nếu người chơi dừng ở một ô tài sản chưa có chủ và đủ tiền, người chơi có thể mua tài sản đó.
 
-Trước khi mua, game sẽ chọn ngẫu nhiên 1 câu hỏi lý luận từ bộ quiz. Người chơi phải trả lời đúng mới được mua ô đó. Nếu trả lời sai, người chơi không mua được ô hiện tại trong lượt này, nhưng vẫn xem được giải thích để học lại và có thể thử lại khi quay lại ô đó ở lượt sau.
+Trước khi mua, trò chơi sẽ chọn ngẫu nhiên 1 câu hỏi lý luận từ bộ câu hỏi. Người chơi phải trả lời đúng mới được mua ô đó. Nếu trả lời sai, người chơi không mua được ô hiện tại trong lượt này, nhưng vẫn xem được giải thích để học lại và có thể thử lại khi quay lại ô đó ở lượt sau.
 
 Khi mua, người chơi:
 
@@ -146,7 +146,7 @@ Tài sản dữ liệu gồm:
 - Mạng xã hội.
 - Sàn thương mại điện tử.
 - Cloud.
-- AI Lab.
+- Phòng thí nghiệm AI.
 
 Ý nghĩa lý luận: mua tài sản mô phỏng quá trình tích lũy tư bản và kiểm soát nguồn lực quan trọng của thị trường. Điều kiện trả lời câu hỏi giúp việc tích lũy tài sản gắn trực tiếp với hiểu biết lý luận, tránh việc chỉ mua theo may rủi.
 
@@ -156,7 +156,7 @@ Nếu người chơi dừng ở tài sản thuộc người chơi khác, ngườ
 
 Với tài sản dầu mỏ, tiền thuê chủ yếu thể hiện lợi ích từ tài nguyên vật chất và hạ tầng.
 
-Với tài sản dữ liệu, người chơi có thể mất thêm users hoặc data, mô phỏng sự phụ thuộc vào nền tảng số.
+Với tài sản dữ liệu, người chơi có thể mất thêm người dùng hoặc dữ liệu, mô phỏng sự phụ thuộc vào nền tảng số.
 
 Ý nghĩa lý luận: khi một chủ thể kiểm soát tài nguyên hoặc nền tảng, các chủ thể khác phải phụ thuộc và trả chi phí để tiếp cận thị trường.
 
@@ -176,19 +176,19 @@ Nâng cấp giúp:
 - Tăng quyền lực thị trường.
 - Với tài sản dữ liệu, nâng cấp còn làm người chơi khác mất thêm dữ liệu hoặc người dùng khi dừng ở ô đó.
 
-Nếu người chơi sở hữu Cloud Infrastructure, một số chi phí nâng cấp được giảm.
+Nếu người chơi sở hữu Hạ tầng đám mây, một số chi phí nâng cấp được giảm.
 
 Ý nghĩa lý luận: nâng cấp mô phỏng việc doanh nghiệp lớn tiếp tục tái đầu tư để mở rộng quy mô và củng cố vị thế độc quyền.
 
 ## 10. Tài sản dầu mỏ và tài sản dữ liệu
 
-Tài sản dầu mỏ chủ yếu tạo ra money và influence.
+Tài sản dầu mỏ chủ yếu tạo ra vốn và ảnh hưởng.
 
-Tài sản dữ liệu chủ yếu tạo ra users, data và influence.
+Tài sản dữ liệu chủ yếu tạo ra người dùng, dữ liệu và ảnh hưởng.
 
-AI Lab làm tăng giá trị của tài sản dữ liệu, vì dữ liệu nhiều giúp AI mạnh hơn, còn AI mạnh hơn lại giúp nền tảng thu hút thêm người dùng.
+Phòng thí nghiệm AI làm tăng giá trị của tài sản dữ liệu, vì dữ liệu nhiều giúp AI mạnh hơn, còn AI mạnh hơn lại giúp nền tảng thu hút thêm người dùng.
 
-Cuối mỗi lượt, nếu người chơi có tài sản dữ liệu và đã có users, game tự chuyển một phần users thành data mới. Nói cách khác: càng nhiều người dùng, nền tảng càng tạo thêm dữ liệu hành vi; dữ liệu đó lại có thể làm mạnh thuật toán, AI và quyền lực thị trường.
+Cuối mỗi lượt, nếu người chơi có tài sản dữ liệu và đã có người dùng, trò chơi tự chuyển một phần người dùng thành dữ liệu mới. Nói cách khác: càng nhiều người dùng, nền tảng càng tạo thêm dữ liệu hành vi; dữ liệu đó lại có thể làm mạnh thuật toán, AI và quyền lực thị trường.
 
 Ý nghĩa lý luận: độc quyền dầu mỏ dựa vào tài nguyên khan hiếm và hạ tầng vật chất; độc quyền dữ liệu dựa vào người dùng, dữ liệu, thuật toán, AI và nền tảng.
 
@@ -207,7 +207,7 @@ Quy luật lặp lại của thẻ:
 2. Khi người chơi dừng ở ô đó, hệ thống rút lá trên cùng.
 3. Sau khi thực hiện hiệu ứng, lá bài thường được đưa xuống đáy xấp.
 4. Một lá bài chỉ xuất hiện lại sau khi các lá còn lại trong xấp đã được rút qua.
-5. Thẻ giữ lại, ví dụ Miễn điều tra một lần, không quay lại xấp ngay. Người chơi giữ thẻ đó cho đến khi luật gameplay sau này cho phép sử dụng.
+5. Thẻ giữ lại, ví dụ Miễn điều tra một lần, không quay lại xấp ngay. Người chơi giữ thẻ đó cho đến khi luật lối chơi sau này cho phép sử dụng.
 
 Ví dụ thẻ Khí vận / Cơ hội:
 
@@ -215,13 +215,13 @@ Ví dụ thẻ Khí vận / Cơ hội:
 - Trúng số khởi nghiệp: nhận thêm tiền.
 - Đầu tư chứng khoán có lời hoặc thua lỗ.
 - Bão lũ làm gián đoạn logistics.
-- KOL đánh giá tích cực: nhận thêm users, và nếu có tài sản dữ liệu thì nhận thêm data.
-- Tín dụng cloud miễn phí: hỗ trợ mở rộng hạ tầng hoặc nhận vốn thay thế.
+- KOL đánh giá tích cực: nhận thêm người dùng, và nếu có tài sản dữ liệu thì nhận thêm dữ liệu.
+- Tín dụng hạ tầng đám mây miễn phí: hỗ trợ mở rộng hạ tầng hoặc nhận vốn thay thế.
 - Tăng tốc thị trường: nhận thêm ảnh hưởng, tượng trưng cho lợi thế đi trước.
 - Án phạt chống độc quyền: người dẫn đầu bị trừ tiền và ảnh hưởng.
-- Vòng lặp users - data: người có nhiều users nhất tiếp tục tăng users và data.
-- Tẩy chay nền tảng: người có nhiều data nhất mất users và ảnh hưởng.
-- Sandbox chính sách: người cuối bảng nhận users, data và điểm lý luận để mô phỏng chính sách mở cơ hội cạnh tranh.
+- Vòng lặp người dùng - dữ liệu: người có nhiều người dùng nhất tiếp tục tăng người dùng và dữ liệu.
+- Tẩy chay nền tảng: người có nhiều dữ liệu nhất mất người dùng và ảnh hưởng.
+- Sandbox chính sách: người cuối bảng nhận người dùng, dữ liệu và điểm lý luận để mô phỏng chính sách mở cơ hội cạnh tranh.
 - Khóa nhà cung ứng: người dẫn đầu tăng ảnh hưởng, người khác chịu chi phí tiếp cận thị trường.
 
 Các thẻ có thể tác động đến:
@@ -237,9 +237,9 @@ Ví dụ:
 
 Ý nghĩa lý luận: thị trường không đứng yên. Chính sách, khủng hoảng, công nghệ và phản ứng xã hội đều có thể ảnh hưởng đến quyền lực độc quyền.
 
-## 12. Ô Quiz
+## 12. Ô Câu hỏi
 
-Khi dừng ở ô Quiz lý luận, người chơi trả lời câu hỏi lý luận.
+Khi dừng ở ô Câu hỏi lý luận, người chơi trả lời câu hỏi lý luận.
 
 Nếu trả lời đúng:
 
@@ -249,9 +249,9 @@ Nếu trả lời đúng:
 Nếu trả lời sai:
 
 - Không nhận điểm thưởng.
-- Game vẫn hiển thị giải thích để người chơi học lại kiến thức.
+- Trò chơi vẫn hiển thị giải thích để người chơi học lại kiến thức.
 
-Bộ câu hỏi được lấy từ file Source Question.md và đã được đưa vào dữ liệu quiz của game.
+Bộ câu hỏi được lấy từ file Source Question.md và đã được đưa vào dữ liệu câu hỏi của trò chơi.
 
 Bộ câu hỏi cũng được dùng cho thử thách mua tài sản. Mỗi lần bấm mua, câu hỏi được chọn ngẫu nhiên để tạo nhịp chơi khó đoán hơn.
 
@@ -263,7 +263,7 @@ Các ô này mô phỏng sự điều tiết khi quyền lực thị trường q
 
 - Người chơi đang đứng trên ô phải trả phí.
 - Người chơi mất ảnh hưởng.
-- Nếu sở hữu Cloud Infrastructure, phí có thể được giảm vì hạ tầng vận hành tốt hơn.
+- Nếu sở hữu Hạ tầng đám mây, phí có thể được giảm vì hạ tầng vận hành tốt hơn.
 
 Ô Điều trần / Chống độc quyền:
 
@@ -283,7 +283,7 @@ Các ô này mô phỏng sự điều tiết khi quyền lực thị trường q
 
 ## 14. Bảng thông tin người chơi
 
-Mỗi người chơi có một bảng thông tin riêng trong game.
+Mỗi người chơi có một bảng thông tin riêng trong trò chơi.
 
 Bảng này hiển thị:
 
@@ -318,11 +318,11 @@ Một người chơi thắng nếu đạt một trong các điều kiện:
 2. Đạt 100 điểm lý luận và có điểm kinh tế cao nhất.
 3. Sau 25 vòng, người có tổng điểm cao nhất thắng.
 
-Lưu ý: game không xét thắng độc quyền ngay ở các vòng đầu, vì lúc đó thị trường chưa đủ thời gian tích lũy. Điều này tránh trường hợp một người vừa mua tài sản đầu tiên đã bị tính là độc quyền.
+Lưu ý: trò chơi không xét thắng độc quyền ngay ở các vòng đầu, vì lúc đó thị trường chưa đủ thời gian tích lũy. Điều này tránh trường hợp một người vừa mua tài sản đầu tiên đã bị tính là độc quyền.
 
 ## 17. Ý nghĩa màn kết quả
 
-Khi kết thúc, game hiển thị câu hỏi:
+Khi kết thúc, trò chơi hiển thị câu hỏi:
 
 “Bạn đã thắng thị trường. Nhưng xã hội có thật sự tốt hơn không?”
 
@@ -335,12 +335,13 @@ Khi kết thúc, game hiển thị câu hỏi:
 
 ## 18. Gợi ý thuyết trình
 
-Khi trình bày trên lớp, có thể giải thích game theo 3 bước:
+Khi trình bày trên lớp, có thể giải thích trò chơi theo 3 bước:
 
 1. Người chơi cạnh tranh để mua tài sản và mở rộng quyền lực.
-2. Cạnh tranh dần tạo ra người dẫn đầu nhờ tích lũy tiền, tài sản, users và data.
-3. Với nền tảng số, nhiều users tạo thêm data; data giúp thuật toán/AI mạnh hơn; lợi thế này có thể tiếp tục hút users mới.
+2. Cạnh tranh dần tạo ra người dẫn đầu nhờ tích lũy tiền, tài sản, người dùng và dữ liệu.
+3. Với nền tảng số, nhiều người dùng tạo thêm dữ liệu; dữ liệu giúp thuật toán/AI mạnh hơn; lợi thế này có thể tiếp tục hút người dùng mới.
 4. Các thẻ điều tiết, tẩy chay, khủng hoảng và dữ liệu mở nhắc người học rằng quyền lực độc quyền luôn có giới hạn xã hội, chính sách và kỹ thuật.
-5. Người thắng có thể rất mạnh về thị trường, nhưng game đặt câu hỏi về tác động xã hội của độc quyền.
+5. Người thắng có thể rất mạnh về thị trường, nhưng trò chơi đặt câu hỏi về tác động xã hội của độc quyền.
 
 Kết luận: từ dầu mỏ đến dữ liệu, hình thức kiểm soát thay đổi, nhưng logic tập trung tư bản và quyền lực thị trường vẫn là vấn đề cần phân tích trong kinh tế chính trị Mác - Lênin.
+

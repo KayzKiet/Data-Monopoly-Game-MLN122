@@ -35,7 +35,7 @@ const gameTheorySections = [
   {
     title: '5. Hiệu ứng mạng lưới và rào cản gia nhập',
     body:
-      'Hiệu ứng mạng lưới nghĩa là giá trị của một nền tảng có thể tăng khi có thêm người dùng hoặc bên tham gia. Trong game, người chơi có nhiều users và data sẽ có lợi thế, nhưng điều này không có nghĩa nền tảng lớn luôn thắng tuyệt đối; sự kiện, điều tiết và khủng hoảng được thêm vào để người học thấy thị trường còn chịu tác động của chính sách và phản ứng xã hội.',
+      'Hiệu ứng mạng lưới nghĩa là giá trị của một nền tảng có thể tăng khi có thêm người dùng hoặc bên tham gia. Trong game, người chơi có nhiều người dùng và dữ liệu sẽ có lợi thế, nhưng điều này không có nghĩa nền tảng lớn luôn thắng tuyệt đối; sự kiện, điều tiết và khủng hoảng được thêm vào để người học thấy thị trường còn chịu tác động của chính sách và phản ứng xã hội.',
     sourceIds: ['oecd-digital-market-power', 'eu-dma'],
   },
   {
@@ -98,7 +98,7 @@ const gameUnderstandingRows = [
   },
   {
     topic: 'Độc quyền dữ liệu',
-    current: 'Đã rõ qua users, data, cloud, AI, nền tảng số, hiệu ứng mạng lưới và vòng lặp users - data.',
+    current: 'Đã rõ qua người dùng, dữ liệu, hạ tầng đám mây, AI, nền tảng số, hiệu ứng mạng lưới và vòng lặp người dùng - dữ liệu.',
     need: 'Nên bổ sung rõ hơn ý dữ liệu do xã hội tạo ra nhưng bị nền tảng tư nhân chiếm hữu.',
   },
   {
@@ -122,7 +122,7 @@ const comparisonRows = [
   {
     criterion: 'Nguồn lực chính trong mô phỏng',
     oil: 'Mỏ dầu, nhiên liệu, nhà máy lọc dầu, đường ống, vận tải',
-    data: 'Người dùng, dữ liệu, cloud, thuật toán, nền tảng trung gian',
+    data: 'Người dùng, dữ liệu, hạ tầng đám mây, thuật toán, nền tảng trung gian',
   },
   {
     criterion: 'Cách tạo quyền lực thị trường',
