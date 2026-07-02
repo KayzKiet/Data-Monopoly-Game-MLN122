@@ -152,6 +152,7 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
 function PostGameSummary({ summary }: { summary: ReturnType<typeof getPostGameSummary> }) {
   const rows = [
     ['Dạng độc quyền', summary.monopolyType],
+    ['Vì sao thắng theo dạng này', summary.monopolyReason],
     ['Nguồn lực then chốt', summary.keyResource],
     ['Mức phụ thuộc của người chơi khác', summary.dependence],
     ['Điều tiết/chống độc quyền', summary.regulation],
@@ -161,6 +162,9 @@ function PostGameSummary({ summary }: { summary: ReturnType<typeof getPostGameSu
   return (
     <div>
       <h3 className="text-lg font-black text-gold">Tổng kết sau ván chơi</h3>
+      <p className="mt-2 rounded-md border border-cyan/20 bg-cyan/10 p-3 text-sm font-semibold leading-6 text-slate-100">
+        {summary.learningConclusion}
+      </p>
       <div className="mt-3 grid gap-3">
         {rows.map(([label, value]) => (
           <div className="rounded-md border border-white/10 bg-oil/50 p-3" key={label}>
@@ -169,9 +173,45 @@ function PostGameSummary({ summary }: { summary: ReturnType<typeof getPostGameSu
           </div>
         ))}
       </div>
+      <ComparisonAfterGamePanel summary={summary} />
       <p className="mt-3 text-sm leading-6 text-slate-200">
         Câu hỏi học thuật: quyền lực này giúp mở rộng sản xuất/dịch vụ, hay làm người chơi khác phụ thuộc nhiều hơn vào một chủ thể?
       </p>
+    </div>
+  );
+}
+
+function ComparisonAfterGamePanel({ summary }: { summary: ReturnType<typeof getPostGameSummary> }) {
+  const rows = [
+    ['Nguồn lực chính', 'Dầu mỏ, nhà máy lọc dầu, đường ống, logistics.', 'Người dùng, dữ liệu, nền tảng, cloud, thuật toán và AI.'],
+    ['Rào cản gia nhập', 'Vốn lớn, tài nguyên khan hiếm và hạ tầng vật chất khó thay thế.', 'Hiệu ứng mạng lưới, dữ liệu lớn, chi phí chuyển đổi và hệ sinh thái khép kín.'],
+    ['Biểu hiện trong ván này', summary.oilReading, summary.dataReading],
+    ['Vấn đề xã hội cần hỏi', 'Ai kiểm soát hạ tầng và giá tiếp cận tài nguyên?', 'Ai kiểm soát dữ liệu do người dùng và xã hội tạo ra?'],
+  ];
+
+  return (
+    <div className="mt-4 rounded-md border border-white/10 bg-slate-950/40 p-3">
+      <p className="text-xs font-black uppercase tracking-[0.14em] text-cyan">So sánh sau ván</p>
+      <div className="mt-3 overflow-x-auto">
+        <table className="w-full min-w-[620px] text-left text-xs">
+          <thead className="text-slate-300">
+            <tr>
+              <th className="border-b border-white/10 py-2 pr-3">Tiêu chí</th>
+              <th className="border-b border-white/10 py-2 pr-3">Độc quyền tài nguyên</th>
+              <th className="border-b border-white/10 py-2">Độc quyền dữ liệu</th>
+            </tr>
+          </thead>
+          <tbody className="text-slate-200">
+            {rows.map(([label, oilValue, dataValue]) => (
+              <tr key={label}>
+                <td className="border-b border-white/10 py-2 pr-3 font-black text-gold">{label}</td>
+                <td className="border-b border-white/10 py-2 pr-3 leading-5">{oilValue}</td>
+                <td className="border-b border-white/10 py-2 leading-5">{dataValue}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -279,6 +319,8 @@ function getPostGameSummary(gameState: GameState, winner: Player) {
   const oilAssets = winner.assets.filter((asset) => asset.era === 'oil');
   const dataAssets = winner.assets.filter((asset) => asset.era === 'data');
   const infrastructureAssets = winner.assets.filter((asset) => ['pipeline', 'logistics', 'cloud-infrastructure'].includes(asset.type));
+  const oilAssetNames = oilAssets.map((asset) => asset.name).slice(0, 3);
+  const dataAssetNames = dataAssets.map((asset) => asset.name).slice(0, 3);
   const marketPower = calculateMarketPower(winner, players);
   const totalMarketPower = players.reduce((sum, player) => sum + calculateMarketPower(player, players), 0);
   const share = totalMarketPower > 0 ? Math.round((marketPower / totalMarketPower) * 100) : 0;
@@ -286,15 +328,31 @@ function getPostGameSummary(gameState: GameState, winner: Player) {
   const winnerRentEvents = gameState.log.filter((entry) => entry.type === 'rent' && entry.message.includes(`cho ${winner.name}`)).length;
 
   let monopolyType = 'Độc quyền hỗn hợp';
+  let monopolyReason =
+    `${winner.name} thắng bằng sự kết hợp giữa tài sản vật chất, tài sản dữ liệu, vốn, ảnh hưởng và điểm học tập. Đây là dạng quyền lực thị trường pha trộn.`;
   if (infrastructureAssets.length >= Math.max(oilAssets.length, dataAssets.length) && infrastructureAssets.length >= 3) {
     monopolyType = 'Độc quyền hạ tầng';
+    monopolyReason =
+      `${winner.name} kiểm soát nhiều hạ tầng then chốt như đường ống, logistics hoặc cloud. Điều này cho thấy ai nắm hạ tầng tiếp cận thị trường có thể đặt điều kiện cho người chơi khác.`;
   } else if (dataAssets.length > oilAssets.length) {
     monopolyType = 'Độc quyền dữ liệu';
+    monopolyReason =
+      `${winner.name} có nhiều tài sản dữ liệu hơn tài sản dầu mỏ, nên chiến thắng chủ yếu dựa trên người dùng, dữ liệu, nền tảng số, cloud hoặc AI.`;
   } else if (oilAssets.length > dataAssets.length) {
     monopolyType = 'Độc quyền dầu mỏ';
+    monopolyReason =
+      `${winner.name} có nhiều tài sản dầu mỏ hơn tài sản dữ liệu, nên chiến thắng chủ yếu dựa trên tài nguyên vật chất, hạ tầng sản xuất và lưu thông.`;
   }
 
   const keyResource = getKeyResourceLabel(winner, oilAssets.length, dataAssets.length, infrastructureAssets.length);
+  const oilReading =
+    oilAssets.length > 0
+      ? `${winner.name} sở hữu ${oilAssets.length} tài sản dầu mỏ${oilAssetNames.length > 0 ? `, gồm ${oilAssetNames.join(', ')}` : ''}.`
+      : `${winner.name} không sở hữu tài sản dầu mỏ nổi bật trong ván này.`;
+  const dataReading =
+    dataAssets.length > 0
+      ? `${winner.name} sở hữu ${dataAssets.length} tài sản dữ liệu${dataAssetNames.length > 0 ? `, gồm ${dataAssetNames.join(', ')}` : ''}; có ${winner.users} người dùng và ${winner.data} dữ liệu.`
+      : `${winner.name} chưa sở hữu tài sản dữ liệu nổi bật; dữ liệu chưa phải nguồn thắng chính trong ván này.`;
   const dependence =
     winnerRentEvents > 0
       ? `Người chơi khác đã trả tiền thuê cho ${winner.name} ${winnerRentEvents} lần, cho thấy có sự phụ thuộc vào tài sản do người thắng kiểm soát.`
@@ -306,10 +364,15 @@ function getPostGameSummary(gameState: GameState, winner: Player) {
 
   return {
     monopolyType,
+    monopolyReason,
     keyResource,
+    oilReading,
+    dataReading,
     dependence,
     regulation,
     theoryLink: `Kết quả này minh họa tích tụ, tập trung tư bản và quyền lực thị trường. Người thắng đang nắm khoảng ${share}% tổng quyền lực thị trường trong mô phỏng.`,
+    learningConclusion:
+      `Ván này cần được đọc theo câu hỏi: ${winner.name} thắng nhờ kiểm soát loại nguồn lực nào, và quyền kiểm soát đó làm thị trường hiệu quả hơn hay khiến các chủ thể khác phụ thuộc hơn?`,
   };
 }
 
