@@ -1002,6 +1002,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         'Data Monopoly mô phỏng quá trình cạnh tranh, tích lũy tài sản và hình thành quyền lực thị trường.',
         'Người chơi bắt đầu với vốn khởi nghiệp; ảnh hưởng, người dùng, dữ liệu, điểm lý luận và tài sản đều bắt đầu từ 0.',
         'Thông điệp chính: hình thức độc quyền có thể chuyển từ tài nguyên vật chất sang dữ liệu/nền tảng, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn cần được phân tích.',
+        'Lưu ý học thuật: Big Tech, gatekeeper, behavioral surplus, walled garden, DMA và Cambridge Analytica là phần vận dụng hiện đại, không phải thuật ngữ gốc của giáo trình Mác - Lênin.',
       ],
     },
     {
@@ -1011,7 +1012,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         'Phân biệt được tích tụ tư bản với tập trung tư bản qua nâng cấp, tái đầu tư và sự dồn quyền lực về người chơi mạnh.',
         'Nhận diện rào cản gia nhập trong độc quyền dầu mỏ và độc quyền dữ liệu.',
         'Phân tích hiệu ứng mạng lưới và vòng lặp người dùng - dữ liệu - AI.',
-        'Đánh giá tác động hai mặt của độc quyền và liên hệ lý luận Mác - Lênin với Big Tech hiện đại.',
+        'Đánh giá tác động hai mặt của độc quyền và biết tách lý luận Mác - Lênin với phần vận dụng hiện đại về Big Tech.',
       ],
     },
     {

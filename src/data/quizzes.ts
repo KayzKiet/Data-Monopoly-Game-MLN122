@@ -354,7 +354,7 @@ export const quizzes: QuizQuestion[] = [
   },
   {
     id: 'question-md-digital-means-production',
-    question: 'Biểu hiện mới về tư liệu sản xuất chủ yếu của các tổ chức độc quyền trong nền kinh tế số ngày nay là gì?',
+    question: 'Trong phần vận dụng hiện đại, nguồn lực nào có thể tạo quyền lực thị trường cho các nền tảng số?',
     options: [
       'A. Sở hữu và tích tụ dữ liệu lớn (Big Data) cùng với hệ thống thuật toán nền tảng',
       'B. Hạn chế sử dụng internet để quay về quản lý sản xuất thủ công',
@@ -362,12 +362,12 @@ export const quizzes: QuizQuestion[] = [
       'D. Độc chiếm hoàn toàn các mỏ dầu thô và tài nguyên khoáng sản vật lý',
     ],
     correctAnswer: 'A',
-    explanation: 'Trong CNTB hiện đại, dữ liệu và tri thức số đã trở thành nguồn lực sản xuất cốt lõi có thể bị các nền tảng lớn kiểm soát.',
+    explanation: 'Đây là phần vận dụng hiện đại: dữ liệu, thuật toán và nền tảng số được dùng để minh họa cách quyền lực thị trường có thể hình thành trong kinh tế số, không phải thuật ngữ nguyên bản của giáo trình.',
     topic: 'data-monopoly',
   },
   {
     id: 'question-md-big-tech-ecosystem',
-    question: 'Hình thức liên minh độc quyền hiện đại của các Big Tech thường vận hành dưới dạng cấu trúc nào?',
+    question: 'Trong phần vận dụng hiện đại, Big Tech thường được dùng để minh họa dạng cấu trúc quyền lực thị trường nào?',
     options: [
       'A. Các doanh nghiệp nhỏ độc lập không có sự liên kết hạ tầng',
       'B. Các nghiệp đoàn vật lý truyền thống như Cartel hay Syndicate',
@@ -375,12 +375,12 @@ export const quizzes: QuizQuestion[] = [
       'D. Các tổ chức phi lợi nhuận hoạt động vì lợi ích công cộng',
     ],
     correctAnswer: 'C',
-    explanation: 'Các tập đoàn nền tảng xây dựng hệ sinh thái giữ chân người dùng, kiểm soát hạ tầng và tạo rào cản đối với đối thủ cạnh tranh.',
+    explanation: 'Big Tech và hệ sinh thái nền tảng khép kín là ví dụ hiện đại để minh họa logic tập trung quyền lực thị trường; đây không phải thuật ngữ gốc trong giáo trình Mác - Lênin.',
     topic: 'data-monopoly',
   },
   {
     id: 'question-md-data-contradiction',
-    question: 'Xét dưới lăng kính kinh tế chính trị Mác - Lênin, mâu thuẫn cơ bản của CNTB hiện đại biểu hiện như thế nào trong hiện tượng độc quyền dữ liệu?',
+    question: 'Khi vận dụng lăng kính kinh tế chính trị Mác - Lênin, độc quyền dữ liệu có thể được phân tích như biểu hiện của mâu thuẫn nào?',
     options: [
       'A. Mâu thuẫn giữa tính xã hội hóa cao độ của nguồn dữ liệu do hàng tỷ người dùng đóng góp và sự chiếm hữu tư nhân tư bản chủ nghĩa về thành quả kinh tế',
       'B. Người dùng không muốn tạo ra dữ liệu nhưng các tập đoàn ép buộc phải sản xuất',
@@ -432,15 +432,15 @@ export const quizzes: QuizQuestion[] = [
   },
   {
     id: 'question-md-historical-limit-data',
-    question: 'Kết luận cốt lõi về giới hạn lịch sử của CNTB hiện đại thông qua sự chuyển dịch từ độc quyền dầu mỏ đến độc quyền dữ liệu là gì?',
+    question: 'Khi vận dụng lý luận Mác - Lênin để so sánh độc quyền dầu mỏ và độc quyền dữ liệu, kết luận thận trọng nào phù hợp nhất?',
     options: [
       'A. CNTB đã hoàn toàn thay đổi bản chất và không còn mâu thuẫn bóc lột',
       'B. Công nghệ số đã giúp giải quyết triệt để mọi giới hạn lịch sử của CNTB',
       'C. CNTB sẽ tồn tại vĩnh viễn và không có bất kỳ giới hạn lịch sử nào',
-      'D. Độc quyền dữ liệu chứng minh CNTB không thể tự điều hòa mâu thuẫn nội tại, vạch rõ giới hạn lịch sử và là sự chuẩn bị vật chất cho xã hội tương lai tiến bộ hơn',
+      'D. Độc quyền dữ liệu cho thấy hình thức nguồn lực thay đổi, nhưng xu hướng tập trung quyền lực thị trường và mâu thuẫn về sở hữu vẫn cần được phân tích',
     ],
     correctAnswer: 'D',
-    explanation: 'Dù lực lượng sản xuất phát triển cao, quan hệ sản xuất tư bản chủ nghĩa vẫn có thể trở nên chật hẹp, làm nổi bật giới hạn lịch sử của CNTB.',
+    explanation: 'Đây là kết luận theo hướng vận dụng: không đồng nhất độc quyền dữ liệu với độc quyền dầu mỏ, mà dùng nó để phân tích tiếp xu hướng tập trung tư bản, quyền lực thị trường và quan hệ sở hữu trong bối cảnh mới.',
     topic: 'historic-limit',
   },
   {
@@ -562,15 +562,15 @@ export const quizzes: QuizQuestion[] = [
   },
   {
     id: 'additional-dma-purpose',
-    question: 'Đạo luật Digital Markets Act (DMA) của EU nhằm mục đích gì?',
+    question: 'Trong phần ví dụ thực tiễn hiện đại, Đạo luật Digital Markets Act (DMA) của EU nhằm mục đích gì?',
     options: [
       'A. Hỗ trợ các nền tảng lớn tự đặt quy tắc cạnh tranh cho thị trường',
-      'B. Điều tiết các nền tảng gatekeeper',
+      'B. Điều tiết các nền tảng số lớn được DMA gọi là gatekeeper',
       'C. Điều chỉnh giá dịch vụ số nhưng không tác động đến cấu trúc nền tảng',
       'D. Chỉ bảo vệ dữ liệu cá nhân, không liên quan đến cạnh tranh nền tảng',
     ],
     correctAnswer: 'B',
-    explanation: 'DMA hướng đến việc kiểm soát quyền lực thị trường của các nền tảng số lớn đóng vai trò cửa ngõ trong nền kinh tế số.',
+    explanation: 'DMA và gatekeeper là thuật ngữ pháp lý hiện đại của EU, được dùng làm ví dụ đối chiếu về điều tiết nền tảng số; chúng không phải thuật ngữ nguyên bản trong giáo trình Mác - Lênin.',
     topic: 'historic-limit',
   },
   {
@@ -614,7 +614,7 @@ export const quizzes: QuizQuestion[] = [
   },
   {
     id: 'additional-behavioral-surplus',
-    question: 'Theo bài viết, "behavioral surplus" là gì?',
+    question: 'Trong phần vận dụng hiện đại, "behavioral surplus" được hiểu là gì?',
     options: [
       'A. Dữ liệu dư thừa có thể dùng để dự đoán và thương mại hóa hành vi',
       'B. Phần dữ liệu người dùng tự nguyện bán trực tiếp cho nền tảng',
@@ -666,7 +666,7 @@ export const quizzes: QuizQuestion[] = [
   },
   {
     id: 'additional-walled-garden',
-    question: '"Khu vườn có tường rào" (Walled Garden) là thuật ngữ để chỉ điều gì?',
+    question: 'Trong phân tích kinh tế số hiện đại, "khu vườn có tường rào" (Walled Garden) là thuật ngữ để chỉ điều gì?',
     options: [
       'A. Hệ thống bảo mật dữ liệu khép kín chỉ để chống tấn công mạng',
       'B. Hệ sinh thái khép kín của các nền tảng công nghệ',
@@ -674,7 +674,7 @@ export const quizzes: QuizQuestion[] = [
       'D. Mô hình lưu trữ dữ liệu nội bộ không ảnh hưởng đến người dùng',
     ],
     correctAnswer: 'B',
-    explanation: 'Walled Garden mô tả hệ sinh thái nền tảng khép kín, nơi doanh nghiệp kiểm soát người dùng, dữ liệu, dịch vụ và điều kiện truy cập.',
+    explanation: 'Walled Garden là thuật ngữ hiện đại dùng để minh họa hệ sinh thái nền tảng khép kín, nơi doanh nghiệp kiểm soát người dùng, dữ liệu, dịch vụ và điều kiện truy cập.',
     topic: 'data-monopoly',
   },
   {
@@ -692,7 +692,7 @@ export const quizzes: QuizQuestion[] = [
   },
   {
     id: 'additional-zuboff-behavioral-surplus',
-    question: 'Theo Shoshana Zuboff, "behavioral surplus" là gì?',
+    question: 'Theo Shoshana Zuboff, thuật ngữ hiện đại "behavioral surplus" là gì?',
     options: [
       'A. Hành vi mua sắm vượt quá nhu cầu thiết yếu của người tiêu dùng',
       'B. Phần dữ liệu hành vi vượt quá nhu cầu cải thiện dịch vụ trực tiếp',
@@ -700,7 +700,7 @@ export const quizzes: QuizQuestion[] = [
       'D. Lượng dầu thừa trong quá trình vận chuyển và lọc dầu',
     ],
     correctAnswer: 'B',
-    explanation: 'Khái niệm này nhấn mạnh việc nền tảng số thu thập thêm dữ liệu hành vi để dự đoán, điều hướng và thương mại hóa hành vi người dùng.',
+    explanation: 'Đây là thuật ngữ hiện đại trong phân tích chủ nghĩa tư bản giám sát, được dùng để liên hệ với độc quyền dữ liệu; nó không phải khái niệm nguyên bản của giáo trình Mác - Lênin.',
     topic: 'data-monopoly',
   },
   {
@@ -757,7 +757,7 @@ export const quizzes: QuizQuestion[] = [
   },
   {
     id: 'additional-dma-gatekeeper',
-    question: 'Theo Digital Markets Act (DMA) của EU, "gatekeeper" là gì?',
+    question: 'Theo Digital Markets Act (DMA) của EU, thuật ngữ pháp lý hiện đại "gatekeeper" là gì?',
     options: [
       'A. Cơ quan quản lý thị trường số của Liên minh châu Âu',
       'B. Nền tảng số lớn đóng vai trò cửa ngõ quan trọng giữa doanh nghiệp và người dùng',
@@ -765,12 +765,12 @@ export const quizzes: QuizQuestion[] = [
       'D. Hệ thống bảo mật dữ liệu của các tập đoàn công nghệ',
     ],
     correctAnswer: 'B',
-    explanation: 'Gatekeeper là nền tảng số có quy mô và vị trí trung gian đủ lớn để ảnh hưởng mạnh đến khả năng tiếp cận thị trường.',
+    explanation: 'Gatekeeper là thuật ngữ của DMA để chỉ nền tảng số có quy mô và vị trí trung gian lớn. Trong bài, thuật ngữ này chỉ là ví dụ vận dụng hiện đại để minh họa quyền lực thị trường nền tảng.',
     topic: 'historic-limit',
   },
   {
     id: 'additional-cambridge-analytica',
-    question: 'Vụ bê bối Cambridge Analytica năm 2018 phản ánh vấn đề gì liên quan đến độc quyền dữ liệu?',
+    question: 'Trong phần ví dụ thực tiễn hiện đại, vụ Cambridge Analytica năm 2018 phản ánh vấn đề gì liên quan đến dữ liệu?',
     options: [
       'A. Rủi ro khi dữ liệu thị trường bị dùng để định giá quảng cáo cao hơn',
       'B. Rủi ro khi dữ liệu cá nhân bị sử dụng để thao túng chính trị và hành vi',
@@ -778,7 +778,7 @@ export const quizzes: QuizQuestion[] = [
       'D. Tranh chấp thương mại giữa các công ty quảng cáo số',
     ],
     correctAnswer: 'B',
-    explanation: 'Sự kiện này cho thấy dữ liệu cá nhân có thể bị khai thác để ảnh hưởng đến nhận thức, lựa chọn chính trị và hành vi xã hội.',
+    explanation: 'Cambridge Analytica là ví dụ thực tiễn hiện đại về rủi ro quản trị dữ liệu và quyền lực nền tảng, không phải nội dung lý luận gốc trong giáo trình Mác - Lênin.',
     topic: 'data-monopoly',
   },
   {

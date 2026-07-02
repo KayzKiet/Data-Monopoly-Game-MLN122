@@ -1,43 +1,68 @@
-# Data Monopoly: Từ độc quyền dầu mỏ đến độc quyền dữ liệu
+# Data Monopoly
 
-Web game giáo dục về kinh tế chính trị Mác - Lênin. Dự án mô phỏng một board game chiến lược giúp người chơi so sánh độc quyền tài nguyên trong thời đại dầu mỏ với độc quyền dữ liệu trong CNTB hiện đại.
+**Data Monopoly** là một web game giáo dục dùng cho học phần Kinh tế chính trị Mác - Lênin. Game giúp người học tìm hiểu chủ đề **chủ nghĩa tư bản độc quyền** thông qua một trò chơi bàn cờ mô phỏng quá trình tích lũy tài sản, dữ liệu, người dùng và quyền lực thị trường.
 
-## Tính năng chính
+Thay vì chỉ đọc khái niệm trong giáo trình, người chơi trực tiếp trải nghiệm việc mua tài sản, nâng cấp, trả phí, trả lời câu hỏi lý thuyết, gặp sự kiện thị trường và chịu điều tiết khi quyền lực độc quyền trở nên quá lớn.
 
-- React + Vite + TypeScript + Tailwind CSS.
-- Điều hướng bằng state giữa Landing, Setup, Game, Theory và Result.
-- Cấu trúc component tách riêng cho board, xúc xắc, panel người chơi, log, modal, lý thuyết và kết quả.
-- Seed data ban đầu cho tiles, event cards, quiz, avatar và scoring.
-- Frontend-only, không backend, không database.
+## App Này Dùng Để Làm Gì?
 
-## Cách chạy local
+App được thiết kế để hỗ trợ thuyết trình, học nhóm hoặc hoạt động trải nghiệm trên lớp.
 
-```bash
-npm install
-npm run dev
-```
+Người học có thể:
 
-Mở URL Vite hiển thị trong terminal, thường là `http://127.0.0.1:5173/`.
+- Hiểu vì sao tích tụ và tập trung tư bản có thể dẫn đến độc quyền.
+- Phân biệt độc quyền dầu mỏ với độc quyền dữ liệu.
+- Nhận diện rào cản gia nhập thị trường như hạ tầng, vốn lớn, dữ liệu, người dùng và nền tảng số.
+- Thấy tác động hai mặt của độc quyền: vừa có thể tạo quy mô và sức mạnh kinh tế, vừa có thể gây bất bình đẳng, hạn chế cạnh tranh và cần điều tiết.
+- Liên hệ lý luận Mác - Lênin với các hiện tượng kinh tế số hiện đại.
 
-## Cách build
+## Cách Chơi Ngắn Gọn
 
-```bash
-npm run build
-```
+1. Chọn số người chơi và bắt đầu ván.
+2. Mỗi lượt, người chơi tung xúc xắc để di chuyển trên bàn cờ.
+3. Khi đi vào ô tài sản, người chơi có thể mua hoặc nâng cấp nếu đủ điều kiện.
+4. Một số ô yêu cầu trả lời câu hỏi lý thuyết để nhận lợi ích hoặc mở quyền mua.
+5. Người chơi tích lũy vốn, tài sản, dữ liệu, người dùng, ảnh hưởng và điểm lý luận.
+6. Nếu quyền lực thị trường quá lớn, người chơi có thể gặp điều tiết hoặc chống độc quyền.
+7. Cuối ván, game tổng kết ai có quyền lực thị trường mạnh nhất và đặt câu hỏi phản tư về tác động xã hội của độc quyền.
 
-File production được tạo trong thư mục `dist/`.
+## Nội Dung Học Tập Chính
 
-## Deploy Vercel
+Game tập trung vào các nội dung:
 
-1. Import repository vào Vercel.
-2. Framework preset: Vite.
-3. Build command: `npm run build`.
-4. Output directory: `dist`.
+- Độc quyền trong kinh tế chính trị Mác - Lênin.
+- Tích tụ tư bản và tập trung tư bản.
+- Lợi nhuận độc quyền.
+- Cạnh tranh trong điều kiện độc quyền.
+- Độc quyền dầu mỏ và kiểm soát tài nguyên vật chất.
+- Độc quyền dữ liệu và quyền lực nền tảng số.
+- Điều tiết, chống độc quyền và giới hạn xã hội của quyền lực thị trường.
 
-## Script thuyết trình 1-2 phút
+## Lưu Ý Học Thuật
 
-Data Monopoly là một web game giáo dục về sự chuyển đổi từ độc quyền dầu mỏ sang độc quyền dữ liệu. Trong thời đại dầu mỏ, quyền lực thị trường đến từ việc kiểm soát tài nguyên khan hiếm, nhà máy lọc dầu, đường ống và logistics. Trong thời đại dữ liệu, quyền lực đó chuyển sang nền tảng số, người dùng, dữ liệu, thuật toán, AI và hiệu ứng mạng lưới. Game giúp người chơi thấy rằng hình thức độc quyền thay đổi, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn tồn tại. Đây chính là một giới hạn lịch sử của CNTB hiện đại.
+Game có tách rõ hai phần:
 
-## Ghi chú
+| Phần nội dung | Ví dụ |
+| --- | --- |
+| Lý luận gốc trong giáo trình | Độc quyền, tích tụ tư bản, tập trung tư bản, lợi nhuận độc quyền, cạnh tranh trong điều kiện độc quyền |
+| Vận dụng hiện đại | Big Tech, dữ liệu, AI, nền tảng số, hiệu ứng mạng lưới, walled garden, behavioral surplus |
+| Ví dụ thực tiễn/pháp lý | Standard Oil, Digital Markets Act, gatekeeper, Cambridge Analytica |
 
-Dự án không dùng backend và không dùng database. Các bước tiếp theo sẽ bổ sung gameplay, lưu tiến trình bằng localStorage và hoàn thiện nội dung lý thuyết.
+Các khái niệm như **Big Tech**, **gatekeeper**, **behavioral surplus**, **walled garden**, **DMA** hoặc ví dụ **Cambridge Analytica** không phải thuật ngữ nguyên bản trong giáo trình Mác - Lênin. Chúng được dùng như phần vận dụng hiện đại để minh họa logic độc quyền trong kinh tế số.
+
+## Gợi Ý Dùng Khi Thuyết Trình
+
+Có thể giới thiệu ngắn gọn như sau:
+
+> Data Monopoly là một web game giáo dục giúp người chơi hiểu quá trình hình thành độc quyền từ dầu mỏ đến dữ liệu. Trong game, người chơi tích lũy vốn, tài sản, dữ liệu, người dùng và ảnh hưởng để tạo quyền lực thị trường. Qua đó, game minh họa logic tích tụ, tập trung tư bản và đặt câu hỏi: khi một người chơi thắng thị trường, xã hội có thật sự tốt hơn không?
+
+## Ai Nên Dùng?
+
+- Sinh viên học Kinh tế chính trị Mác - Lênin.
+- Nhóm làm bài thuyết trình về chủ nghĩa tư bản độc quyền.
+- Giảng viên muốn có hoạt động minh họa trực quan trên lớp.
+- Người học muốn hiểu độc quyền dữ liệu qua ví dụ gần với đời sống số hiện nay.
+
+## Ghi Chú
+
+Đây là sản phẩm mô phỏng phục vụ học tập, không phải mô hình kinh tế đầy đủ. Các chỉ số trong game như dữ liệu, ảnh hưởng, quyền lực thị trường và điểm tổng được đơn giản hóa để người chơi dễ quan sát, thảo luận và phản tư.

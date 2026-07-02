@@ -80,7 +80,7 @@ const coreTheorySections = [
   {
     title: '6. Cập nhật thực tiễn và thông điệp học thuật',
     body:
-      'Vụ Standard Oil năm 1911 là mốc lịch sử để đối chiếu với các vụ kiện chống độc quyền hiện đại nhắm vào Google và Big Tech. DMA và DSA của Liên minh Châu Âu là ví dụ pháp lý hiện đại nhằm điều tiết nền tảng lớn và các dịch vụ số. Thông điệp học thuật: dữ liệu có thể là dầu mỏ mới, nhưng độc quyền dữ liệu vẫn bộc lộ giới hạn cũ của CNTB.',
+      'Vụ Standard Oil năm 1911 là mốc lịch sử để đối chiếu với các vụ kiện chống độc quyền hiện đại nhắm vào Google và Big Tech. DMA, DSA và thuật ngữ gatekeeper của Liên minh Châu Âu là ví dụ pháp lý hiện đại nhằm điều tiết nền tảng lớn và các dịch vụ số. Những ví dụ này dùng để vận dụng và minh họa logic độc quyền trong kinh tế số, không phải thuật ngữ nguyên bản của giáo trình Mác - Lênin.',
     sourceIds: ['standard-oil-1911', 'doj-google-adtech', 'doj-google-search', 'eu-dma', 'eu-dsa'],
   },
 ];
@@ -174,7 +174,7 @@ const learningOutcomeRows = [
   },
   {
     id: 'LO6',
-    outcome: 'Liên hệ được lý luận Mác - Lênin với hiện tượng Big Tech hiện đại',
+    outcome: 'Vận dụng lý luận Mác - Lênin để phân tích Big Tech hiện đại, đồng thời phân biệt lý luận gốc với minh họa hiện đại',
     evidence: 'Trả lời quiz, đọc giải thích và xem tổng kết sau ván về độc quyền dữ liệu/nền tảng số.',
   },
 ];
@@ -407,9 +407,9 @@ function CoreTheoryContent() {
 
       <div className="panel">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">Thông điệp học thuật cốt lõi</p>
-        <h2 className="mt-2 text-2xl font-black text-white">Dữ liệu có thể là dầu mỏ mới, nhưng độc quyền dữ liệu là giới hạn cũ</h2>
+        <h2 className="mt-2 text-2xl font-black text-white">Tách lý luận gốc với phần vận dụng hiện đại</h2>
         <p className="mt-3 text-sm leading-7 text-slate-300">
-          Khi trình bày, nên nhấn mạnh phương pháp luận: không chỉ nhìn Big Tech như công nghệ tiện ích, mà phải truy về quan hệ sản xuất, quyền sở hữu tư liệu sản xuất, cách dữ liệu được tạo ra và cách lợi ích kinh tế được chiếm hữu.
+          Khi trình bày, nên nhấn mạnh phương pháp luận: độc quyền, tích tụ tư bản, tập trung tư bản và lợi nhuận độc quyền là phần lý luận gốc; Big Tech, gatekeeper, walled garden, behavioral surplus, DMA và Cambridge Analytica là phần vận dụng hiện đại để minh họa quyền lực thị trường trong kinh tế số.
         </p>
       </div>
     </>

@@ -6,6 +6,8 @@ Data Monopoly là web trò chơi giáo dục về chủ đề từ độc quyề
 
 Thông điệp chính của trò chơi là: hình thức độc quyền có thể thay đổi từ tài nguyên vật chất sang dữ liệu và nền tảng số, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn tồn tại.
 
+Lưu ý học thuật: trò chơi tách giữa lý luận gốc trong giáo trình Kinh tế chính trị Mác - Lênin và phần vận dụng hiện đại. Các thuật ngữ như Big Tech, gatekeeper, behavioral surplus, walled garden, DMA hoặc ví dụ Cambridge Analytica được dùng để minh họa logic độc quyền trong kinh tế số, không phải thuật ngữ nguyên bản của giáo trình.
+
 ## 2. Learning outcomes sau khi chơi
 
 Sau khi trải nghiệm Data Monopoly, người học được kỳ vọng đạt các kết quả sau:
@@ -17,7 +19,7 @@ Sau khi trải nghiệm Data Monopoly, người học được kỳ vọng đạ
 | Nhận diện được rào cản gia nhập trong độc quyền dầu mỏ và độc quyền dữ liệu | So sánh tài sản dầu mỏ/hạ tầng với tài sản dữ liệu/nền tảng/AI, cùng chi phí phụ thuộc khi đi vào tài sản của người khác |
 | Phân tích được hiệu ứng mạng lưới và vòng lặp dữ liệu - AI | Theo dõi cơ chế người dùng tạo dữ liệu, dữ liệu hỗ trợ AI/nền tảng, từ đó tiếp tục tăng lợi thế |
 | Đánh giá được tác động hai mặt của độc quyền | Nhìn thấy người thắng có quyền lực lớn nhưng đồng thời xuất hiện thuế, điều tiết, khủng hoảng, tẩy chay và câu hỏi phản tư xã hội |
-| Liên hệ được lý luận Mác - Lênin với hiện tượng Big Tech hiện đại | Trả lời quiz, đọc giải thích và đối chiếu độc quyền dầu mỏ với độc quyền dữ liệu trong phần tổng kết sau ván |
+| Vận dụng lý luận Mác - Lênin để phân tích Big Tech hiện đại, đồng thời phân biệt rõ lý luận gốc và minh họa hiện đại | Trả lời quiz, đọc giải thích và đối chiếu độc quyền dầu mỏ với độc quyền dữ liệu trong phần tổng kết sau ván |
 
 Các learning outcomes này giúp sản phẩm không chỉ là trò chơi cạnh tranh, mà là một hoạt động học tập có mục tiêu rõ ràng.
 
