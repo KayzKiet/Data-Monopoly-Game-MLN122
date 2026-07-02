@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { avatars } from '../data/avatars';
-import type { GameState } from '../types/game';
+import { backgroundMusicTracks, defaultBackgroundMusicTrackId, type BackgroundMusicTrack } from '../data/backgroundMusic';
+import type { BackgroundMusicMode, GameState } from '../types/game';
 import { createInitialGameState } from '../utils/gameLogic';
 import { PlayerAvatar } from './PlayerAvatar';
 
@@ -12,18 +13,23 @@ interface PlayerSetupProps {
 interface PlayerFormState {
   name: string;
   avatarId: string;
+  backgroundMusicTrackId: string;
 }
 
 const defaultPlayers: PlayerFormState[] = [
-  { name: 'Player 1', avatarId: avatars[0].id },
-  { name: 'Player 2', avatarId: avatars[1].id },
-  { name: 'Player 3', avatarId: avatars[2].id },
-  { name: 'Player 4', avatarId: avatars[3].id },
+  { name: 'Player 1', avatarId: avatars[0].id, backgroundMusicTrackId: backgroundMusicTracks[0]?.id ?? defaultBackgroundMusicTrackId },
+  { name: 'Player 2', avatarId: avatars[1].id, backgroundMusicTrackId: backgroundMusicTracks[1]?.id ?? defaultBackgroundMusicTrackId },
+  { name: 'Player 3', avatarId: avatars[2].id, backgroundMusicTrackId: backgroundMusicTracks[2]?.id ?? defaultBackgroundMusicTrackId },
+  { name: 'Player 4', avatarId: avatars[3].id, backgroundMusicTrackId: backgroundMusicTracks[3]?.id ?? defaultBackgroundMusicTrackId },
 ];
 
 export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
   const [playerCount, setPlayerCount] = useState(2);
   const [players, setPlayers] = useState<PlayerFormState[]>(defaultPlayers);
+  const [backgroundMusicMode, setBackgroundMusicMode] = useState<BackgroundMusicMode>('shared');
+  const [sharedBackgroundMusicTrackId, setSharedBackgroundMusicTrackId] = useState(defaultBackgroundMusicTrackId);
+  const [previewingTrackId, setPreviewingTrackId] = useState<string | null>(null);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
   const [error, setError] = useState('');
 
   const activePlayers = useMemo(() => players.slice(0, playerCount), [playerCount, players]);
@@ -45,6 +51,41 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
     setError('');
   };
 
+  const updatePlayerMusic = (index: number, backgroundMusicTrackId: string) => {
+    setPlayers((current) => current.map((player, itemIndex) => (itemIndex === index ? { ...player, backgroundMusicTrackId } : player)));
+  };
+
+  useEffect(() => {
+    return () => {
+      previewAudioRef.current?.pause();
+    };
+  }, []);
+
+  const stopPreview = () => {
+    previewAudioRef.current?.pause();
+    previewAudioRef.current = null;
+    setPreviewingTrackId(null);
+  };
+
+  const previewTrack = (trackId: string) => {
+    const track = backgroundMusicTracks.find((item) => item.id === trackId);
+    if (!track) return;
+
+    if (previewingTrackId === track.id) {
+      stopPreview();
+      return;
+    }
+
+    previewAudioRef.current?.pause();
+    const previewAudio = new Audio(track.filePath);
+    previewAudio.volume = 0.5;
+    previewAudioRef.current = previewAudio;
+    previewAudio.play()
+      .then(() => setPreviewingTrackId(track.id))
+      .catch(() => setPreviewingTrackId(null));
+    previewAudio.addEventListener('ended', () => setPreviewingTrackId(null), { once: true });
+  };
+
   const handleStart = () => {
     const normalizedNames = activePlayers.map((player) => player.name.trim().toLocaleLowerCase());
     const hasEmptyName = normalizedNames.some((name) => name.length === 0);
@@ -63,6 +104,8 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
       return;
     }
 
+    stopPreview();
+
     const initialGameState = createInitialGameState(
       activePlayers.map((player, index) => {
         const selectedAvatar = avatars.find((avatar) => avatar.id === player.avatarId) ?? avatars[index];
@@ -71,8 +114,13 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
           id: `player-${index + 1}`,
           name: player.name.trim(),
           avatar: selectedAvatar.imagePath,
+          backgroundMusicTrackId: backgroundMusicMode === 'per-player' ? player.backgroundMusicTrackId : sharedBackgroundMusicTrackId,
         };
       }),
+      {
+        mode: backgroundMusicMode,
+        sharedTrackId: sharedBackgroundMusicTrackId,
+      },
     );
 
     onStart(initialGameState);
@@ -126,6 +174,39 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
             <p className="mt-2 text-sm leading-6 text-slate-300">
               Kiểm soát quyền lực thị trường, đạt điểm lý luận cao, hoặc dẫn đầu tổng điểm sau 25 vòng.
             </p>
+          </div>
+
+          <div className="rounded-lg border border-white/10 bg-white/5 p-4">
+            <p className="text-sm font-bold text-white">Nhạc nền</p>
+            <div className="mt-3 grid gap-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+                <input
+                  checked={backgroundMusicMode === 'shared'}
+                  name="background-music-mode"
+                  onChange={() => setBackgroundMusicMode('shared')}
+                  type="radio"
+                />
+                Dùng chung một bài
+              </label>
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+                <input
+                  checked={backgroundMusicMode === 'per-player'}
+                  name="background-music-mode"
+                  onChange={() => setBackgroundMusicMode('per-player')}
+                  type="radio"
+                />
+                Đổi theo lượt người chơi
+              </label>
+            </div>
+            <MusicTrackPicker
+              disabled={backgroundMusicMode !== 'shared'}
+              id="shared-background-music-setup"
+              onPreview={previewTrack}
+              onTrackChange={setSharedBackgroundMusicTrackId}
+              previewingTrackId={previewingTrackId}
+              trackId={sharedBackgroundMusicTrackId}
+              tracks={backgroundMusicTracks}
+            />
           </div>
 
           <button className="primary-button w-full" onClick={handleStart} type="button">
@@ -202,11 +283,67 @@ export function PlayerSetup({ onBack, onStart }: PlayerSetupProps) {
                     })}
                   </div>
                 </div>
+
+                <div className="mt-4">
+                  <label className="text-sm font-bold text-slate-200" htmlFor={`player-music-${index + 1}`}>
+                    Nhạc nền khi đến lượt
+                  </label>
+                  <MusicTrackPicker
+                    disabled={backgroundMusicMode !== 'per-player'}
+                    id={`player-music-${index + 1}`}
+                    onPreview={previewTrack}
+                    onTrackChange={(trackId) => updatePlayerMusic(index, trackId)}
+                    previewingTrackId={previewingTrackId}
+                    trackId={player.backgroundMusicTrackId}
+                    tracks={backgroundMusicTracks}
+                  />
+                </div>
               </section>
             );
           })}
         </div>
       </div>
     </section>
+  );
+}
+
+interface MusicTrackPickerProps {
+  disabled: boolean;
+  id: string;
+  trackId: string;
+  tracks: BackgroundMusicTrack[];
+  previewingTrackId: string | null;
+  onTrackChange: (trackId: string) => void;
+  onPreview: (trackId: string) => void;
+}
+
+function MusicTrackPicker({ disabled, id, trackId, tracks, previewingTrackId, onTrackChange, onPreview }: MusicTrackPickerProps) {
+  const selectedTrack = tracks.find((track) => track.id === trackId) ?? tracks[0];
+  const isPreviewing = previewingTrackId === selectedTrack.id;
+
+  return (
+    <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+      <select
+        className="min-w-0 rounded-md border border-white/10 bg-midnight px-3 py-3 text-white outline-none transition focus:border-cyan disabled:opacity-50"
+        disabled={disabled}
+        id={id}
+        onChange={(event) => onTrackChange(event.target.value)}
+        value={trackId}
+      >
+        {tracks.map((track) => (
+          <option key={track.id} value={track.id}>
+            {track.title}
+          </option>
+        ))}
+      </select>
+      <button
+        className="secondary-button whitespace-nowrap px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={disabled}
+        onClick={() => onPreview(selectedTrack.id)}
+        type="button"
+      >
+        {isPreviewing ? 'Dừng' : 'Nghe thử'}
+      </button>
+    </div>
   );
 }

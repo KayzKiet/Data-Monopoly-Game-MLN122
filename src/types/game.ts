@@ -50,6 +50,14 @@ export interface Player {
   position: number;
   isInJail: boolean;
   underInvestigation: boolean;
+  backgroundMusicTrackId?: string;
+}
+
+export type BackgroundMusicMode = 'shared' | 'per-player';
+
+export interface BackgroundMusicSettings {
+  mode: BackgroundMusicMode;
+  sharedTrackId: string;
 }
 
 export interface Tile {
@@ -122,6 +130,7 @@ export interface GameState {
   purchaseQuizFailedTileIds: string[];
   eventDecks: Record<EventDeckType, string[]>;
   winnerId: string | null;
+  backgroundMusic: BackgroundMusicSettings;
   status: 'setup' | 'playing' | 'finished';
   log: GameLogEntry[];
 }

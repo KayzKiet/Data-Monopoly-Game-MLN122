@@ -1,4 +1,5 @@
 import { avatars } from '../data/avatars';
+import { defaultBackgroundMusicTrackId } from '../data/backgroundMusic';
 import { events } from '../data/events';
 import { tiles } from '../data/tiles';
 import type { GameState } from '../types/game';
@@ -55,10 +56,15 @@ function migrateGameState(gameState: GameState): GameState {
     purchaseQuizFailedTileIds: gameState.purchaseQuizFailedTileIds ?? [],
     rollsThisTurn: gameState.rollsThisTurn ?? (gameState.diceValue !== null ? 1 : 0),
     extraRollsAvailable: gameState.extraRollsAvailable ?? 0,
+    backgroundMusic: gameState.backgroundMusic ?? {
+      mode: 'shared',
+      sharedTrackId: defaultBackgroundMusicTrackId,
+    },
     eventDecks,
     players: gameState.players.map((player) => ({
       ...player,
       avatar: normalizeAvatar(player.avatar, Number(player.id.replace('player-', '')) - 1),
+      backgroundMusicTrackId: player.backgroundMusicTrackId ?? defaultBackgroundMusicTrackId,
       heldEventCards: player.heldEventCards ?? [],
       position: player.position % tiles.length,
       assets: player.assets.map((asset) => ({ ...asset, lapsHeld: asset.lapsHeld ?? 1 })),

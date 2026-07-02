@@ -12,8 +12,8 @@ interface ResultScreenProps {
 const endingPoints = [
   'Các tài sản dầu mỏ trong game mô phỏng quyền lực từ tài nguyên vật chất và hạ tầng.',
   'Các tài sản dữ liệu là phần vận dụng hiện đại về nền tảng, dữ liệu, thuật toán và AI.',
-  'Điểm lý luận chính là xu hướng tích tụ, tập trung tư bản có thể tạo quyền lực độc quyền.',
-  'Kết quả game nên được đọc như mô phỏng học tập, không thay thế giáo trình.',
+  'Điểm lý luận là chỉ số học tập trong game, không phải thước đo trực tiếp của quyền lực thị trường ngoài đời thực.',
+  'Kết quả thắng nên được đọc như một mô phỏng để phản tư, không phải sự khẳng định rằng độc quyền luôn có lợi cho xã hội.',
 ];
 
 export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultScreenProps) {
@@ -40,6 +40,8 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
   const ranking = [...gameState.players].sort((left, right) => calculateTotalScore(right) - calculateTotalScore(left));
   const winner = gameState.winnerId ? gameState.players.find((player) => player.id === gameState.winnerId) ?? ranking[0] : ranking[0];
   const winnerBreakdown = getScoreBreakdown(winner, gameState.players);
+  const postGameSummary = getPostGameSummary(gameState, winner);
+  const socialIndicators = getSocialIndicators(gameState, winner);
   const chartRows = ranking.map((player) => ({ player, breakdown: getScoreBreakdown(player, gameState.players) }));
 
   return (
@@ -58,6 +60,7 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
           <div className="mt-6 grid grid-cols-2 gap-3">
             <ScoreCard label="Vốn" value={`$${winnerBreakdown.money}`} />
             <ScoreCard label="Giá trị tài sản" value={`$${winnerBreakdown.assetValue}`} />
+            <ScoreCard label="Ảnh hưởng" value={winnerBreakdown.influence} />
             <ScoreCard label="Người dùng" value={winnerBreakdown.users} />
             <ScoreCard label="Dữ liệu" value={winnerBreakdown.data} />
             <ScoreCard label="Điểm lý luận" value={winnerBreakdown.theoryPoints} />
@@ -79,6 +82,10 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
             ))}
           </div>
 
+          <div className="mt-5 rounded-lg border border-gold/30 bg-gold/10 p-4">
+            <PostGameSummary summary={postGameSummary} />
+          </div>
+
           <div className="mt-6 flex flex-wrap gap-3">
             <button className="primary-button" onClick={onRestart} type="button">
               Chơi lại
@@ -92,6 +99,8 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
           </div>
         </div>
       </div>
+
+      <SocialIndicatorsPanel indicators={socialIndicators} />
 
       <ComparisonChart rows={chartRows} />
 
@@ -140,11 +149,65 @@ export function ResultScreen({ gameState, onHome, onRestart, onTheory }: ResultS
   );
 }
 
+function PostGameSummary({ summary }: { summary: ReturnType<typeof getPostGameSummary> }) {
+  const rows = [
+    ['Dạng độc quyền', summary.monopolyType],
+    ['Nguồn lực then chốt', summary.keyResource],
+    ['Mức phụ thuộc của người chơi khác', summary.dependence],
+    ['Điều tiết/chống độc quyền', summary.regulation],
+    ['Khái niệm lý luận minh họa', summary.theoryLink],
+  ];
+
+  return (
+    <div>
+      <h3 className="text-lg font-black text-gold">Tổng kết sau ván chơi</h3>
+      <div className="mt-3 grid gap-3">
+        {rows.map(([label, value]) => (
+          <div className="rounded-md border border-white/10 bg-oil/50 p-3" key={label}>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{label}</p>
+            <p className="mt-1 text-sm leading-6 text-slate-100">{value}</p>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-sm leading-6 text-slate-200">
+        Câu hỏi học thuật: quyền lực này giúp mở rộng sản xuất/dịch vụ, hay làm người chơi khác phụ thuộc nhiều hơn vào một chủ thể?
+      </p>
+    </div>
+  );
+}
+
+function SocialIndicatorsPanel({ indicators }: { indicators: ReturnType<typeof getSocialIndicators> }) {
+  const rows = [
+    ['Mức cạnh tranh còn lại', indicators.remainingCompetition],
+    ['Mức tập trung thị trường', indicators.marketConcentration],
+    ['Tổn hại người chơi nhỏ/người tiêu dùng', indicators.consumerHarm],
+    ['Mức điều tiết cần thiết', indicators.regulationNeed],
+  ];
+
+  return (
+    <section className="panel">
+      <h2 className="text-xl font-black text-white">Chỉ số xã hội trong mô phỏng</h2>
+      <p className="mt-2 text-sm leading-6 text-slate-300">
+        Các chỉ số này không phải đo lường kinh tế học chính thức, mà là công cụ phản tư để người chơi thảo luận tác động xã hội của độc quyền.
+      </p>
+      <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {rows.map(([label, value]) => (
+          <article className="rounded-lg border border-white/10 bg-oil/60 p-4" key={label}>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-cyan">{label}</p>
+            <p className="mt-3 text-sm font-semibold leading-6 text-slate-100">{value}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function ComparisonChart({ rows }: { rows: Array<{ player: Player; breakdown: ReturnType<typeof getScoreBreakdown> }> }) {
   const metrics = [
     { key: 'finalScore', label: 'Điểm tổng', color: 'bg-cyan' },
     { key: 'marketPower', label: 'Quyền lực thị trường', color: 'bg-gold' },
     { key: 'assetValue', label: 'Giá trị tài sản', color: 'bg-emerald-400' },
+    { key: 'influence', label: 'Ảnh hưởng', color: 'bg-orange-300' },
     { key: 'users', label: 'Người dùng', color: 'bg-sky-400' },
     { key: 'data', label: 'Dữ liệu', color: 'bg-violet-400' },
     { key: 'theoryPoints', label: 'Điểm lý luận', color: 'bg-rose-400' },
@@ -202,10 +265,112 @@ function getScoreBreakdown(player: Player, players: Player[]) {
   return {
     money: player.money,
     assetValue,
+    influence: player.influence,
     users: player.users,
     data: player.data,
     theoryPoints: player.theoryPoints,
     marketPower: calculateMarketPower(player, players),
     finalScore: calculateTotalScore(player),
   };
+}
+
+function getPostGameSummary(gameState: GameState, winner: Player) {
+  const players = gameState.players;
+  const oilAssets = winner.assets.filter((asset) => asset.era === 'oil');
+  const dataAssets = winner.assets.filter((asset) => asset.era === 'data');
+  const infrastructureAssets = winner.assets.filter((asset) => ['pipeline', 'logistics', 'cloud-infrastructure'].includes(asset.type));
+  const marketPower = calculateMarketPower(winner, players);
+  const totalMarketPower = players.reduce((sum, player) => sum + calculateMarketPower(player, players), 0);
+  const share = totalMarketPower > 0 ? Math.round((marketPower / totalMarketPower) * 100) : 0;
+  const winnerRegulationEvents = gameState.log.filter((entry) => entry.playerId === winner.id && entry.type === 'regulation').length;
+  const winnerRentEvents = gameState.log.filter((entry) => entry.type === 'rent' && entry.message.includes(`cho ${winner.name}`)).length;
+
+  let monopolyType = 'Độc quyền hỗn hợp';
+  if (infrastructureAssets.length >= Math.max(oilAssets.length, dataAssets.length) && infrastructureAssets.length >= 3) {
+    monopolyType = 'Độc quyền hạ tầng';
+  } else if (dataAssets.length > oilAssets.length) {
+    monopolyType = 'Độc quyền dữ liệu';
+  } else if (oilAssets.length > dataAssets.length) {
+    monopolyType = 'Độc quyền dầu mỏ';
+  }
+
+  const keyResource = getKeyResourceLabel(winner, oilAssets.length, dataAssets.length, infrastructureAssets.length);
+  const dependence =
+    winnerRentEvents > 0
+      ? `Người chơi khác đã trả tiền thuê cho ${winner.name} ${winnerRentEvents} lần, cho thấy có sự phụ thuộc vào tài sản do người thắng kiểm soát.`
+      : `Chưa ghi nhận nhiều lần trả thuê cho ${winner.name}; mức phụ thuộc trực tiếp vào tài sản của người thắng còn thấp hoặc chưa thể hiện rõ trong ván này.`;
+  const regulation =
+    winnerRegulationEvents > 0 || winner.underInvestigation
+      ? `${winner.name} đã chịu ${winnerRegulationEvents} tác động điều tiết/chống độc quyền${winner.underInvestigation ? ' và đang bị đánh dấu điều tra' : ''}.`
+      : `${winner.name} chưa chịu tác động điều tiết đáng kể; nếu quyền lực tiếp tục tăng, đây là điểm cần thảo luận về nhu cầu can thiệp.`;
+
+  return {
+    monopolyType,
+    keyResource,
+    dependence,
+    regulation,
+    theoryLink: `Kết quả này minh họa tích tụ, tập trung tư bản và quyền lực thị trường. Người thắng đang nắm khoảng ${share}% tổng quyền lực thị trường trong mô phỏng.`,
+  };
+}
+
+function getSocialIndicators(gameState: GameState, winner: Player) {
+  const players = gameState.players;
+  const marketPowers = players.map((player) => calculateMarketPower(player, players));
+  const totalMarketPower = marketPowers.reduce((sum, value) => sum + value, 0);
+  const winnerShare = totalMarketPower > 0 ? calculateMarketPower(winner, players) / totalMarketPower : 0;
+  const sortedPowers = [...marketPowers].sort((left, right) => right - left);
+  const gap = (sortedPowers[0] ?? 0) - (sortedPowers[1] ?? 0);
+  const regulationEvents = gameState.log.filter((entry) => entry.type === 'regulation').length;
+  const rentEvents = gameState.log.filter((entry) => entry.type === 'rent').length;
+  const crisisEvents = gameState.log.filter((entry) => entry.type === 'event' && /khủng hoảng|tẩy chay|phạt|điều tra/i.test(entry.message)).length;
+
+  return {
+    remainingCompetition:
+      winnerShare >= 0.6
+        ? 'Thấp: quyền lực tập trung mạnh vào người thắng, đối thủ còn ít khả năng cân bằng.'
+        : gap >= 25
+          ? 'Trung bình: vẫn còn cạnh tranh, nhưng người dẫn đầu đã tạo khoảng cách đáng kể.'
+          : 'Còn tương đối: các người chơi chưa quá chênh lệch về quyền lực thị trường.',
+    marketConcentration:
+      winnerShare >= 0.6
+        ? 'Cao: người thắng kiểm soát từ 60% quyền lực thị trường mô phỏng trở lên.'
+        : winnerShare >= 0.4
+          ? 'Đáng chú ý: người thắng chưa độc chiếm tuyệt đối nhưng đã có lợi thế lớn.'
+          : 'Chưa quá cao: quyền lực thị trường còn phân tán giữa nhiều người chơi.',
+    consumerHarm:
+      rentEvents + crisisEvents >= 6
+        ? 'Cao: nhiều lần trả thuê/khủng hoảng cho thấy chi phí phụ thuộc và tổn hại xã hội đã xuất hiện rõ.'
+        : rentEvents + crisisEvents >= 3
+          ? 'Trung bình: đã có dấu hiệu phụ thuộc, chi phí và biến động bất lợi cho người chơi yếu hơn.'
+          : 'Thấp: ván chơi chưa tạo nhiều tình huống tổn hại trực tiếp.',
+    regulationNeed:
+      winnerShare >= 0.6 || regulationEvents >= 3
+        ? 'Cần thiết cao: mức tập trung hoặc số lần điều tiết cho thấy cần cơ chế kiểm soát độc quyền.'
+        : winnerShare >= 0.4
+          ? 'Cần theo dõi: quyền lực đang tăng và có thể cần điều tiết nếu tiếp tục tập trung.'
+          : 'Chưa cấp bách: thị trường mô phỏng còn đủ cạnh tranh tương đối.',
+  };
+}
+
+function getKeyResourceLabel(winner: Player, oilAssetCount: number, dataAssetCount: number, infrastructureAssetCount: number) {
+  const strongestMetric = [
+    { label: 'vốn', value: winner.money },
+    { label: 'người dùng', value: winner.users },
+    { label: 'dữ liệu', value: winner.data },
+    { label: 'ảnh hưởng', value: winner.influence },
+  ].sort((left, right) => right.value - left.value)[0]?.label ?? 'tài sản';
+
+  if (dataAssetCount > oilAssetCount && winner.data + winner.users > winner.money) {
+    return `Dữ liệu, người dùng và nền tảng số là nguồn lực nổi bật; chỉ số mạnh nhất của người thắng là ${strongestMetric}.`;
+  }
+
+  if (oilAssetCount > dataAssetCount) {
+    return `Tài sản dầu mỏ và hạ tầng vật chất là nguồn lực nổi bật; người thắng có ${oilAssetCount} tài sản dầu mỏ.`;
+  }
+
+  if (infrastructureAssetCount >= 3) {
+    return `Hạ tầng phân phối/cloud/logistics là nguồn lực nổi bật; người thắng kiểm soát ${infrastructureAssetCount} tài sản hạ tầng.`;
+  }
+
+  return `Nguồn lực then chốt là sự kết hợp giữa tài sản, ${strongestMetric}, người dùng/dữ liệu và ảnh hưởng.`;
 }

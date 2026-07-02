@@ -22,14 +22,14 @@ export function calculateMarketPower(player: Player, allPlayers: Player[]): numb
   const maxAssets = Math.max(...allPlayers.map(calculatePlayerAssetValue), 0);
   const maxUsers = Math.max(...allPlayers.map((item) => item.users), 0);
   const maxData = Math.max(...allPlayers.map((item) => item.data), 0);
-  const maxTheory = Math.max(...allPlayers.map((item) => item.theoryPoints), 0);
+  const maxInfluence = Math.max(...allPlayers.map((item) => item.influence), 0);
 
   const score =
-    normalize(player.money, maxMoney) * 0.2 +
-    normalize(assetValue, maxAssets) * 0.3 +
+    normalize(player.money, maxMoney) * 0.15 +
+    normalize(assetValue, maxAssets) * 0.35 +
     normalize(player.users, maxUsers) * 0.2 +
     normalize(player.data, maxData) * 0.2 +
-    normalize(player.theoryPoints, maxTheory) * 0.1;
+    normalize(player.influence, maxInfluence) * 0.1;
 
   return Math.round(score * 100);
 }

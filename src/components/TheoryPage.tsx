@@ -146,6 +146,90 @@ const comparisonRows = [
   },
 ];
 
+const learningOutcomeRows = [
+  {
+    id: 'LO1',
+    outcome: 'Giải thích được nguyên nhân hình thành độc quyền',
+    evidence: 'Theo dõi quá trình mua tài sản, nâng cấp, tích lũy vốn và quyền lực thị trường qua nhiều vòng.',
+  },
+  {
+    id: 'LO2',
+    outcome: 'Phân biệt được tích tụ tư bản và tập trung tư bản',
+    evidence: 'Tích tụ thể hiện qua tái đầu tư/nâng cấp; tập trung thể hiện qua tài sản và quyền lực dồn về người chơi mạnh hơn.',
+  },
+  {
+    id: 'LO3',
+    outcome: 'Nhận diện được rào cản gia nhập trong độc quyền dầu mỏ và độc quyền dữ liệu',
+    evidence: 'So sánh tài sản dầu mỏ/hạ tầng với dữ liệu/nền tảng/AI, cùng chi phí phụ thuộc khi đi vào tài sản của người khác.',
+  },
+  {
+    id: 'LO4',
+    outcome: 'Phân tích được hiệu ứng mạng lưới và vòng lặp dữ liệu - AI',
+    evidence: 'Quan sát cơ chế người dùng tạo dữ liệu, dữ liệu hỗ trợ AI/nền tảng, từ đó tiếp tục tạo lợi thế.',
+  },
+  {
+    id: 'LO5',
+    outcome: 'Đánh giá được tác động hai mặt của độc quyền',
+    evidence: 'Đối chiếu ưu thế của người thắng với thuế, điều tiết, khủng hoảng, tẩy chay và câu hỏi phản tư xã hội.',
+  },
+  {
+    id: 'LO6',
+    outcome: 'Liên hệ được lý luận Mác - Lênin với hiện tượng Big Tech hiện đại',
+    evidence: 'Trả lời quiz, đọc giải thích và xem tổng kết sau ván về độc quyền dữ liệu/nền tảng số.',
+  },
+];
+
+const gameMetricRows = [
+  {
+    metric: 'Vốn',
+    type: 'Kinh tế',
+    meaning: 'Tiền dùng để mua tài sản, nâng cấp, trả phí và chịu biến động thị trường.',
+    theory: 'Tích lũy tư bản, tái đầu tư và khả năng mở rộng quy mô.',
+  },
+  {
+    metric: 'Tài sản',
+    type: 'Kinh tế',
+    meaning: 'Các ô người chơi sở hữu, tạo tiền thuê và lợi thế dài hạn.',
+    theory: 'Kiểm soát tư liệu sản xuất, tài nguyên, hạ tầng hoặc nền tảng.',
+  },
+  {
+    metric: 'Người dùng',
+    type: 'Kinh tế số/xã hội',
+    meaning: 'Quy mô người dùng của nền tảng, tạo dữ liệu và lợi thế mạng lưới.',
+    theory: 'Hiệu ứng mạng lưới và độc quyền dữ liệu.',
+  },
+  {
+    metric: 'Dữ liệu',
+    type: 'Kinh tế số',
+    meaning: 'Tài nguyên chiến lược trong game, hỗ trợ nền tảng và AI.',
+    theory: 'Vận dụng hiện đại về dữ liệu như nguồn lực sản xuất mới.',
+  },
+  {
+    metric: 'Ảnh hưởng',
+    type: 'Xã hội/thị trường',
+    meaning: 'Sức nặng xã hội, uy tín và khả năng chi phối thị trường trong mô phỏng.',
+    theory: 'Quyền lực thị trường, vị thế nền tảng và tác động xã hội.',
+  },
+  {
+    metric: 'Điểm lý luận',
+    type: 'Game hóa/học tập',
+    meaning: 'Điểm nhận được khi trả lời đúng câu hỏi, phản ánh mức tiếp thu kiến thức.',
+    theory: 'Không phải quyền lực thị trường trực tiếp; dùng để đo kết quả học tập.',
+  },
+  {
+    metric: 'Quyền lực thị trường',
+    type: 'Chỉ số tổng hợp mô phỏng',
+    meaning: 'Tổng hợp vốn, tài sản, người dùng, dữ liệu và ảnh hưởng để ước lượng mức chi phối.',
+    theory: 'Độc quyền, tập trung quyền lực thị trường và rào cản cạnh tranh.',
+  },
+  {
+    metric: 'Điểm tổng',
+    type: 'Game hóa',
+    meaning: 'Dùng để xếp hạng cuối game, có tính cả điểm kinh tế và điểm học tập.',
+    theory: 'Phục vụ mục tiêu trò chơi, không phải khái niệm lý luận nguyên bản.',
+  },
+];
+
 export function TheoryPage({ onBack }: TheoryPageProps) {
   const [activeTab, setActiveTab] = useState<TheoryTab>('game');
 
@@ -194,6 +278,35 @@ export function TheoryPage({ onBack }: TheoryPageProps) {
 function GameTheoryContent() {
   return (
     <>
+      <div className="panel overflow-x-auto">
+        <div>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">Learning outcomes</p>
+          <h2 className="mt-2 text-2xl font-black text-white">Người học học được gì sau khi chơi</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-300">
+            Bảng này gom mục tiêu học tập của game thành các kết quả cụ thể, tránh để nội dung học tập bị rải rác giữa luật chơi, quiz và phần lý thuyết.
+          </p>
+        </div>
+
+        <table className="mt-5 w-full min-w-[860px] border-separate border-spacing-0 text-left text-sm">
+          <thead>
+            <tr className="text-cyan">
+              <th className="rounded-tl-lg border border-white/10 bg-oil/80 px-4 py-3">LO</th>
+              <th className="border-y border-r border-white/10 bg-oil/80 px-4 py-3">Sau khi chơi, người học có thể</th>
+              <th className="rounded-tr-lg border-y border-r border-white/10 bg-oil/80 px-4 py-3">Minh chứng trong game</th>
+            </tr>
+          </thead>
+          <tbody className="text-slate-300">
+            {learningOutcomeRows.map((row) => (
+              <tr key={row.id}>
+                <td className="border-x border-b border-white/10 px-4 py-4 font-black text-gold">{row.id}</td>
+                <td className="border-b border-r border-white/10 px-4 py-4 font-semibold leading-6 text-white">{row.outcome}</td>
+                <td className="border-b border-r border-white/10 px-4 py-4 leading-6">{row.evidence}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className="grid gap-4 lg:grid-cols-2">
         {gameTheorySections.map((section) => (
           <article className="panel" key={section.title}>
@@ -202,6 +315,37 @@ function GameTheoryContent() {
             <SourceBadges sourceIds={section.sourceIds} />
           </article>
         ))}
+      </div>
+
+      <div className="panel overflow-x-auto">
+        <div>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">Chỉ số game</p>
+          <h2 className="mt-2 text-2xl font-black text-white">Phân loại và ý nghĩa học thuật</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-300">
+            Các chỉ số này là công cụ mô phỏng để học lý thuyết. Chúng không phải thước đo kinh tế học chính thức, nhưng giúp người chơi hình dung quyền lực thị trường và tác động xã hội của độc quyền.
+          </p>
+        </div>
+
+        <table className="mt-5 w-full min-w-[960px] border-separate border-spacing-0 text-left text-sm">
+          <thead>
+            <tr className="text-cyan">
+              <th className="rounded-tl-lg border border-white/10 bg-oil/80 px-4 py-3">Chỉ số</th>
+              <th className="border-y border-r border-white/10 bg-oil/80 px-4 py-3">Loại chỉ số</th>
+              <th className="border-y border-r border-white/10 bg-oil/80 px-4 py-3">Ý nghĩa trong game</th>
+              <th className="rounded-tr-lg border-y border-r border-white/10 bg-oil/80 px-4 py-3">Liên hệ lý thuyết</th>
+            </tr>
+          </thead>
+          <tbody className="text-slate-300">
+            {gameMetricRows.map((row) => (
+              <tr key={row.metric}>
+                <td className="border-x border-b border-white/10 px-4 py-4 font-black text-white">{row.metric}</td>
+                <td className="border-b border-r border-white/10 px-4 py-4 font-semibold text-gold">{row.type}</td>
+                <td className="border-b border-r border-white/10 px-4 py-4 leading-6">{row.meaning}</td>
+                <td className="border-b border-r border-white/10 px-4 py-4 leading-6">{row.theory}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <div className="panel overflow-x-auto">

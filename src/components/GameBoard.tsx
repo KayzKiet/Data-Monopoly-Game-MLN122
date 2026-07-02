@@ -1,4 +1,5 @@
 import { type CSSProperties, type RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import { backgroundMusicTracks, defaultBackgroundMusicTrackId, type BackgroundMusicTrack } from '../data/backgroundMusic';
 import { events } from '../data/events';
 import { quizzes } from '../data/quizzes';
 import type { GameState, Player, Tile } from '../types/game';
@@ -54,17 +55,22 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   const [offscreenPlayerGuides, setOffscreenPlayerGuides] = useState<OffscreenPlayerGuide[]>([]);
   const [isTheoryOpen, setIsTheoryOpen] = useState(false);
   const [isRulesOpen, setIsRulesOpen] = useState(false);
+  const [isBackgroundMusicOn, setIsBackgroundMusicOn] = useState(true);
   const boardViewportRef = useRef<HTMLDivElement | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
   const playersSectionRef = useRef<HTMLDivElement | null>(null);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const diceSectionRef = useRef<HTMLDivElement | null>(null);
+  const diceRollSoundRef = useRef<HTMLAudioElement | null>(null);
+  const backgroundMusicRef = useRef<HTMLAudioElement | null>(null);
+  const backgroundMusicRetryPendingRef = useRef(false);
   const tileRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const timers = useRef<number[]>([]);
   const isRolling = turnAnimationPhase === 'rolling';
   const isMoving = turnAnimationPhase === 'moving';
   const isTurnBusy = turnAnimationPhase !== 'idle';
   const isLightTheme = themeMode === 'light';
+  const selectedBackgroundMusicTrack = getBackgroundMusicTrack(gameState, currentPlayer);
   const canRollDice = Boolean(
     gameState &&
       currentPlayer &&
@@ -165,12 +171,36 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
   }, [boardZoom, gameState, visualPositions]);
 
   useEffect(() => {
+    if (!gameState || !isBackgroundMusicOn || !selectedBackgroundMusicTrack) return;
+
+    playBackgroundMusicTrack(selectedBackgroundMusicTrack);
+  }, [gameState, isBackgroundMusicOn, selectedBackgroundMusicTrack]);
+
+  useEffect(() => {
+    if (!gameState || !isBackgroundMusicOn) return;
+
+    const retryBackgroundMusic = () => {
+      if (!backgroundMusicRetryPendingRef.current) return;
+      playBackgroundMusicTrack(selectedBackgroundMusicTrack);
+    };
+
+    window.addEventListener('pointerdown', retryBackgroundMusic);
+    window.addEventListener('keydown', retryBackgroundMusic);
+
+    return () => {
+      window.removeEventListener('pointerdown', retryBackgroundMusic);
+      window.removeEventListener('keydown', retryBackgroundMusic);
+    };
+  }, [gameState, isBackgroundMusicOn, selectedBackgroundMusicTrack]);
+
+  useEffect(() => {
     return () => {
       timers.current.forEach((timer) => {
         window.clearTimeout(timer);
         window.clearInterval(timer);
       });
       timers.current = [];
+      backgroundMusicRef.current?.pause();
     };
   }, []);
 
@@ -216,8 +246,90 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
     });
   };
 
+  const playDiceRollSound = () => {
+    if (!diceRollSoundRef.current) {
+      diceRollSoundRef.current = new Audio('/sounds/dice-roll.mp3');
+      diceRollSoundRef.current.volume = 0.75;
+    }
+
+    diceRollSoundRef.current.currentTime = 0;
+    diceRollSoundRef.current.play().catch(() => {
+      // Browser may block audio or the file may be missing; gameplay should continue.
+    });
+  };
+
+  const playBackgroundMusicTrack = (track: BackgroundMusicTrack) => {
+    if (backgroundMusicRef.current?.src.endsWith(track.filePath)) {
+      backgroundMusicRef.current.play()
+        .then(() => {
+          backgroundMusicRetryPendingRef.current = false;
+          setIsBackgroundMusicOn(true);
+        })
+        .catch(() => {
+          backgroundMusicRetryPendingRef.current = true;
+        });
+      return;
+    }
+
+    backgroundMusicRef.current?.pause();
+    backgroundMusicRef.current = new Audio(track.filePath);
+    backgroundMusicRef.current.loop = true;
+    backgroundMusicRef.current.volume = 0.35;
+    backgroundMusicRef.current.play()
+      .then(() => {
+        backgroundMusicRetryPendingRef.current = false;
+        setIsBackgroundMusicOn(true);
+      })
+      .catch(() => {
+        backgroundMusicRetryPendingRef.current = true;
+      });
+  };
+
+  const toggleBackgroundMusic = () => {
+    if (isBackgroundMusicOn) {
+      backgroundMusicRef.current?.pause();
+      backgroundMusicRetryPendingRef.current = false;
+      setIsBackgroundMusicOn(false);
+      return;
+    }
+
+    playBackgroundMusicTrack(selectedBackgroundMusicTrack);
+  };
+
+  const updateBackgroundMusicMode = (mode: 'shared' | 'per-player') => {
+    if (!gameState) return;
+    commitGameState({
+      ...gameState,
+      backgroundMusic: {
+        ...gameState.backgroundMusic,
+        mode,
+      },
+    });
+  };
+
+  const updateSharedBackgroundMusic = (trackId: string) => {
+    if (!gameState) return;
+    commitGameState({
+      ...gameState,
+      backgroundMusic: {
+        ...gameState.backgroundMusic,
+        sharedTrackId: trackId,
+      },
+    });
+  };
+
+  const updateCurrentPlayerBackgroundMusic = (trackId: string) => {
+    if (!gameState || !currentPlayer) return;
+    commitGameState({
+      ...gameState,
+      players: gameState.players.map((player) => (player.id === currentPlayer.id ? { ...player, backgroundMusicTrackId: trackId } : player)),
+    });
+  };
+
   const handleRoll = () => {
     if (!gameState || !currentPlayer || !canRollDice) return;
+
+    playDiceRollSound();
 
     const rolledFaces: [number, number] = [randomDieFace(), randomDieFace()];
     const diceValue = rolledFaces[0] + rolledFaces[1];
@@ -377,6 +489,25 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
           )}
         </div>
         <div className="flex flex-wrap gap-3">
+          <details className="relative">
+            <summary className="cursor-pointer rounded-md border border-white/15 bg-white/10 px-4 py-2 font-bold text-white transition hover:border-cyan/50 hover:bg-white/15">
+              {isBackgroundMusicOn ? 'Nhạc nền đang bật' : 'Nhạc nền'}
+            </summary>
+            <div className="absolute right-0 z-30 mt-2 w-80 rounded-lg border border-white/15 bg-oil p-4 shadow-gold">
+              <BackgroundMusicControls
+                currentPlayerName={currentPlayer?.name ?? 'Người chơi'}
+                mode={gameState.backgroundMusic.mode}
+                onModeChange={updateBackgroundMusicMode}
+                onPlayerTrackChange={updateCurrentPlayerBackgroundMusic}
+                onSharedTrackChange={updateSharedBackgroundMusic}
+                onToggle={toggleBackgroundMusic}
+                playerTrackId={currentPlayer?.backgroundMusicTrackId ?? defaultBackgroundMusicTrackId}
+                sharedTrackId={gameState.backgroundMusic.sharedTrackId}
+                tracks={backgroundMusicTracks}
+                isOn={isBackgroundMusicOn}
+              />
+            </div>
+          </details>
           <button className="secondary-button" onClick={() => setIsTheoryOpen(true)} type="button">
             Lý thuyết
           </button>
@@ -543,6 +674,101 @@ export function GameBoard({ gameState, onFinish, onGameStateChange, onReset, onS
 
 function randomDieFace(): number {
   return Math.floor(Math.random() * 6) + 1;
+}
+
+function getBackgroundMusicTrack(gameState: GameState | null, currentPlayer: Player | null): BackgroundMusicTrack {
+  const settings = gameState?.backgroundMusic;
+  const trackId =
+    settings?.mode === 'per-player'
+      ? currentPlayer?.backgroundMusicTrackId ?? settings.sharedTrackId
+      : settings?.sharedTrackId;
+
+  return backgroundMusicTracks.find((track) => track.id === trackId) ?? backgroundMusicTracks[0];
+}
+
+interface BackgroundMusicControlsProps {
+  currentPlayerName: string;
+  mode: 'shared' | 'per-player';
+  sharedTrackId: string;
+  playerTrackId: string;
+  tracks: BackgroundMusicTrack[];
+  isOn: boolean;
+  onModeChange: (mode: 'shared' | 'per-player') => void;
+  onSharedTrackChange: (trackId: string) => void;
+  onPlayerTrackChange: (trackId: string) => void;
+  onToggle: () => void;
+}
+
+function BackgroundMusicControls({
+  currentPlayerName,
+  mode,
+  sharedTrackId,
+  playerTrackId,
+  tracks,
+  isOn,
+  onModeChange,
+  onSharedTrackChange,
+  onPlayerTrackChange,
+  onToggle,
+}: BackgroundMusicControlsProps) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan">Nhạc nền</p>
+          <p className="mt-1 text-sm font-bold text-slate-200">{isOn ? 'Đang phát' : 'Đang tắt'}</p>
+        </div>
+        <button className="secondary-button px-3 py-2" onClick={onToggle} type="button">
+          {isOn ? 'Tắt' : 'Bật'}
+        </button>
+      </div>
+
+      <div className="grid gap-2">
+        <label className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+          <input checked={mode === 'shared'} name="game-background-music-mode" onChange={() => onModeChange('shared')} type="radio" />
+          Dùng chung
+        </label>
+        <label className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+          <input checked={mode === 'per-player'} name="game-background-music-mode" onChange={() => onModeChange('per-player')} type="radio" />
+          Đổi theo lượt
+        </label>
+      </div>
+
+      <label className="block text-sm font-bold text-slate-200" htmlFor="shared-background-music">
+        Bài dùng chung
+      </label>
+      <select
+        className="w-full rounded-md border border-white/10 bg-midnight px-3 py-2 text-sm font-bold text-white outline-none focus:border-cyan disabled:opacity-50"
+        disabled={mode !== 'shared'}
+        id="shared-background-music"
+        onChange={(event) => onSharedTrackChange(event.target.value)}
+        value={sharedTrackId}
+      >
+        {tracks.map((track) => (
+          <option key={track.id} value={track.id}>
+            {track.title}
+          </option>
+        ))}
+      </select>
+
+      <label className="block text-sm font-bold text-slate-200" htmlFor="player-background-music">
+        Bài của {currentPlayerName}
+      </label>
+      <select
+        className="w-full rounded-md border border-white/10 bg-midnight px-3 py-2 text-sm font-bold text-white outline-none focus:border-cyan disabled:opacity-50"
+        disabled={mode !== 'per-player'}
+        id="player-background-music"
+        onChange={(event) => onPlayerTrackChange(event.target.value)}
+        value={playerTrackId}
+      >
+        {tracks.map((track) => (
+          <option key={track.id} value={track.id}>
+            {track.title}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 }
 
 interface BoardTileAtPositionProps {
@@ -779,7 +1005,17 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '2. Mỗi lượt chơi',
+      title: '2. Learning outcomes',
+      content: [
+        'Giải thích được nguyên nhân hình thành độc quyền qua quá trình tích lũy tài sản và quyền lực thị trường.',
+        'Phân biệt được tích tụ tư bản với tập trung tư bản qua nâng cấp, tái đầu tư và sự dồn quyền lực về người chơi mạnh.',
+        'Nhận diện rào cản gia nhập trong độc quyền dầu mỏ và độc quyền dữ liệu.',
+        'Phân tích hiệu ứng mạng lưới và vòng lặp người dùng - dữ liệu - AI.',
+        'Đánh giá tác động hai mặt của độc quyền và liên hệ lý luận Mác - Lênin với Big Tech hiện đại.',
+      ],
+    },
+    {
+      title: '3. Mỗi lượt chơi',
       content: [
         'Bấm Tung xúc xắc để di chuyển theo tổng 2 xúc xắc.',
         'Khung bàn cờ tự đi theo nhân vật. Khi di chuyển xong, bảng bên phải tự chuyển đến phần Hành động.',
@@ -788,7 +1024,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '3. Hiệu ứng khi di chuyển',
+      title: '4. Hiệu ứng khi di chuyển',
       content: [
         'Nếu tung tổng từ 10 trở lên: tài sản dữ liệu có thể tạo thêm người dùng/dữ liệu; hạ tầng dầu mỏ, logistics hoặc đám mây có thể tăng ảnh hưởng.',
         'Nếu tung tổng từ 3 trở xuống và đã có tài sản: phát sinh chi phí vận hành nhỏ.',
@@ -796,7 +1032,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '4. Mua và nâng cấp tài sản',
+      title: '5. Mua và nâng cấp tài sản',
       content: [
         'Nếu dừng ở tài sản chưa có chủ và đủ vốn, người chơi bấm mua để nhận 1 câu hỏi lý luận ngẫu nhiên.',
         'Trả lời đúng thì mua được tài sản, nhận thêm một ít điểm lý luận và ảnh hưởng; trả lời sai thì mất quyền mua ô đó trong lượt hiện tại.',
@@ -806,7 +1042,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '5. Người dùng, dữ liệu và vòng lặp nền tảng',
+      title: '6. Người dùng, dữ liệu và vòng lặp nền tảng',
       content: [
         'Cuối lượt, nếu người chơi có tài sản dữ liệu và có người dùng, người dùng sẽ tạo thêm dữ liệu hành vi.',
         'Nhiều người dùng -> nhiều dữ liệu; dữ liệu có thể làm thuật toán/AI mạnh hơn; AI và nền tảng mạnh hơn có thể tiếp tục hút người dùng.',
@@ -814,7 +1050,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '6. Khí vận và Cơ hội',
+      title: '7. Khí vận và Cơ hội',
       content: [
         'Khí vận thiên về biến động cá nhân: trúng vốn, thua lỗ, KOL đánh giá, tín dụng cloud, sự cố cáp, bão lũ, chi phí vận hành.',
         'Cơ hội thiên về biến động thị trường: hiệu ứng mạng lưới, vòng lặp người dùng - dữ liệu, dữ liệu mở, tẩy chay nền tảng, thử nghiệm chính sách, khóa nhà cung ứng, phạt chống độc quyền.',
@@ -822,9 +1058,10 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '7. Quiz, điều tiết và khủng hoảng',
+      title: '8. Quiz, điều tiết và khủng hoảng',
       content: [
         'Quiz lý luận: trả lời đúng nhận điểm lý luận và tăng nhẹ ảnh hưởng; trả lời sai vẫn hiện giải thích để học lại.',
+        'Điểm lý luận là chỉ số học tập trong game; tăng ảnh hưởng khi trả lời đúng là cơ chế game hóa năng lực nhận diện lý thuyết, không phải quy luật kinh tế trực tiếp.',
         'Quiz mua tài sản dùng cùng bộ câu hỏi nhưng có mục tiêu khác: đúng mới được mua, sai thì thử lại khi quay lại ô ở lượt sau.',
         'Thuế/Quy định: người đứng trên ô trả phí và mất ảnh hưởng; sở hữu cloud có thể giảm phí.',
         'Điều trần/Chống độc quyền: người dẫn đầu quyền lực thị trường bị nhắm đến.',
@@ -832,19 +1069,21 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '8. Điều kiện thắng',
+      title: '9. Điều kiện thắng',
       content: [
         'Từ vòng 5 trở đi, nếu một người chơi có ít nhất 4 tài sản và kiểm soát ít nhất 60% tổng quyền lực thị trường, người đó thắng.',
         'Hoặc đạt 100 điểm lý luận và dẫn đầu kinh tế.',
         'Hoặc sau 25 vòng, người có tổng điểm cao nhất thắng.',
+        'Người thắng là người đạt ưu thế trong mô phỏng, không có nghĩa kết quả đó tốt nhất cho xã hội.',
         'Nút Xem kết quả chỉ mở sau khi game thật sự kết thúc.',
       ],
     },
     {
-      title: '9. Cách đọc bài học từ game',
+      title: '10. Cách đọc bài học từ game',
       content: [
         'Dầu mỏ: quyền lực đến từ tài nguyên vật chất và hạ tầng sản xuất - lưu thông.',
         'Dữ liệu: quyền lực đến từ người dùng, dữ liệu, nền tảng, thuật toán, AI và hiệu ứng mạng lưới.',
+        'Điểm lý luận là chỉ số học tập; quyền lực thị trường trong game dựa trên vốn, tài sản, người dùng, dữ liệu và ảnh hưởng.',
         'Điều tiết, khủng hoảng, tẩy chay và dữ liệu mở cho thấy độc quyền không phải sức mạnh tuyệt đối; nó luôn gặp giới hạn xã hội, chính sách và kỹ thuật.',
       ],
     },
@@ -883,20 +1122,24 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                 <tr>
                   <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Chỉ số</th>
                   <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Bắt đầu</th>
+                  <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Loại</th>
                   <th className="border-b border-white/10 bg-oil/80 px-4 py-3">Ý nghĩa</th>
                 </tr>
               </thead>
               <tbody className="text-slate-300">
                 {[
-                  ['Vốn', '$500', 'Mua tài sản, nâng cấp, trả phí và chịu biến động thị trường.'],
-                  ['Ảnh hưởng', '0', 'Sức nặng xã hội/thị trường, tăng qua tài sản, quiz và sự kiện.'],
-                  ['Người dùng', '0', 'Nguồn tạo dữ liệu cho tài sản dữ liệu và nền tảng số.'],
-                  ['Dữ liệu', '0', 'Tài nguyên chiến lược trong kinh tế số, gắn với thuật toán/AI.'],
-                  ['Điểm lý luận', '0', 'Thể hiện việc trả lời đúng quiz và hiểu nội dung lý thuyết.'],
-                ].map(([metric, start, meaning]) => (
+                  ['Vốn', '$500', 'Kinh tế', 'Mua tài sản, nâng cấp, trả phí; liên hệ tích lũy tư bản và tái đầu tư.'],
+                  ['Ảnh hưởng', '0', 'Xã hội/thị trường', 'Sức nặng xã hội/thị trường; liên hệ vị thế và tác động xã hội.'],
+                  ['Người dùng', '0', 'Kinh tế số/xã hội', 'Nguồn tạo dữ liệu; liên hệ hiệu ứng mạng lưới.'],
+                  ['Dữ liệu', '0', 'Kinh tế số', 'Tài nguyên chiến lược trong kinh tế số, gắn với thuật toán/AI.'],
+                  ['Điểm lý luận', '0', 'Game hóa/học tập', 'Đo mức trả lời đúng quiz; không phải quyền lực thị trường trực tiếp.'],
+                  ['Quyền lực thị trường', 'Tính theo ván', 'Tổng hợp mô phỏng', 'Tổng hợp vốn, tài sản, người dùng, dữ liệu và ảnh hưởng để ước lượng mức chi phối.'],
+                  ['Điểm tổng', 'Tính theo ván', 'Game hóa', 'Xếp hạng cuối game, kết hợp thành tích kinh tế và kết quả học tập.'],
+                ].map(([metric, start, type, meaning]) => (
                   <tr key={metric}>
                     <td className="border-b border-white/10 px-4 py-4 font-bold text-white">{metric}</td>
                     <td className="border-b border-white/10 px-4 py-4">{start}</td>
+                    <td className="border-b border-white/10 px-4 py-4 font-semibold text-gold">{type}</td>
                     <td className="border-b border-white/10 px-4 py-4 leading-6">{meaning}</td>
                   </tr>
                 ))}

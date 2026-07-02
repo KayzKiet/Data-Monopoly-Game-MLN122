@@ -6,7 +6,22 @@ Data Monopoly là web trò chơi giáo dục về chủ đề từ độc quyề
 
 Thông điệp chính của trò chơi là: hình thức độc quyền có thể thay đổi từ tài nguyên vật chất sang dữ liệu và nền tảng số, nhưng xu hướng tập trung tư bản và quyền lực thị trường vẫn tồn tại.
 
-## 2. Số người chơi
+## 2. Learning outcomes sau khi chơi
+
+Sau khi trải nghiệm Data Monopoly, người học được kỳ vọng đạt các kết quả sau:
+
+| Learning outcome | Người học chứng minh qua đâu trong game |
+| --- | --- |
+| Giải thích được nguyên nhân hình thành độc quyền | Quan sát quá trình mua tài sản, nâng cấp, tích lũy vốn và quyền lực thị trường qua nhiều vòng |
+| Phân biệt được tích tụ tư bản và tập trung tư bản | Tích tụ thể hiện qua tái đầu tư/nâng cấp; tập trung thể hiện qua việc tài sản và quyền lực dồn về người chơi mạnh hơn |
+| Nhận diện được rào cản gia nhập trong độc quyền dầu mỏ và độc quyền dữ liệu | So sánh tài sản dầu mỏ/hạ tầng với tài sản dữ liệu/nền tảng/AI, cùng chi phí phụ thuộc khi đi vào tài sản của người khác |
+| Phân tích được hiệu ứng mạng lưới và vòng lặp dữ liệu - AI | Theo dõi cơ chế người dùng tạo dữ liệu, dữ liệu hỗ trợ AI/nền tảng, từ đó tiếp tục tăng lợi thế |
+| Đánh giá được tác động hai mặt của độc quyền | Nhìn thấy người thắng có quyền lực lớn nhưng đồng thời xuất hiện thuế, điều tiết, khủng hoảng, tẩy chay và câu hỏi phản tư xã hội |
+| Liên hệ được lý luận Mác - Lênin với hiện tượng Big Tech hiện đại | Trả lời quiz, đọc giải thích và đối chiếu độc quyền dầu mỏ với độc quyền dữ liệu trong phần tổng kết sau ván |
+
+Các learning outcomes này giúp sản phẩm không chỉ là trò chơi cạnh tranh, mà là một hoạt động học tập có mục tiêu rõ ràng.
+
+## 3. Số người chơi
 
 Trò chơi hỗ trợ từ 2 đến 4 người chơi.
 
@@ -20,7 +35,9 @@ Trước khi bắt đầu, mỗi người chơi cần:
 
 Ảnh nhân vật đặt trong `public/images/players`. Ảnh từng ô đặt trong `public/images/tiles`.
 
-## 3. Chỉ số của người chơi
+Nguồn nhạc nền và âm thanh bổ sung trong game lấy từ Pixabay Music/Pixabay Sound Effects. Các file âm thanh đặt trong `public/sounds`, gồm tiếng tung xúc xắc và các bản nhạc nền. Khi nộp hoặc chia sẻ công khai, nhóm nên ghi rõ nguồn Pixabay và giữ thông tin tác giả/tên file để minh bạch tài nguyên sử dụng.
+
+## 4. Chỉ số của người chơi
 
 Mỗi người chơi có các chỉ số sau:
 
@@ -33,6 +50,21 @@ Mỗi người chơi có các chỉ số sau:
 - Vị trí: vị trí hiện tại trên bàn cờ.
 - Đang bị điều tra: trạng thái bị điều tra chống độc quyền.
 
+### Bảng phân loại chỉ số game
+
+| Chỉ số | Loại chỉ số | Ý nghĩa trong game | Liên hệ lý thuyết |
+| --- | --- | --- | --- |
+| Vốn | Kinh tế | Tiền dùng để mua tài sản, nâng cấp, trả phí và chịu biến động thị trường | Gắn với tích lũy tư bản, tái đầu tư và khả năng mở rộng quy mô |
+| Tài sản | Kinh tế | Các ô người chơi sở hữu, tạo tiền thuê và lợi thế dài hạn | Gắn với kiểm soát tư liệu sản xuất, tài nguyên/hạ tầng/nền tảng |
+| Người dùng | Kinh tế số/xã hội | Quy mô người dùng của nền tảng, tạo dữ liệu và lợi thế mạng lưới | Gắn với hiệu ứng mạng lưới và độc quyền dữ liệu |
+| Dữ liệu | Kinh tế số | Tài nguyên chiến lược trong game, hỗ trợ nền tảng và AI | Gắn với vận dụng hiện đại về dữ liệu như nguồn lực sản xuất mới |
+| Ảnh hưởng | Xã hội/thị trường | Mức sức nặng xã hội, uy tín và khả năng chi phối thị trường trong mô phỏng | Gắn với quyền lực thị trường, vị thế nền tảng và tác động xã hội |
+| Điểm lý luận | Game hóa/học tập | Điểm nhận được khi trả lời đúng câu hỏi, phản ánh mức tiếp thu kiến thức | Không phải quyền lực thị trường trực tiếp; dùng để đo kết quả học tập |
+| Quyền lực thị trường | Chỉ số tổng hợp mô phỏng | Tổng hợp vốn, tài sản, người dùng, dữ liệu và ảnh hưởng để ước lượng mức chi phối | Gắn với độc quyền, tập trung quyền lực thị trường và rào cản cạnh tranh |
+| Điểm tổng | Chỉ số game hóa | Dùng để xếp hạng cuối game, có tính cả điểm kinh tế và điểm học tập | Phục vụ mục tiêu trò chơi, không phải khái niệm lý luận nguyên bản |
+
+Lưu ý: các chỉ số trong game là công cụ mô phỏng và học tập. Chúng giúp người chơi hình dung quan hệ kinh tế - xã hội, nhưng không phải thước đo kinh tế học chính thức.
+
 Khi bắt đầu ván:
 
 - Vốn: có sẵn để mua tài sản ban đầu.
@@ -44,7 +76,7 @@ Khi bắt đầu ván:
 
 Các chỉ số không giảm xuống dưới 0. Nếu người chơi bị phạt vượt quá lượng vốn hoặc dữ liệu đang có, trò chơi chỉ trừ đến 0.
 
-## 4. Cấu trúc bàn cờ
+## 5. Cấu trúc bàn cờ
 
 Bàn cờ có 40 ô, đi theo một vòng khép kín.
 
@@ -82,7 +114,7 @@ Các loại ô chính:
 - Câu hỏi lý luận: câu hỏi lý luận.
 - Điều tra chống độc quyền: điều tra chống độc quyền.
 
-## 5. Cách chơi mỗi lượt
+## 6. Cách chơi mỗi lượt
 
 Mỗi lượt diễn ra theo thứ tự:
 
@@ -111,7 +143,7 @@ Hiệu ứng trong lúc di chuyển:
 
 Ý nghĩa học tập: thị trường không chỉ thay đổi ở điểm dừng cuối cùng. Tốc độ mở rộng, độ phủ, chi phí vận hành và hạ tầng đều ảnh hưởng đến quá trình tích lũy.
 
-## 6. Đi qua ô Khởi nghiệp
+## 7. Đi qua ô Khởi nghiệp
 
 Khi người chơi đi qua ô Khởi nghiệp, người chơi nhận thêm tiền.
 
@@ -119,7 +151,9 @@ Khi người chơi đi qua ô Khởi nghiệp, người chơi nhận thêm tiề
 
 Trong lối chơi hiện tại, đi qua Khởi nghiệp còn có tác dụng mở quyền nâng cấp cho tài sản đã mua. Một tài sản mới mua phải được giữ qua ít nhất 1 vòng trước khi nâng cấp.
 
-## 7. Mua tài sản
+Giải thích học thuật: cơ chế này không có nghĩa trong thực tế mọi doanh nghiệp chỉ cần “đi đủ một vòng” là được mở rộng. Đây là cách game hóa chu kỳ tái đầu tư: tài sản cần trải qua một vòng vận động sản xuất - lưu thông trước khi được tái đầu tư, nâng cấp và mở rộng quy mô.
+
+## 8. Mua tài sản
 
 Nếu người chơi dừng ở một ô tài sản chưa có chủ và đủ tiền, người chơi có thể mua tài sản đó.
 
@@ -150,7 +184,9 @@ Tài sản dữ liệu gồm:
 
 Ý nghĩa lý luận: mua tài sản mô phỏng quá trình tích lũy tư bản và kiểm soát nguồn lực quan trọng của thị trường. Điều kiện trả lời câu hỏi giúp việc tích lũy tài sản gắn trực tiếp với hiểu biết lý luận, tránh việc chỉ mua theo may rủi.
 
-## 8. Trả tiền thuê
+Giải thích học thuật: trả lời đúng câu hỏi làm tăng ảnh hưởng là cơ chế game hóa. Nó biểu thị việc người chơi có năng lực nhận diện đúng quy luật vận động của thị trường, từ đó ra quyết định tốt hơn trong mô phỏng. Đây không phải quy luật kinh tế trực tiếp ngoài đời thực.
+
+## 9. Trả tiền thuê
 
 Nếu người chơi dừng ở tài sản thuộc người chơi khác, người chơi phải trả tiền thuê.
 
@@ -160,7 +196,9 @@ Với tài sản dữ liệu, người chơi có thể mất thêm người dùn
 
 Ý nghĩa lý luận: khi một chủ thể kiểm soát tài nguyên hoặc nền tảng, các chủ thể khác phải phụ thuộc và trả chi phí để tiếp cận thị trường.
 
-## 9. Nâng cấp tài sản
+Giải thích học thuật: việc người chơi mất người dùng hoặc dữ liệu khi dừng vào tài sản dữ liệu của người khác là cách game mô phỏng sự phụ thuộc nền tảng, chi phí chuyển đổi, lock-in và việc dữ liệu/người dùng có thể bị hút về hệ sinh thái mạnh hơn. Không nên hiểu đây là quy luật cơ học tuyệt đối.
+
+## 10. Nâng cấp tài sản
 
 Người chơi chỉ có thể nâng cấp tài sản khi đáp ứng đủ các điều kiện:
 
@@ -180,7 +218,9 @@ Nếu người chơi sở hữu Hạ tầng đám mây, một số chi phí nân
 
 Ý nghĩa lý luận: nâng cấp mô phỏng việc doanh nghiệp lớn tiếp tục tái đầu tư để mở rộng quy mô và củng cố vị thế độc quyền.
 
-## 10. Tài sản dầu mỏ và tài sản dữ liệu
+Giải thích học thuật: hạ tầng đám mây làm giảm chi phí nâng cấp là cách biểu đạt lợi thế hạ tầng, quy mô và khả năng tối ưu vận hành của nền tảng lớn. Trong thực tế, tác động này còn phụ thuộc vào công nghệ, tổ chức, thị trường và chính sách.
+
+## 11. Tài sản dầu mỏ và tài sản dữ liệu
 
 Tài sản dầu mỏ chủ yếu tạo ra vốn và ảnh hưởng.
 
@@ -192,7 +232,7 @@ Cuối mỗi lượt, nếu người chơi có tài sản dữ liệu và đã c
 
 Ý nghĩa lý luận: độc quyền dầu mỏ dựa vào tài nguyên khan hiếm và hạ tầng vật chất; độc quyền dữ liệu dựa vào người dùng, dữ liệu, thuật toán, AI và nền tảng.
 
-## 11. Ô Khí vận và Cơ hội
+## 12. Ô Khí vận và Cơ hội
 
 Khi dừng ở ô Khí vận hoặc Cơ hội, người chơi rút một thẻ từ đúng xấp bài tương ứng.
 
@@ -237,7 +277,7 @@ Ví dụ:
 
 Ý nghĩa lý luận: thị trường không đứng yên. Chính sách, khủng hoảng, công nghệ và phản ứng xã hội đều có thể ảnh hưởng đến quyền lực độc quyền.
 
-## 12. Ô Câu hỏi
+## 13. Ô Câu hỏi
 
 Khi dừng ở ô Câu hỏi lý luận, người chơi trả lời câu hỏi lý luận.
 
@@ -255,7 +295,7 @@ Bộ câu hỏi được lấy từ file Source Question.md và đã được đ
 
 Bộ câu hỏi cũng được dùng cho thử thách mua tài sản. Mỗi lần bấm mua, câu hỏi được chọn ngẫu nhiên để tạo nhịp chơi khó đoán hơn.
 
-## 13. Ô Thuế, Quy định và Điều trần
+## 14. Ô Thuế, Quy định và Điều trần
 
 Các ô này mô phỏng sự điều tiết khi quyền lực thị trường quá lớn.
 
@@ -281,7 +321,7 @@ Các ô này mô phỏng sự điều tiết khi quyền lực thị trường q
 
 Ý nghĩa lý luận: trong CNTB hiện đại, khi độc quyền phát triển mạnh, nhà nước và xã hội có thể phải can thiệp thông qua thuế, quy định, chống độc quyền hoặc chính sách dữ liệu mở.
 
-## 14. Bảng thông tin người chơi
+## 15. Bảng thông tin người chơi
 
 Mỗi người chơi có một bảng thông tin riêng trong trò chơi.
 
@@ -296,7 +336,7 @@ Bảng này hiển thị:
 - Danh sách ô đất/tài sản đã mua.
 - Số ô, tên tài sản, cấp hiện tại, tiền thuê cơ bản và trạng thái đã đủ vòng nâng cấp hay chưa.
 
-## 15. Quyền lực thị trường
+## 16. Quyền lực thị trường
 
 Quyền lực thị trường là điểm thể hiện mức chi phối thị trường của người chơi.
 
@@ -306,11 +346,13 @@ Quyền lực thị trường là điểm thể hiện mức chi phối thị tr
 - Giá trị tài sản.
 - Người dùng.
 - Dữ liệu.
-- Điểm lý luận.
+- Ảnh hưởng.
 
 Công thức được scale khoảng 0 đến 100 để dễ đọc trên giao diện.
 
-## 16. Điều kiện thắng
+Lưu ý học thuật: quyền lực thị trường trong game là chỉ số mô phỏng. Chỉ số này không đồng nhất hoàn toàn với khái niệm quyền lực thị trường trong kinh tế học hay kinh tế chính trị. Điểm lý luận không được xem là quyền lực thị trường trực tiếp; điểm lý luận là chỉ số học tập và chỉ góp vào điểm tổng/điều kiện thắng theo hướng giáo dục.
+
+## 17. Điều kiện thắng
 
 Một người chơi thắng nếu đạt một trong các điều kiện:
 
@@ -320,7 +362,9 @@ Một người chơi thắng nếu đạt một trong các điều kiện:
 
 Lưu ý: trò chơi không xét thắng độc quyền ngay ở các vòng đầu, vì lúc đó thị trường chưa đủ thời gian tích lũy. Điều này tránh trường hợp một người vừa mua tài sản đầu tiên đã bị tính là độc quyền.
 
-## 17. Ý nghĩa màn kết quả
+Lưu ý giáo dục: người thắng trong game là người đạt ưu thế trong mô phỏng, không có nghĩa kết quả đó là tốt nhất cho xã hội. Game cố ý đặt người chơi vào vị trí tích lũy quyền lực để sau đó phản tư về tác động hai mặt của độc quyền.
+
+## 18. Ý nghĩa màn kết quả
 
 Khi kết thúc, trò chơi hiển thị câu hỏi:
 
@@ -332,8 +376,26 @@ Khi kết thúc, trò chơi hiển thị câu hỏi:
 - Độc quyền dữ liệu dựa trên người dùng, dữ liệu, thuật toán, AI và nền tảng.
 - Hình thức độc quyền thay đổi, nhưng sự tập trung quyền lực thị trường vẫn tồn tại.
 - Đây là một giới hạn của CNTB hiện đại.
+- Người thắng có thể đạt ưu thế thị trường, nhưng lớp cần thảo luận thêm: quyền lực đó làm tăng hiệu quả, hay làm người chơi khác phụ thuộc và làm giảm cạnh tranh?
 
-## 18. Gợi ý thuyết trình
+Màn kết quả cũng có phần Tổng kết sau ván chơi:
+
+- Người thắng bằng dạng độc quyền nào: dầu mỏ, dữ liệu, hạ tầng hoặc hỗn hợp.
+- Nguồn lực then chốt mà người thắng kiểm soát.
+- Mức độ người chơi khác phụ thuộc vào tài sản của người thắng.
+- Người thắng có bị điều tiết hoặc chống độc quyền hay không.
+- Khái niệm lý luận mà kết quả ván chơi minh họa.
+
+Ngoài ra, game hiển thị một số chỉ số xã hội trong mô phỏng:
+
+- Mức cạnh tranh còn lại.
+- Mức tập trung thị trường.
+- Mức tổn hại người chơi nhỏ/người tiêu dùng.
+- Mức điều tiết cần thiết.
+
+Các chỉ số này không phải thước đo kinh tế học chính thức, mà là công cụ phản tư để người chơi thảo luận tác động xã hội của độc quyền.
+
+## 19. Gợi ý thuyết trình
 
 Khi trình bày trên lớp, có thể giải thích trò chơi theo 3 bước:
 
@@ -344,4 +406,5 @@ Khi trình bày trên lớp, có thể giải thích trò chơi theo 3 bước:
 5. Người thắng có thể rất mạnh về thị trường, nhưng trò chơi đặt câu hỏi về tác động xã hội của độc quyền.
 
 Kết luận: từ dầu mỏ đến dữ liệu, hình thức kiểm soát thay đổi, nhưng logic tập trung tư bản và quyền lực thị trường vẫn là vấn đề cần phân tích trong kinh tế chính trị Mác - Lênin.
+
 

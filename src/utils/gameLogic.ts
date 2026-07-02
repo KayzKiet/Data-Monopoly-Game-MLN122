@@ -1,7 +1,8 @@
 import { events } from '../data/events';
+import { defaultBackgroundMusicTrackId } from '../data/backgroundMusic';
 import { quizzes } from '../data/quizzes';
 import { tiles } from '../data/tiles';
-import type { Asset, EventDeckType, GameLogEntry, GameState, Player, QuizQuestion, Tile } from '../types/game';
+import type { Asset, BackgroundMusicSettings, EventDeckType, GameLogEntry, GameState, Player, QuizQuestion, Tile } from '../types/game';
 import { calculateMarketPower, calculateTotalScore, getLastPlacePlayer, getLeadingPlayer } from './scoring';
 
 const START_BONUS = 100;
@@ -14,7 +15,7 @@ const PURCHASE_THEORY_REWARD = 5;
 const MONOPOLY_WIN_MIN_ROUND = 5;
 const MONOPOLY_WIN_MIN_ASSETS = 4;
 
-type PlayerSetupInput = Pick<Player, 'name' | 'avatar'> & Partial<Pick<Player, 'id'>>;
+type PlayerSetupInput = Pick<Player, 'name' | 'avatar'> & Partial<Pick<Player, 'id' | 'backgroundMusicTrackId'>>;
 
 export function createInitialPlayer(id: number, name: string, avatar: string): Player {
   return {
@@ -31,13 +32,15 @@ export function createInitialPlayer(id: number, name: string, avatar: string): P
     position: 0,
     isInJail: false,
     underInvestigation: false,
+    backgroundMusicTrackId: defaultBackgroundMusicTrackId,
   };
 }
 
-export function createInitialGameState(players: PlayerSetupInput[]): GameState {
+export function createInitialGameState(players: PlayerSetupInput[], backgroundMusic: BackgroundMusicSettings = createDefaultBackgroundMusicSettings()): GameState {
   const normalizedPlayers = players.map((player, index) => ({
     ...createInitialPlayer(index + 1, player.name, player.avatar),
     id: player.id ?? `player-${index + 1}`,
+    backgroundMusicTrackId: player.backgroundMusicTrackId ?? backgroundMusic.sharedTrackId,
   }));
 
   return addLog(
@@ -58,12 +61,20 @@ export function createInitialGameState(players: PlayerSetupInput[]): GameState {
       purchaseQuizFailedTileIds: [],
       eventDecks: createEventDecks(),
       winnerId: null,
+      backgroundMusic,
       status: 'playing',
       log: [],
     },
     'system',
     'Game bắt đầu. Mỗi người chơi có vốn ban đầu, nhưng ảnh hưởng, người dùng, dữ liệu và tài sản đều bắt đầu từ 0.',
   );
+}
+
+export function createDefaultBackgroundMusicSettings(): BackgroundMusicSettings {
+  return {
+    mode: 'shared',
+    sharedTrackId: defaultBackgroundMusicTrackId,
+  };
 }
 
 export function rollDice(seed?: number): number {
@@ -941,10 +952,16 @@ function addLog(state: GameState, type: GameLogEntry['type'], message: string, p
 }
 
 export function sanitizeGameState(state: GameState): GameState {
+  const backgroundMusic = state.backgroundMusic ?? createDefaultBackgroundMusicSettings();
+
   return {
     ...state,
     activePurchaseQuiz: state.activePurchaseQuiz ?? null,
     purchaseQuizFailedTileIds: state.purchaseQuizFailedTileIds ?? [],
+    backgroundMusic: {
+      mode: backgroundMusic.mode === 'per-player' ? 'per-player' : 'shared',
+      sharedTrackId: backgroundMusic.sharedTrackId ?? defaultBackgroundMusicTrackId,
+    },
     players: sanitizePlayers(state.players),
   };
 }
@@ -957,5 +974,6 @@ function sanitizePlayers(players: Player[]): Player[] {
     users: Math.max(0, Math.round(player.users)),
     data: Math.max(0, Math.round(player.data)),
     theoryPoints: Math.max(0, Math.round(player.theoryPoints)),
+    backgroundMusicTrackId: player.backgroundMusicTrackId ?? defaultBackgroundMusicTrackId,
   }));
 }

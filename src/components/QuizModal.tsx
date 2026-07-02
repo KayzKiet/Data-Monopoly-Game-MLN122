@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { getSourceReferencesForTopic } from '../data/sources';
 import type { QuizQuestion } from '../types/game';
 
 interface QuizModalProps {
@@ -15,7 +14,6 @@ export function QuizModal({ mode = 'theory', quiz, onAnswer }: QuizModalProps) {
 
   const isAnswered = selectedAnswer !== null;
   const isCorrect = selectedAnswer === quiz.correctAnswer;
-  const sources = getSourceReferencesForTopic(quiz.topic);
   const isPurchaseMode = mode === 'purchase';
 
   const handleAnswer = (answer: QuizQuestion['correctAnswer']) => {
@@ -81,19 +79,6 @@ export function QuizModal({ mode = 'theory', quiz, onAnswer }: QuizModalProps) {
                     : 'Chưa đúng. Không nhận điểm thưởng.'}
               </p>
               <p className="mt-2 text-sm leading-6 text-slate-200">{quiz.explanation}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {sources.map((source) => (
-                  <a
-                    className="rounded border border-white/15 bg-white/5 px-2 py-1 text-[11px] font-bold leading-5 text-slate-200 transition hover:border-cyan hover:text-cyan"
-                    href={source.href}
-                    key={source.id}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    Nguồn: {source.label}
-                  </a>
-                ))}
-              </div>
             </div>
           )}
         </div>
