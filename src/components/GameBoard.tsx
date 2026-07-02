@@ -997,7 +997,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
   const ruleSections = [
     {
-      title: '1. Mục tiêu học tập',
+      title: '1. Mục tiêu của trò chơi',
       content: [
         'Data Monopoly mô phỏng quá trình cạnh tranh, tích lũy tài sản và hình thành quyền lực thị trường.',
         'Người chơi bắt đầu với vốn khởi nghiệp; ảnh hưởng, người dùng, dữ liệu, điểm lý luận và tài sản đều bắt đầu từ 0.',
@@ -1006,7 +1006,17 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '2. Learning outcomes',
+      title: '2. Tóm tắt nhanh cho người mới chơi',
+      content: [
+        'Mỗi người chơi là một chủ thể cạnh tranh trên thị trường.',
+        'Mục tiêu là mua tài sản, nâng cấp tài sản và tích lũy quyền lực thị trường.',
+        'Muốn mua tài sản, người chơi thường phải trả lời đúng câu hỏi lý luận.',
+        'Tài sản dầu mỏ giúp tạo vốn và ảnh hưởng; tài sản dữ liệu giúp tạo người dùng, dữ liệu và lợi thế nền tảng.',
+        'Một lượt chơi: tung xúc xắc -> di chuyển -> xử lý ô đang đứng -> mua/nâng cấp/trả phí/trả lời câu hỏi nếu có -> kết thúc lượt.',
+      ],
+    },
+    {
+      title: '3. Sau khi chơi, người chơi hiểu được gì?',
       content: [
         'Giải thích được nguyên nhân hình thành độc quyền qua quá trình tích lũy tài sản và quyền lực thị trường.',
         'Phân biệt được tích tụ tư bản với tập trung tư bản qua nâng cấp, tái đầu tư và sự dồn quyền lực về người chơi mạnh.',
@@ -1016,7 +1026,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '3. Mỗi lượt chơi',
+      title: '4. Mỗi lượt chơi',
       content: [
         'Bấm Tung xúc xắc để di chuyển theo tổng 2 xúc xắc.',
         'Khung bàn cờ tự đi theo nhân vật. Khi di chuyển xong, bảng bên phải tự chuyển đến phần Hành động.',
@@ -1025,7 +1035,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '4. Hiệu ứng khi di chuyển',
+      title: '5. Hiệu ứng khi di chuyển',
       content: [
         'Nếu tung tổng từ 10 trở lên: tài sản dữ liệu có thể tạo thêm người dùng/dữ liệu; hạ tầng dầu mỏ, logistics hoặc đám mây có thể tăng ảnh hưởng.',
         'Nếu tung tổng từ 3 trở xuống và đã có tài sản: phát sinh chi phí vận hành nhỏ.',
@@ -1033,7 +1043,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '5. Mua và nâng cấp tài sản',
+      title: '6. Mua và nâng cấp tài sản',
       content: [
         'Nếu dừng ở tài sản chưa có chủ và đủ vốn, người chơi bấm mua để nhận 1 câu hỏi lý luận ngẫu nhiên.',
         'Trả lời đúng thì mua được tài sản, nhận thêm một ít điểm lý luận và ảnh hưởng; trả lời sai thì mất quyền mua ô đó trong lượt hiện tại.',
@@ -1043,7 +1053,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '6. Người dùng, dữ liệu và vòng lặp nền tảng',
+      title: '7. Người dùng, dữ liệu và vòng lặp nền tảng',
       content: [
         'Cuối lượt, nếu người chơi có tài sản dữ liệu và có người dùng, người dùng sẽ tạo thêm dữ liệu hành vi.',
         'Nhiều người dùng -> nhiều dữ liệu; dữ liệu có thể làm thuật toán/AI mạnh hơn; AI và nền tảng mạnh hơn có thể tiếp tục hút người dùng.',
@@ -1051,7 +1061,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '7. Khí vận và Cơ hội',
+      title: '8. Khí vận và Cơ hội',
       content: [
         'Khí vận thiên về biến động cá nhân: trúng vốn, thua lỗ, KOL đánh giá, tín dụng cloud, sự cố cáp, bão lũ, chi phí vận hành.',
         'Cơ hội thiên về biến động thị trường: hiệu ứng mạng lưới, vòng lặp người dùng - dữ liệu, dữ liệu mở, tẩy chay nền tảng, thử nghiệm chính sách, khóa nhà cung ứng, phạt chống độc quyền.',
@@ -1059,7 +1069,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '8. Quiz, điều tiết và khủng hoảng',
+      title: '9. Quiz, điều tiết và khủng hoảng',
       content: [
         'Quiz lý luận: trả lời đúng nhận điểm lý luận và tăng nhẹ ảnh hưởng; trả lời sai vẫn hiện giải thích để học lại.',
         'Điểm lý luận là chỉ số học tập trong game; tăng ảnh hưởng khi trả lời đúng là cơ chế game hóa năng lực nhận diện lý thuyết, không phải quy luật kinh tế trực tiếp.',
@@ -1070,7 +1080,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '9. Điều kiện thắng',
+      title: '10. Điều kiện thắng',
       content: [
         'Từ vòng 5 trở đi, nếu một người chơi có ít nhất 4 tài sản và kiểm soát ít nhất 60% tổng quyền lực thị trường, người đó thắng.',
         'Hoặc đạt 100 điểm lý luận và dẫn đầu kinh tế.',
@@ -1080,7 +1090,7 @@ function GameRulesModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       ],
     },
     {
-      title: '10. Cách đọc bài học từ game',
+      title: '11. Cách đọc bài học từ game',
       content: [
         'Dầu mỏ: quyền lực đến từ tài nguyên vật chất và hạ tầng sản xuất - lưu thông.',
         'Dữ liệu: quyền lực đến từ người dùng, dữ liệu, nền tảng, thuật toán, AI và hiệu ứng mạng lưới.',

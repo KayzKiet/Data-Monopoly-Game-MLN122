@@ -16,9 +16,9 @@ const learningPoints = [
 
 const howToPlaySteps = [
   'Chọn 2-4 người chơi, đặt tên và ảnh nhân vật.',
-  'Tung xúc xắc để di chuyển trên bàn 40 ô, từ ô 0 đến ô 39 rồi quay lại Khởi nghiệp.',
+  'Tung xúc xắc để đi quanh bàn cờ; khi đi qua Khởi nghiệp sẽ nhận thêm tiền.',
   'Mua tài sản, trả phí, xử lý sự kiện và trả lời quiz lý luận.',
-  'Chiến thắng bằng quyền lực thị trường, điểm lý luận hoặc tổng điểm sau 25 vòng.',
+  'Chiến thắng bằng quyền lực thị trường, điểm lý luận hoặc tổng điểm sau 25 vòng, rồi thảo luận tác động xã hội của độc quyền.',
 ];
 
 export function LandingPage({ hasSavedGame, onContinue, onStart, onLearnTheory, onHowToPlay }: LandingPageProps) {
@@ -44,7 +44,7 @@ export function LandingPage({ hasSavedGame, onContinue, onStart, onLearnTheory, 
             Từ độc quyền dầu mỏ đến độc quyền dữ liệu
           </p>
           <p className="max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
-            Trò chơi giúp người học phân tích cách cạnh tranh trong CNTB có thể gắn với tích tụ tư bản,
+            Trò chơi giúp người học phân tích cách cạnh tranh trong chủ nghĩa tư bản có thể gắn với tích tụ tư bản,
             tập trung tư bản, quyền lực độc quyền và rào cản gia nhập thị trường.
           </p>
         </div>

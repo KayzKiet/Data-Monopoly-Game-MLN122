@@ -310,7 +310,7 @@ export const quizzes: QuizQuestion[] = [
       'D. Độc quyền hiện đại chủ yếu là vấn đề kỹ thuật, không cần phân tích quan hệ sở hữu',
     ],
     correctAnswer: 'A',
-    explanation: 'Game dùng dầu mỏ và dữ liệu để so sánh hai hình thức độc quyền khác nhau, qua đó làm rõ sự vận động và giới hạn của CNTB hiện đại.',
+    explanation: 'Game dùng dầu mỏ và dữ liệu để so sánh hai hình thức độc quyền khác nhau, qua đó làm rõ sự vận động và giới hạn của chủ nghĩa tư bản hiện đại.',
     topic: 'historic-limit',
   },
   {
@@ -434,9 +434,9 @@ export const quizzes: QuizQuestion[] = [
     id: 'question-md-historical-limit-data',
     question: 'Khi vận dụng lý luận Mác - Lênin để so sánh độc quyền dầu mỏ và độc quyền dữ liệu, kết luận thận trọng nào phù hợp nhất?',
     options: [
-      'A. CNTB đã hoàn toàn thay đổi bản chất và không còn mâu thuẫn bóc lột',
-      'B. Công nghệ số đã giúp giải quyết triệt để mọi giới hạn lịch sử của CNTB',
-      'C. CNTB sẽ tồn tại vĩnh viễn và không có bất kỳ giới hạn lịch sử nào',
+      'A. Chủ nghĩa tư bản đã hoàn toàn thay đổi bản chất và không còn mâu thuẫn bóc lột',
+      'B. Công nghệ số đã giúp giải quyết triệt để mọi giới hạn lịch sử của chủ nghĩa tư bản',
+      'C. Chủ nghĩa tư bản sẽ tồn tại vĩnh viễn và không có bất kỳ giới hạn lịch sử nào',
       'D. Độc quyền dữ liệu cho thấy hình thức nguồn lực thay đổi, nhưng xu hướng tập trung quyền lực thị trường và mâu thuẫn về sở hữu vẫn cần được phân tích',
     ],
     correctAnswer: 'D',
@@ -471,7 +471,7 @@ export const quizzes: QuizQuestion[] = [
   },
   {
     id: 'added-question-state-regulation',
-    question: 'Vì sao trong CNTB hiện đại, nhà nước thường phải can thiệp hoặc điều tiết các tổ chức độc quyền lớn?',
+    question: 'Vì sao trong chủ nghĩa tư bản hiện đại, nhà nước thường phải can thiệp hoặc điều tiết các tổ chức độc quyền lớn?',
     options: [
       'A. Vì độc quyền có thể gây tổn hại cạnh tranh, người tiêu dùng và ổn định xã hội',
       'B. Vì độc quyền thường tạo quy mô lớn nên nhà nước cần bảo vệ lợi nhuận của doanh nghiệp dẫn đầu',

@@ -39,7 +39,7 @@ const gameTheorySections = [
     sourceIds: ['oecd-digital-market-power', 'eu-dma'],
   },
   {
-    title: '6. Giới hạn lịch sử của CNTB hiện đại',
+    title: '6. Giới hạn lịch sử của chủ nghĩa tư bản hiện đại',
     body:
       'Thông điệp của game là: hình thức độc quyền có thể thay đổi từ tài nguyên vật chất sang dữ liệu và nền tảng, nhưng xu hướng tập trung tư bản, quyền lực thị trường và rào cản cạnh tranh vẫn là vấn đề cần phân tích. Đây là cách liên hệ với nội dung kinh tế chính trị Mác - Lênin về chủ nghĩa tư bản độc quyền và các mâu thuẫn của nó, đồng thời đặt trong bối cảnh kinh tế số hiện nay.',
     sourceIds: ['mln-textbook', 'lenin-imperialism', 'oecd-digital-market-power'],
@@ -66,7 +66,7 @@ const coreTheorySections = [
     sourceIds: ['mln-textbook', 'oecd-digital-market-power', 'eu-dma'],
   },
   {
-    title: '4. Mâu thuẫn cơ bản của CNTB hiện đại trong độc quyền dữ liệu',
+    title: '4. Mâu thuẫn cơ bản của chủ nghĩa tư bản hiện đại trong độc quyền dữ liệu',
     body:
       'Mâu thuẫn cơ bản của chủ nghĩa tư bản là mâu thuẫn giữa tính xã hội hóa ngày càng cao của lực lượng sản xuất với hình thức chiếm hữu tư nhân tư bản chủ nghĩa về tư liệu sản xuất. Trong kinh tế số, dữ liệu do hoạt động xã hội rộng lớn tạo ra nhưng quyền kiểm soát và lợi ích kinh tế có thể tập trung vào một số chủ sở hữu nền tảng.',
     sourceIds: ['mln-textbook', 'oecd-digital-market-power'],
@@ -280,19 +280,19 @@ function GameTheoryContent() {
     <>
       <div className="panel overflow-x-auto">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">Learning outcomes</p>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">Sau khi chơi</p>
           <h2 className="mt-2 text-2xl font-black text-white">Người học học được gì sau khi chơi</h2>
           <p className="mt-3 text-sm leading-6 text-slate-300">
-            Bảng này gom mục tiêu học tập của game thành các kết quả cụ thể, tránh để nội dung học tập bị rải rác giữa luật chơi, quiz và phần lý thuyết.
+            Bảng này giúp người chơi thấy mỗi cơ chế trong game đang minh họa nội dung học tập nào.
           </p>
         </div>
 
         <table className="mt-5 w-full min-w-[860px] border-separate border-spacing-0 text-left text-sm">
           <thead>
             <tr className="text-cyan">
-              <th className="rounded-tl-lg border border-white/10 bg-oil/80 px-4 py-3">LO</th>
-              <th className="border-y border-r border-white/10 bg-oil/80 px-4 py-3">Sau khi chơi, người học có thể</th>
-              <th className="rounded-tr-lg border-y border-r border-white/10 bg-oil/80 px-4 py-3">Minh chứng trong game</th>
+              <th className="rounded-tl-lg border border-white/10 bg-oil/80 px-4 py-3">Mục</th>
+              <th className="border-y border-r border-white/10 bg-oil/80 px-4 py-3">Người học hiểu được</th>
+              <th className="rounded-tr-lg border-y border-r border-white/10 bg-oil/80 px-4 py-3">Thấy qua đâu trong game</th>
             </tr>
           </thead>
           <tbody className="text-slate-300">

@@ -187,7 +187,7 @@ export const tiles: Tile[] = [
     name: 'Câu hỏi giới hạn lịch sử',
     type: 'theory-quiz',
     era: 'system',
-    description: 'Liên hệ kết quả thị trường với giới hạn của CNTB hiện đại.',
+    description: 'Liên hệ kết quả thị trường với giới hạn của chủ nghĩa tư bản hiện đại.',
     quizId: 'game-main-lesson',
   },
   {
